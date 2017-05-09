@@ -153,7 +153,7 @@ BOWER_INSTALLED_APPS = (
     'font-awesome',
     'fullcalendar-scheduler',
     'handsontable',
-    'jquery',
+    'jquery#1.9.1',
     'pace',
     'qtip2',
     'slick-carousel',
