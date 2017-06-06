@@ -4,6 +4,9 @@
 # Directorio de media.
 /media
 
+# Directorio staticfiles
+/staticfiles
+
 # Variables de entorno utilizadas por Docker.
 environment.txt
 
@@ -74,3 +77,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# MacOS finder files
+*.DS_Store
