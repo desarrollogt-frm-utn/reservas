@@ -152,11 +152,14 @@ BOWER_INSTALLED_APPS = (
     'bootswatch-dist#flatly',
     'font-awesome',
     'fullcalendar-scheduler',
-    'handsontable',
+    'handsontable#0.31.2',
     'jquery#1.9.1',
     'pace',
     'qtip2',
     'slick-carousel',
+    'bootstrap',
+    'seiyria-bootstrap-slider',
+    'eonasdan-bootstrap-datetimepicker',
 )
 
 # Token de Google Calendar, utilizado para consultar la información de eventos
