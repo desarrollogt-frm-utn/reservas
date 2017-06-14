@@ -24,7 +24,7 @@ class Docente(models.Model):
         Información de la clase.
         """
         app_label = 'app_reservas'
-        ordering = ['legajo']
+        ordering = ['nombre']
         verbose_name = 'Docente'
         verbose_name_plural = 'Docentes'
 
@@ -43,4 +43,3 @@ class Docente(models.Model):
         """
         nombre_corto = self.nombre
         return nombre_corto
-
