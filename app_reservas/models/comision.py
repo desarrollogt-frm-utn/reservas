@@ -20,13 +20,19 @@ class CuatrimestreField(models.CharField):
 class Comision(models.Model):
     # Atributos
     comision = models.CharField(
-        max_length=5,
+        max_length=10,
         blank=False,
         verbose_name='Comisión',
     )
 
     anioacademico = models.PositiveSmallIntegerField(
         verbose_name='Año Académico'
+    )
+
+    codigo= models.PositiveIntegerField(
+        verbose_name='Código de comisión',
+        blank=True,
+        null=True
     )
 
     cuatrimestre = CuatrimestreField()
