@@ -12,6 +12,11 @@ class Especialidad(models.Model):
         blank=True,
         verbose_name='Descripción',
     )
+    codigo = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Codigo',
+    )
 
 
     class Meta:
