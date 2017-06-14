@@ -13,6 +13,14 @@ DIAS_SEMANA = {
 }
 
 
+TIPO_RECURSO = {
+    '1': _(u'Aula'),
+    '2': _(u'Laboratorio Informatico'),
+    '3': _(u'Laboratorio'),
+    '4': _(u'Recurso de ALI'),
+}
+
+
 class DiasSemanaField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = tuple(sorted(DIAS_SEMANA.items()))
@@ -20,24 +28,54 @@ class DiasSemanaField(models.CharField):
         super(DiasSemanaField, self).__init__(*args, **kwargs)
 
 
+class TipoRecursoField(models.CharField):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = tuple(sorted(TIPO_RECURSO.items()))
+        kwargs['max_length'] = 1
+        super(TipoRecursoField, self).__init__(*args, **kwargs)
+
 class HorarioSolicitud(models.Model):
     # Atributos
 
     dia = DiasSemanaField()
 
-    duracion = models.PositiveSmallIntegerField(
-        verbose_name='Duración'
+    fin = models.TimeField(
+        verbose_name='Hora de Fin'
     )
 
-    horaInicio = models.TimeField(
+    inicio = models.TimeField(
         verbose_name='Hora de Inicio'
+    )
+
+    tipoRecurso = TipoRecursoField()
+
+    cantidad_alumnos = models.PositiveIntegerField(
+        verbose_name='Cantidad de alumnos'
+    )
+    softwareRequerido = models.TextField(
+        verbose_name='Software Requerido',
+        null=True,
+        blank=True,
     )
 
     # Relaciones
 
     solicitud = models.ForeignKey(
         'Solicitud',
-        verbose_name='Horario de la solicitud',
+        verbose_name='Solicitud',
+    )
+
+    tipoLaboratorio = models.ForeignKey(
+        'TipoLaboratorio',
+        verbose_name="Tipo de Laboratorio",
+        null=True,
+        blank=True,
+    )
+    tipoRecursoAli = models.ManyToManyField(
+        'TipoRecursoAli',
+        verbose_name='Tipo de Recurso ALI',
+        null=True,
+        blank=True,
     )
 
     class Meta:
