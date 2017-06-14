@@ -17,6 +17,7 @@ from .views import (
     RecursoAliDetailView,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
+    SolicitudCreate,
     SolicitudInstalacionSoftwareView,
     SolicitudLaboratorioInformaticoView,
     SolicitudMaterialMultimediaView,
@@ -26,6 +27,7 @@ from .views import (
     TvVisorCuerposDetailView,
     TvVisorDetailView,
 )
+from .serializer import get_materia_json, get_horarios_json
 
 
 urlpatterns = [
@@ -138,6 +140,24 @@ urlpatterns = [
         r'^tv/visor/(?P<slug>[-\w]+)/cuerpos/$',
         TvVisorCuerposDetailView.as_view(),
         name='tv_visor_cuerpos'
+    ),
+
+    url(
+        r'^solicitudes/nueva/',
+        SolicitudCreate,
+        name='solicitud_nueva'
+    ),
+
+    url(
+        r'^api/materia/(?P<legajo>\d+)$',
+        get_materia_json,
+        name='materia_json'
+    ),
+
+    url(
+        r'^api/horarios/(?P<comision>\d+)$',
+        get_horarios_json,
+        name='comision_json'
     ),
 
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se

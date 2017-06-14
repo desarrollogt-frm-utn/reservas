@@ -4,6 +4,7 @@ from .ali import (
 )
 from .area import AreaDetailView
 from .aula import AulaDetailView
+from .createViewSolicitud import SolicitudCreate
 from .cuerpo import CuerpoDetailView
 from .index import IndexView
 from .laboratorio import LaboratorioDetailView
