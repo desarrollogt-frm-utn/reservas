@@ -1,0 +1,219 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block title %}
+    Prueba Solicitud de material multimedia
+{% endblock title %}
+
+
+{% block static_css %}
+    {{ block.super }}
+
+
+    <link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
+{% endblock static_css %}
+
+{% block static_js_body %}
+
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'seiyria-bootstrap-slider/dist/bootstrap-slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
+{% endblock static_js_body %}
+
+
+{% block contenido %}
+
+
+        <form id="solicitud_form" method="post">
+            {% csrf_token %}
+              {{form.as_p}}
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tbody>
+                    {% for form in formset.forms %}
+                    <tr>
+                       <td>
+                         {{ form.dia.label_tag }}
+                          {{ form.dia }}
+                       </td>
+                       <td>
+                         {{ form.tipoRecurso.label_tag }}
+                         {{ form.tipoRecurso }}
+                       </td>
+                       <td>
+                           {{ form.inicio.label_tag }}
+                          <div class='input-group date'>
+                              {{ form.inicio }}
+                          <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-time"></span>
+                          </span>
+                          </div>
+                       </td>
+                       <td>
+                           {{ form.fin.label_tag }}
+                           <div class='input-group date'>
+                              {{ form.fin }}
+                          <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-time"></span>
+                          </span>
+                          </div>
+                       </td>
+                       <td>
+                         {{ form.cantidad_alumnos.label_tag }}
+                         {{ form.cantidad_alumnos }}
+                       </td>
+                       <td>
+                         {{ form.tipoLaboratorio.label_tag }}
+                         {{ form.tipoLaboratorio }}
+                       </td>
+                       <td>
+                         {{ form.tipoRecursoAli.label_tag }}
+                         {{ form.tipoRecursoAli }}
+                       </td>
+                       <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ formset.management_form }}
+            <div style="width:100px; float:right">
+                    <input class="form-control" type="submit" value="Solicitar" />
+                </div>
+        </form>
+
+{% endblock contenido %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+    $(function() {
+      $('#solicitud_form tbody tr').formset({
+          prefix: '{{ formset.prefix }}'
+      });
+      $('[id$=-inicio]').datetimepicker({
+          format: 'HH:mm',
+          minDate: moment({h:8}),
+      });
+      $('[id$=-fin]').datetimepicker({
+          format: 'HH:mm',
+          minDate: moment({h:8}),
+      });
+    })
+</script>
+
+
+<script>
+    // Función que detecta el cambio en el select de docente
+
+    $("#docente_select").change(function() {
+      $('#tipo_select').attr("disabled", false);
+
+    });
+
+    $('#tipo_select').change(function(){
+      // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      $select = $('#mat_select');
+      $('#mat_select').attr("disabled", false);
+      $('#com_select').html('<option value="" selected="selected">---------</option>');
+      if ($(this).val()== 1) {
+        clear_days_fields();
+        $.ajax({
+            url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+            dataType:'JSON',
+            success:function(data){
+                // Vacio las opciones de local en caso que se haya seleccionado
+                $select.html('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $select.append('<option value="' + val.id_materia + '">' + val.nombre + '</option>');
+
+                })
+            }
+        }) }
+        else {
+          $('#mat_select').attr("disabled", true);
+
+
+          $('[id$=-dia]').attr("disabled", false);
+          $('[id$=-tipoRecurso]').attr("disabled", false);
+          $('[id$=-inicio]').attr("disabled", false);
+          $('[id$=-fin]').attr("disabled", false);
+          $('[id$=-cantidad_alumnos]').attr("disabled", false);
+        };
+
+      $.ajax({
+          url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+          dataType:'JSON',
+          success:function(data){
+              // Vacio las opciones de local en caso que se haya seleccionado
+              $select.html('<option value="" selected="selected">---------</option>');
+              $.each(data, function(key, val){
+                  $select.append('<option value="' + val.id_comision + '">' + val.nombre_comision + " - " + val.nombre_materia + " - " + val.nombre_plan + '</option>');
+
+              })
+          }
+      });
+    });
+
+
+    $('#mat_select').change(function(){
+      // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      $select = $('#com_select');
+      clear_days_fields();
+      $.ajax({
+          url: "http://localhost:8080/reservas/api/horarios/" + $('#mat_select').val(),
+          dataType:'JSON',
+          success:function(data){
+              // Vacio las opciones de local en caso que se haya seleccionado
+              $.each(data, function(key, val){
+                $('[id$=id_' + val.dia_nombre + '_activo]').attr("disabled", false);
+                $('[id$=id_' + val.dia_nombre + '_inicio]').attr("disabled", false);
+                $('[id$=id_' + val.dia_nombre + '_fin]').attr("disabled", false);
+                $('[id$=id_' + val.dia_nombre + '_tipoRecurso]').attr("disabled", false);
+                $('#id_' + val.dia_nombre + '_inicio').val(val.hora_inicio);
+                $('#id_' + val.dia_nombre + '_fin').val(val.hora_fin);
+                $('#id_' + val.dia_nombre + '_cantidadAlumnos').val(val.cantidad_alumnos);
+
+              })
+              $('#com_select').attr("disabled", false);
+          }
+      });
+    });
+
+    function clear_days_fields() {
+
+      $('[id$=-dia]').val("");
+      $('[id$=-tipoRecurso]').val("");
+      $('[id$=-inicio]').val("");
+      $('[id$=-fin]').val("");
+      $('[id$=-cantidad_alumnos]').val("");
+      $('[id$=-tipoLaboratorio]').val("");
+      $('[id$=-tipoRecursoAli]').val("");
+
+
+      $('[id$=-dia]').attr("disabled", true);
+      $('[id$=-tipoRecurso]').attr("disabled", true);
+      $('[id$=-inicio]').attr("disabled", true);
+      $('[id$=-fin]').attr("disabled", true);
+      $('[id$=-cantidad_alumnos]').attr("disabled", true);
+      $('[id$=-tipoLaboratorio]').attr("disabled", true);
+      $('[id$=-tipoRecursoAli]').attr("disabled", true);
+
+    };
+
+    $('[id$=-tipoRecurso]').change(function () {
+      console.log(event.target.name.slice(-13, -12));
+      if (event.target.value == 3) {
+        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", false);
+        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", true);
+      } else if (event.target.value == 4) {
+          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", false);
+          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", true);
+      } else {
+        $('[id$=id_' + event.target.name.slice(0, -12) + '_cantidadAlumnos]').attr("disabled", false);
+      }
+    });
+
+</script>
+
+
+{% endblock %}
