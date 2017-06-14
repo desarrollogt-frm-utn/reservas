@@ -2,39 +2,16 @@ from django.db import models
 
 from django.utils.translation import ugettext as _
 
-TIPO_RECURSO = {
-    '1': _(u'Aula'),
-    '2': _(u'Laboratorio Informatico'),
-    '3': _(u'Laboratorio'),
-    '4': _(u'Recurso de ALI'),
-}
-
-class TipoRecursoField(models.CharField):
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = tuple(sorted(TIPO_RECURSO.items()))
-        kwargs['max_length'] = 1
-        super(TipoRecursoField, self).__init__(*args, **kwargs)
-
 class Solicitud(models.Model):
     # Atributos
     fechaCreacion = models.DateTimeField(
         verbose_name='Fecha de Creación',
     )
 
-    horaInicio = models.TimeField(
-        verbose_name='Hora de Inicio'
-    )
-
-    horaFin = models.TimeField(
-        verbose_name='Hora de Fin'
-    )
-
-    tipoRecurso = TipoRecursoField()
-
     # relaciones
     tipoSolicitud = models.ForeignKey(
         'TipoSolicitud',
-        verbose_name='Tipo de la Solicitud',
+        verbose_name='Tipo de Solicitud',
     )
 
     docente= models.ForeignKey(
