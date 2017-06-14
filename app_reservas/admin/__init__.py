@@ -17,4 +17,5 @@ from .plan import Plan
 from .recursoAli import RecursoAliAdmin
 from .tipoLaboratorio import TipoLaboratorioAdmin
 from .tipoRecursoAli import TipoRecursoAliAdmin
+from .tipoSolicitud import TipoSolicitud
 from .visorTv import VisorTvAdmin
