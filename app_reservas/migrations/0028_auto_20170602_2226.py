@@ -171,7 +171,7 @@ class Migration(migrations.Migration):
                 ('fechaCreacion', models.DateTimeField(verbose_name='Fecha de Creación')),
                 ('horaInicio', models.TimeField(verbose_name='Hora de Inicio')),
                 ('horaFin', models.TimeField(verbose_name='Hora de Fin')),
-                ('tipoRecurso', app_reservas.models.solicitud.TipoRecursoField(choices=[('1', 'Aula'), ('2', 'Laboratorio Informatico'), ('3', 'Laboratorio'), ('4', 'Recurso de ALI')], max_length=1)),
+                ('tipoRecurso', models.CharField(choices=[('1', 'Aula'), ('2', 'Laboratorio Informatico'), ('3', 'Laboratorio'), ('4', 'Recurso de ALI')], max_length=1)),
                 ('comision', models.ForeignKey(to='app_reservas.Comision', blank=True, verbose_name='Comision', null=True)),
                 ('docente', models.ForeignKey(to='app_reservas.Docente', verbose_name='Docente')),
             ],
