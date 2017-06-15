@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from django.conf.urls import url
+from django.contrib.auth.decorators import login_required
 
 from .views import (
     AliTemplateView,
@@ -18,8 +19,10 @@ from .views import (
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
     SolicitudCreate,
+    SolicitudDetail,
     SolicitudInstalacionSoftwareView,
     SolicitudLaboratorioInformaticoView,
+    SolicitudList,
     SolicitudMaterialMultimediaView,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
@@ -143,7 +146,7 @@ urlpatterns = [
     ),
 
     url(
-        r'^solicitudes/nueva/',
+        r'^solicitud/nueva/$',
         SolicitudCreate,
         name='solicitud_nueva'
     ),
@@ -159,6 +162,14 @@ urlpatterns = [
         get_horarios_json,
         name='comision_json'
     ),
+    url(
+        r'^solicitudes/$',
+        login_required(SolicitudList.as_view()),
+        name='solicitud_listar'),
+    url(
+        r'^solicitud/(?P<pk>\d+)/$',
+        login_required(SolicitudDetail.as_view()),
+        name='solicitud_detalle'),
 
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se
     # mantienen para compatibilidad con los visores que funcionan actualmente.
