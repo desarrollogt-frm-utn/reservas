@@ -6,6 +6,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.base import TemplateView
 
 from app_reservas.models import Comision, Docente, EstadoSolicitud, HistoricoEstadoSolicitud, Solicitud, TipoSolicitud
+from app_reservas.models.horarioSolicitud import DIAS_SEMANA, TIPO_RECURSO
 from app_reservas.form import FilterSolicitudForm, SolicitudInlineFormset, SolicitudForm
 
 class SolicitudAliReclamosSugerencias(TemplateView):
@@ -111,3 +112,10 @@ class SolicitudList(ListView):
 class SolicitudDetail(DetailView):
     template_name = 'app_reservas/reservas_detail.html'
     model = Solicitud
+
+
+    def get_context_data(self, **kwargs):
+            context = super(SolicitudDetail, self).get_context_data(**kwargs)
+            context['dias_semana'] = DIAS_SEMANA
+            context['tipo_recursos'] = TIPO_RECURSO
+            return context

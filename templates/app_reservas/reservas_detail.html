@@ -1,5 +1,6 @@
 {% extends 'app_reservas/base.html' %}
 {% load static %}
+{% load navbar_tags %}
 
 {% block static_js %}
 {% endblock %}
@@ -47,10 +48,10 @@ Detalle de Reserva
 	<tbody>
 		{% for horario in object.horariosolicitud_set.all %}
 		<tr>
-			<td>{{ horario.dia }}</td>
+			<td>{{ dias_semana|get_item:horario.dia }}</td>
 			<td>{{ horario.inicio }}</td>
 			<td>{{ horario.fin }}</td>
-			<td>{{ horario.tipoRecurso }}</td>
+			<td>{{ tipo_recursos|get_item:horario.tipoRecurso }}</td>
 			<td>{{ horario.cantidad_alumnos }}</td>
       <td>
         {% if horario.tipoLaboratorio %}
