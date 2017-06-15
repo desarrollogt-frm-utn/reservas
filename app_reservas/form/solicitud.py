@@ -1,19 +1,19 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from app_reservas.models import Solicitud, HorarioSolicitud
+from app_reservas.models import Solicitud, HorarioSolicitud, EstadoSolicitud
 
 
 class SolicitudForm(forms.ModelForm):
 
-    materia = forms.ChoiceField(
+    comision = forms.ChoiceField(
         label='Comisión y Materia:',
         widget=forms.Select(attrs={'id': 'mat_select', 'class': 'form-control', 'disabled': 'true'}),
     )
 
     class Meta:
         model = Solicitud
-        fields = ['docente', 'tipoSolicitud', 'materia' ]
+        fields = ['docente', 'tipoSolicitud', 'comision' ]
         widgets = {
             'docente': forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
             'tipoSolicitud': forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
@@ -44,3 +44,10 @@ class HorarioSolicitudForm(forms.ModelForm):
 
 
 SolicitudInlineFormset = inlineformset_factory(Solicitud, HorarioSolicitud, form=HorarioSolicitudForm, extra=2)
+
+class FilterSolicitudForm(forms.Form):
+    estado = forms.ChoiceField(
+                choices=[('', 'Todos')] +
+                [(estado.id, estado.nombre) for estado in EstadoSolicitud.objects.all()],
+                widget=forms.Select(attrs={'id': 'estado_select', 'class': 'form-control'})
+            )

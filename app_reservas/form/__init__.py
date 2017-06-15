@@ -1,1 +1,1 @@
-from .solicitud import SolicitudInlineFormset, SolicitudForm
+from .solicitud import SolicitudInlineFormset, SolicitudForm, FilterSolicitudForm
