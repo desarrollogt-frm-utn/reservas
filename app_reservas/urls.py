@@ -7,6 +7,7 @@ from .views import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
     AreaDetailView,
+    AsingRole,
     AulaDetailView,
     CuerpoDetailView,
     IndexView,
@@ -16,6 +17,7 @@ from .views import (
     NivelDetailView,
     recurso_eventos_json,
     RecursoAliDetailView,
+    RemoveRole,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
     SolicitudCreate,
@@ -29,6 +31,7 @@ from .views import (
     TvCuerposListView,
     TvVisorCuerposDetailView,
     TvVisorDetailView,
+    UserList,
 )
 from .serializer import get_materia_json, get_horarios_json
 
@@ -182,5 +185,23 @@ urlpatterns = [
         r'^tv/bedelia/(?P<slug>[-\w]+)/cuerpos/$',
         TvVisorCuerposDetailView.as_view(),
         name='tv_bedelia_cuerpos'
+    ),
+
+
+    # Administración de usuarios
+    url(
+        r'^administracion_usuarios/$',
+        login_required(UserList),
+        name='user_roles'
+    ),
+    url(
+        r'^administracion_usuarios/asignar/(?P<role>[A-Za-z]+)/(?P<pk>\d+)$',
+        login_required(AsingRole),
+        name='user_asing_role'
+    ),
+    url(
+        r'^administracion_usuarios/quitar/(?P<role>[A-Za-z]+)/(?P<pk>\d+)$',
+        login_required(RemoveRole),
+        name='user_remove_role'
     ),
 ]

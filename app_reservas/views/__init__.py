@@ -14,6 +14,7 @@ from .laboratorio_informatico import (
 from .nivel import NivelDetailView
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
+from .rolesManager import UserList, AsingRole, RemoveRole
 from .solicitud import (
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,

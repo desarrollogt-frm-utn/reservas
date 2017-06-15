@@ -1,0 +1,94 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Listado de usuarios
+{% endblock %}
+
+{% block contenido %}
+
+<form method="get" action="{% url 'user_roles' %}" >
+  <p>
+    <input name="search" placeholder="Buscador" id="buscador" class="form-control">
+  </p>
+</form>
+
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Usuario</td>
+			<td>Nombre</td>
+			<td>Técnico</td>
+			<td>Soporte</td>
+			<td>Administrador</td>
+      <td>Bedel</td>
+      <td>Aliano</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% if users %}
+		{% for user in users %}
+		<tr>
+			<td>{{ user.username }}</td>
+			<td>{{ user.first_name }} {{ user.last_name }}</td>
+			<td>
+				{% if user.tecnico %}
+				<a class="btn btn-danger" href="{% url 'user_remove_role' 'tecnico' user.id %}">Quitar Rol</a>
+				{% else %}
+				<a class="btn btn-primary" href="{% url 'user_asing_role' 'tecnico' user.id %}">Asignar Rol</a>
+				{% endif %}
+			</td>
+			<td>
+				{% if user.soporte %}
+				<a class="btn btn-danger" href="{% url 'user_remove_role' 'soporte' user.id %}">Quitar Rol</a>
+				{% else %}
+				<a class="btn btn-primary" href="{% url 'user_asing_role' 'soporte' user.id %}">Asignar Rol</a>
+				{% endif %}
+			</td>
+			<td>
+				{% if user.administrador %}
+				<a class="btn btn-danger" href="{% url 'user_remove_role' 'administrador' user.id %}">Quitar Rol</a>
+				{% else %}
+				<a class="btn btn-primary" href="{% url 'user_asing_role' 'administrador' user.id %}">Asignar Rol</a>
+				{% endif %}
+			</td>
+      <td>
+				{% if user.bedel %}
+				<a class="btn btn-danger" href="{% url 'user_remove_role' 'bedel' user.id %}">Quitar Rol</a>
+				{% else %}
+				<a class="btn btn-primary" href="{% url 'user_asing_role' 'bedel' user.id %}">Asignar Rol</a>
+				{% endif %}
+			</td>
+      <td>
+				{% if user.aliano %}
+				<a class="btn btn-danger" href="{% url 'user_remove_role' 'aliano' user.id %}">Quitar Rol</a>
+				{% else %}
+				<a class="btn btn-primary" href="{% url 'user_asing_role' 'aliano' user.id %}">Asignar Rol</a>
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+
+		{% else %}
+		<h1>No existen usuarios cargados</h1>
+		{% endif %}
+	</tbody>
+</table>
+<ul class="pager">
+	<li>
+		{% if page_obj.has_previous %}
+       	 <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+		{% endif %}
+        </li>
+	<li>
+		{% if page_obj.has_next %}
+     	 <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    	{% endif %}
+    </li>
+</ul>
+{% endblock%}

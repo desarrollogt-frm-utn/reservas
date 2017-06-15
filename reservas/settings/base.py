@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'djangobower',
     'app_facturacion',
     'app_reservas.apps.ReservasConfig',
+    'rolepermissions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -172,3 +173,5 @@ BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit//')
 LOGIN_URL = '/' + DJANGO_URL_PREFIX + 'cuentas/login/'
 
 LOGIN_REDIRECT_URL = reverse_lazy('solicitud_listar')
+
+ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
