@@ -1,0 +1,79 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Listado de Reservas
+{% endblock %}
+
+{% block contenido %}
+
+
+<form method="get" action="{% url 'solicitud_listar' %}">
+<p> Estado: {{ estado.estado }} </p>
+<p><input type="submit"/></p>
+</form>
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Solicitante</td>
+			<td>Tipo de Solicitud</td>
+			<td>Fecha de Solicitud</td>
+			<td>Estado</td>
+			<td>Comision</td>
+			<td>Acciones</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% if object_list %}
+		{% for solicitud in object_list %}
+		<tr>
+			<td>{{ solicitud.docente.nombre }}</td>
+			<td>{{ solicitud.tipoSolicitud.nombre }}</td>
+			<td>{{ solicitud.fechaCreacion }}</td>
+			<td>
+				{% for historico in solicitud.historicoestadosolicitud_set.all %}
+				{% if historico.fechaFin == None  %}
+					{{ historico.estadoSolicitud.nombre }}
+				{% endif %}
+				{% endfor %}
+			</td>
+    		</td>
+			<td>
+			{% if solicitud.comision %}
+			<li>Materia: {{ solicitud.comision.materia.nombre }}</li>
+			<li>Comisión: {{ solicitud.comision.comision }}</li>
+			<li>Especialidad: {{ solicitud.comision.materia.especialidad.nombre }}</li>
+			{% else %}
+			---
+			{% endif %}
+			</td>
+			<td>
+				<a class="btn btn-primary" href="{% url 'solicitud_detalle' solicitud.id %}">Visualizar</a>
+				<a class="btn btn-danger" href="">Eliminar</a>
+			</td>
+		</tr>
+		{% endfor %}
+
+		{% else %}
+		<h1>No existen solicitudes para mostrar</h1>
+		{% endif %}
+	</tbody>
+</table>
+<ul class="pager">
+	<li>
+		{% if page_obj.has_previous %}
+       	 <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+		{% endif %}
+        </li>
+	<li>
+		{% if page_obj.has_next %}
+     	 <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    	{% endif %}
+    </li>
+</ul>
+{% endblock%}

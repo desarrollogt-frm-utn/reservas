@@ -1,0 +1,96 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Detalle de Reserva
+{% endblock %}
+
+{% block contenido %}
+
+<h1>{{ object.docente.nombre }}</h1>
+<p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
+<p>Tipo de solicitud: {{ object.tipoSolicitud.nombre }}</p>
+<p>Estado:
+  {% for historico in solicitud.historicoestadosolicitud_set.all %}
+  {% if historico.fechaFin == None  %}
+    {{ historico.estadoSolicitud.nombre }}
+  {% endif %}
+  {% endfor %}
+</p>
+<p>Comision:
+  {% if object.comision %}
+  <li>Materia: {{ object.comision.materia.nombre }}</li>
+  <li>Comisión: {{ object.comision.comision }}</li>
+  <li>Especialidad: {{ object.comision.materia.especialidad.nombre }}</li>
+  {% else %}
+  ---
+  {% endif %}
+</p>
+<div>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Día</td>
+			<td>Inicio</td>
+			<td>Fin</td>
+			<td>Tipo Recurso</td>
+			<td>Cantidad de Alumnos</td>
+      <td>Tipo de laboratorio</td>
+      <td>Tipo de Recurso ALI</td>
+			<td>Acciones</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% for horario in object.horariosolicitud_set.all %}
+		<tr>
+			<td>{{ horario.dia }}</td>
+			<td>{{ horario.inicio }}</td>
+			<td>{{ horario.fin }}</td>
+			<td>{{ horario.tipoRecurso }}</td>
+			<td>{{ horario.cantidad_alumnos }}</td>
+      <td>
+        {% if horario.tipoLaboratorio %}
+          {{ horario.tipoLaboratorio }}
+        {% else %}
+          ---
+        {% endif %}
+      </td>
+      <td>
+        {% if horario.tipoRecursoAli.all %}
+          {% for recurso_ali in horario.tipoRecursoAli.all %}
+            <li> {{ recursoa_ali }} </li>
+          {% endfor %}
+        {% else %}
+          ---
+        {% endif %}
+      </td>
+			<td>
+				<a class="btn btn-primary" href="">Editar</a>
+				<a class="btn btn-danger" href="">Eliminar</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+
+{% if recurso_reject %}
+<h3>El recurso actual se encuentra rechazado</h3>
+<p>Motivos: {{ recurso_reject }}</p>
+
+{% endif %}
+
+{% if edit_recurso_estado %}
+	{% for historico in recurso.historicosEstados.all %}
+	{% if historico.fechaFin == None and historico.estado.nombre == "Dado de alta"  %}
+		<h1>El recurso tiene una verificacion pendiente de revisión</h1>
+		<a class="btn btn-primary" href="{% url 'recurso_approve' object.id %}">Aprobar Recurso</a>
+		<a class="btn btn-danger" href="{% url 'recurso_reject' object.id %}">Rechazar Recurso</a>
+	{% endif %}
+	{% endfor %}
+{% endif %}
+{% endblock %}
