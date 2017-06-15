@@ -23,3 +23,7 @@ def obtener_informacion_navbar(context):
         'user': context.get('user')
     }
     return context
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
