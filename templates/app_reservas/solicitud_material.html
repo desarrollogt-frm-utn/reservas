@@ -116,7 +116,6 @@
       $('#mat_select').attr("disabled", false);
       $('#com_select').html('<option value="" selected="selected">---------</option>');
       if ($(this).val()== 1) {
-        clear_days_fields();
         $.ajax({
             url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
             dataType:'JSON',
@@ -158,7 +157,6 @@
     $('#mat_select').change(function(){
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
       $select = $('#com_select');
-      clear_days_fields();
       $.ajax({
           url: "http://localhost:8080/reservas/api/horarios/" + $('#mat_select').val(),
           dataType:'JSON',
