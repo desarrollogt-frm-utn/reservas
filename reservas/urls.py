@@ -18,6 +18,7 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import login, logout_then_login
 
 urlpatterns = [
     url(r'^' + settings.DJANGO_URL_PREFIX, include([
@@ -46,6 +47,17 @@ urlpatterns = [
         url(
             r'',
             include('app_reservas.urls')
+        ),
+        url(
+            r'^cuentas/login/',
+            login,
+            {'template_name':'app_reservas/login.html'},
+            name='login'
+        ),
+        url(
+            r'^logout/',
+            logout_then_login,
+            name='logout'
         ),
         ]
     )),

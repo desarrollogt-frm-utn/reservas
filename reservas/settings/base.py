@@ -15,6 +15,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import random
+from django.core.urlresolvers import reverse_lazy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -167,3 +168,7 @@ BOWER_INSTALLED_APPS = (
 GOOGLE_CALENDAR_TOKEN = os.environ.get('GOOGLE_CALENDAR_TOKEN', '')
 
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit//')
+
+LOGIN_URL = '/' + DJANGO_URL_PREFIX + 'cuentas/login/'
+
+LOGIN_REDIRECT_URL = reverse_lazy('solicitud_listar')
