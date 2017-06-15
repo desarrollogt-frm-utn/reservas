@@ -14,6 +14,7 @@ environment.txt
 celerybeat*.bak
 celerybeat*.dat
 celerybeat*.dir
+celerybeat*.db
 
 ##########
 # Python #
@@ -41,6 +42,7 @@ lib64/
 parts/
 sdist/
 var/
+venv/
 *.egg-info/
 .installed.cfg
 *.egg
