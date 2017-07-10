@@ -59,8 +59,8 @@ class Comision(models.Model):
         Representación de la instancia.
         """
         if self.materia:
-            s = '{0!s} - {1!s}'.format(self.get_nombre_corto(),
-                                      self.materia.get_nombre_corto())
+            s = '{0!s} - {1!s} - {2!s}'.format(self.get_nombre_corto(),
+                                      self.materia.get_nombre_corto(), self.materia.nombre)
         else:
             s = '{0!s}'.format(self.get_nombre_corto())
         return s
