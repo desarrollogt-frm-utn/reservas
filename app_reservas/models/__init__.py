@@ -19,6 +19,7 @@ from .nivel import Nivel
 from .plan import Plan
 from .recurso import Recurso
 from .recursoAli import RecursoAli
+from .reserva import Reserva
 from .solicitud import Solicitud
 from .tipoLaboratorio import TipoLaboratorio
 from .tipoRecursoAli import TipoRecursoAli
@@ -46,6 +47,7 @@ __all__ = [
     'Plan',
     'Recurso',
     'RecursoAli',
+    'Reserva',
     'Solicitud',
     'TipoLaboratorio',
     'TipoRecursoAli',
