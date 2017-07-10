@@ -10,11 +10,13 @@ from .views import (
     AsingRole,
     AulaDetailView,
     CuerpoDetailView,
+    FechasSemestreConfig,
     IndexView,
     LaboratorioDetailView,
     LaboratorioInformaticoDetailView,
     LaboratorioInformaticoListView,
     NivelDetailView,
+    RecursoAssign,
     recurso_eventos_json,
     RecursoAliDetailView,
     RemoveRole,
@@ -174,6 +176,12 @@ urlpatterns = [
         login_required(SolicitudDetail.as_view()),
         name='solicitud_detalle'),
 
+    url(
+        r'^recurso/asignar/(?P<solicitud>\d+)/(?P<horario>\d+)$',
+        login_required(RecursoAssign),
+        name='recurso_assign'
+    ),
+
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se
     # mantienen para compatibilidad con los visores que funcionan actualmente.
     url(
@@ -193,6 +201,11 @@ urlpatterns = [
         r'^administracion_usuarios/$',
         login_required(UserList),
         name='user_roles'
+    ),
+    url(
+        r'^administracion_fechas_semestre/$',
+        login_required(FechasSemestreConfig),
+        name='fechas_semestre_config'
     ),
     url(
         r'^administracion_usuarios/asignar/(?P<role>[A-Za-z]+)/(?P<pk>\d+)$',
