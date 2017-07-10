@@ -5,7 +5,18 @@ from datetime import datetime
 from dateutil import parser
 from httplib2 import ServerNotFoundError
 
-from reservas.settings.base import GOOGLE_CALENDAR_TOKEN
+from reservas.settings.base import GOOGLE_CALENDAR_TOKEN, GOOGLE_SECRET_JSON_FILE
+
+import httplib2
+from googleapiclient.discovery import build
+from oauth2client.service_account import ServiceAccountCredentials
+
+
+CLIENT_SECRET_FILE = GOOGLE_SECRET_JSON_FILE
+
+SCOPES = 'https://www.googleapis.com/auth/calendar'
+scopes = [SCOPES]
+
 
 
 def crear_servicio():
@@ -142,3 +153,48 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True):
             break
 
     return eventos
+
+
+def build_service():
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        filename=CLIENT_SECRET_FILE,
+        scopes=SCOPES,
+    )
+
+    http = credentials.authorize(httplib2.Http())
+
+    service = build('calendar', 'v3', http=http)
+
+    return service
+
+
+def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
+    service = build_service()
+    event = {
+      'summary': titulo,
+      'description': 'Creado automaticamente por sistema de reservas UTN',
+      'start': {
+        'dateTime': inicio,
+        'timeZone': 'America/Mendoza',
+      },
+      'end': {
+        'dateTime': fin,
+        'timeZone': 'America/Mendoza',
+      },
+      'attendees': [
+        {'email': 'martin.94.mza@gmail.com'},
+      ],
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'popup', 'minutes': 10},
+         ],
+      },
+    }
+
+    if hasta is not None:
+        event['recurrence'] = ['RRULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta), ]
+
+    created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
+
+    return created_event
