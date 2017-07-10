@@ -11,6 +11,8 @@ Detalle de Reserva
 
 {% block contenido %}
 
+<a href="{{request.META.HTTP_REFERER}}">Atrás</a>
+
 <h1>{{ object.docente.nombre }}</h1>
 <p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
 <p>Tipo de solicitud: {{ object.tipoSolicitud.nombre }}</p>
@@ -63,16 +65,22 @@ Detalle de Reserva
       <td>
         {% if horario.tipoRecursoAli.all %}
           {% for recurso_ali in horario.tipoRecursoAli.all %}
-            <li> {{ recursoa_ali }} </li>
+            <li> {{ recurso_ali.nombre }} </li>
           {% endfor %}
         {% else %}
           ---
         {% endif %}
       </td>
 			<td>
-				<a class="btn btn-primary" href="">Editar</a>
+        {% if not horario.reservas.get %}
+        <a class="btn btn-primary" href="{% url 'recurso_assign' object.id horario.id %}">Asignar</a>
 				<a class="btn btn-danger" href="">Eliminar</a>
-			</td>
+        {% else %}
+        <li>Recurso: {{horario.reservas.get.recurso }}</li>
+        <li>Asignado por: {{horario.reservas.get.asignado_por }}</li>
+        <li>Fecha: {{horario.reservas.get.fecha_creacion }}</li>
+        {% endif %}
+      </td>
 		</tr>
 		{% endfor %}
 	</tbody>

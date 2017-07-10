@@ -1,0 +1,47 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Detalle de Reserva
+{% endblock %}
+
+{% block contenido %}
+
+<a href="{{request.META.HTTP_REFERER}}">Atrás</a>
+
+<h1>{{ object.docente.nombre }}</h1>
+<p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
+<p>Tipo de solicitud: {{ object.tipoSolicitud.nombre }}</p>
+<p>Estado:
+  {% for historico in object.historicoestadosolicitud_set.all %}
+  {% if historico.fechaFin == None  %}
+    {{ historico.estadoSolicitud.nombre }}
+  {% endif %}
+  {% endfor %}
+</p>
+<p>Comision:
+  {% if object.comision %}
+  <li>Materia: {{ object.comision.materia.nombre }}</li>
+  <li>Comisión: {{ object.comision.comision }}</li>
+  <li>Especialidad: {{ object.comision.materia.especialidad.nombre }}</li>
+  {% else %}
+  ---
+  {% endif %}
+</p>
+<p>Dia: {{ dias_semana|get_item:horario.dia }}</p>
+<p>Inicio: {{ horario.inicio }}</p>
+<p>Fin: {{ horario.fin }}</p>
+<p>Tipo Recurso: {{ tipo_recursos|get_item:horario.tipoRecurso }} </p>
+<p>Cantidad de Alumnos: {{ horario.cantidad_alumnos }}</p>
+
+<form method="post" action="" id="reservas_assign">
+  {% csrf_token %}
+  <p>{{ form.as_p }} </p>
+  <p><input type="submit" value="Asignar" class="form-control"/></p>
+</form>
+
+{% endblock %}
