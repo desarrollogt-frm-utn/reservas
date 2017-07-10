@@ -16,6 +16,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 import random
 from django.core.urlresolvers import reverse_lazy
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -52,6 +53,8 @@ INSTALLED_APPS = (
     'app_facturacion',
     'app_reservas.apps.ReservasConfig',
     'rolepermissions',
+    'constance',
+    'constance.backends.database',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,9 +104,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-la'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mendoza'
 
 USE_I18N = True
 
@@ -175,3 +178,14 @@ LOGIN_URL = '/' + DJANGO_URL_PREFIX + 'cuentas/login/'
 LOGIN_REDIRECT_URL = reverse_lazy('solicitud_listar')
 
 ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
+
+GOOGLE_SECRET_JSON_FILE = os.path.join(BASE_DIR, 'Reservas-FRM-UTN.json')
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'FECHA_INICIO_PRIMER_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de inicio del primer semestre', datetime.date),
+    'FECHA_FIN_PRIMER_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de fin del primer semestre', datetime.date),
+    'FECHA_INICIO_SEGUNDO_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de inicio del segundo semestre', datetime.date),
+    'FECHA_FIN_SEGUNDO_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de fin del segundo semestre', datetime.date),
+}
