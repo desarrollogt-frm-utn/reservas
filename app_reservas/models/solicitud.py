@@ -56,3 +56,8 @@ class Solicitud(models.Model):
         """
         nombre_corto = self.fechaCreacion
         return nombre_corto
+
+    @property
+    def get_estado_solicitud(obj):
+        ultimo_historico_recurso = obj.historicoestadosolicitud_set.filter(fechaFin__isnull=True).latest('fechaInicio')
+        return ultimo_historico_recurso
