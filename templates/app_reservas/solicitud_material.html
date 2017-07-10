@@ -24,10 +24,39 @@
 
 {% block contenido %}
 
+      {% if form.errors %}
+         {% for field in form %}
+             {% for error in field.errors %}
+                 <div class="alert alert-danger">
+                     <strong>{{ error|escape }}</strong>
+                     {{error}}
+                 </div>
+             {% endfor %}
+         {% endfor %}
+         {% for error in form.non_field_errors %}
+             <div class="alert alert-danger">
+                 <strong>{{ error|escape }}</strong>
+             </div>
+         {% endfor %}
+      {% endif %}
+
 
         <form id="solicitud_form" method="post">
             {% csrf_token %}
-              {{form.as_p}}
+              <p>
+                {{ form.docente.label_tag }}
+                {{ form.docente }}
+              </p>
+              <p>
+                {{ form.tipoSolicitud.label_tag }}
+                {{ form.tipoSolicitud }}
+              </p>
+              <p>
+                {{ form.comision.label_tag }}
+                {{ form.comision }}
+              </p>
+
+
             <table border="0" cellpadding="0" cellspacing="0">
                 <tbody>
                     {% for form in formset.forms %}
@@ -130,13 +159,6 @@
         }) }
         else {
           $('#mat_select').attr("disabled", true);
-
-
-          $('[id$=-dia]').attr("disabled", false);
-          $('[id$=-tipoRecurso]').attr("disabled", false);
-          $('[id$=-inicio]').attr("disabled", false);
-          $('[id$=-fin]').attr("disabled", false);
-          $('[id$=-cantidad_alumnos]').attr("disabled", false);
         };
 
       $.ajax({
@@ -163,40 +185,17 @@
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado
               $.each(data, function(key, val){
-                $('[id$=id_' + val.dia_nombre + '_activo]').attr("disabled", false);
-                $('[id$=id_' + val.dia_nombre + '_inicio]').attr("disabled", false);
-                $('[id$=id_' + val.dia_nombre + '_fin]').attr("disabled", false);
-                $('[id$=id_' + val.dia_nombre + '_tipoRecurso]').attr("disabled", false);
-                $('#id_' + val.dia_nombre + '_inicio').val(val.hora_inicio);
-                $('#id_' + val.dia_nombre + '_fin').val(val.hora_fin);
-                $('#id_' + val.dia_nombre + '_cantidadAlumnos').val(val.cantidad_alumnos);
+
+                $('[id$=id_horariosolicitud_set-' + key  + '-dia]').val(val.dia_numero);
+                $('[id$=id_horariosolicitud_set-' + key  + '-inicio]').val(val.hora_inicio);
+                $('[id$=id_horariosolicitud_set-' + key  + '-fin]').val(val.hora_fin);
+                $('[id$=id_horariosolicitud_set-' + key  + '-cantidad_alumnos]').val(val.cantidad_alumnos);
 
               })
               $('#com_select').attr("disabled", false);
           }
       });
     });
-
-    function clear_days_fields() {
-
-      $('[id$=-dia]').val("");
-      $('[id$=-tipoRecurso]').val("");
-      $('[id$=-inicio]').val("");
-      $('[id$=-fin]').val("");
-      $('[id$=-cantidad_alumnos]').val("");
-      $('[id$=-tipoLaboratorio]').val("");
-      $('[id$=-tipoRecursoAli]').val("");
-
-
-      $('[id$=-dia]').attr("disabled", true);
-      $('[id$=-tipoRecurso]').attr("disabled", true);
-      $('[id$=-inicio]').attr("disabled", true);
-      $('[id$=-fin]').attr("disabled", true);
-      $('[id$=-cantidad_alumnos]').attr("disabled", true);
-      $('[id$=-tipoLaboratorio]').attr("disabled", true);
-      $('[id$=-tipoRecursoAli]').attr("disabled", true);
-
-    };
 
     $('[id$=-tipoRecurso]').change(function () {
       console.log(event.target.name.slice(-13, -12));

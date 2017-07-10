@@ -1,0 +1,98 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+  Fechas de Semestre
+{% endblock %}
+
+{% block static_css %}
+    {{ block.super }}
+
+
+    <link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
+{% endblock static_css %}
+
+{% block static_js_body %}
+
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'seiyria-bootstrap-slider/dist/bootstrap-slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
+{% endblock static_js_body %}
+
+{% block navbar %} {% endblock %}
+{% block contenido %}
+<form method="post">
+	{% csrf_token %}
+  <h1>Panel de cambio de Fechas de Semestre</h1>
+  <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+              {{form.fecha_inicio_primer_semestre.label_tag}}
+                <div class='input-group date' id='fecha_inicio_primer_semestre'>
+                    {{form.fecha_inicio_primer_semestre}}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class='col-sm-6'>
+            <div class="form-group">
+              {{form.fecha_fin_primer_semestre.label_tag}}
+                <div class='input-group date' id='fecha_fin_primer_semestre'>
+                    {{form.fecha_fin_primer_semestre}}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+  </div>
+  <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+              {{form.fecha_inicio_segundo_semestre.label_tag}}
+                <div class='input-group date' id='fecha_inicio_segundo_semestre'>
+                    {{form.fecha_inicio_segundo_semestre}}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class='col-sm-6'>
+            <div class="form-group">
+              {{form.fecha_fin_segundo_semestre.label_tag}}
+                <div class='input-group date' id='fecha_fin_segundo_semestre'>
+                    {{form.fecha_fin_segundo_semestre}}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div style="width:100px; float:right">
+          <input class="form-control" type="submit" value="Guardar" />
+  </div>
+
+</form>
+{% endblock contenido %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(function () {
+        $('[id$=_semestre]').datetimepicker({
+          format: 'DD/MM/YYYY'
+        });
+    });
+</script>
+
+{% endblock scripts %}
