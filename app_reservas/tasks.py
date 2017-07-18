@@ -7,6 +7,7 @@ from celery import (
 )
 import json
 
+from app_reservas.adapters.google_calendar import crear_evento
 
 @shared_task(name='obtener_eventos_recursos')
 def obtener_eventos_recursos():
@@ -47,3 +48,17 @@ def obtener_eventos_recurso_especifico(
         with open(nombre_archivo_completo, 'w') as archivo:
             # Escribe en el archivo los eventos del recurso, en formato JSON.
             archivo.write(eventos)
+
+@shared_task(name='crear_evento_recurso_especifico')
+def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta):
+    crear_evento(
+        calendar_id=calendar_id,
+        titulo=titulo,
+        inicio=inicio,
+        fin=fin,
+        hasta=hasta
+    )
+
+    from .models import Recurso
+    recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
+    obtener_eventos_recurso_especifico(recurso_obj)
