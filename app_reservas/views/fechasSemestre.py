@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from rolepermissions.decorators import has_role_decorator
 from constance import config
-from app_reservas.settings import FECHA_INICIO_PRIMER_SEMESTRE
-
 from app_reservas.form import FechasSemestreForm
 
 @has_role_decorator('administrador')
