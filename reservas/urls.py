@@ -49,7 +49,7 @@ urlpatterns = [
             include('app_reservas.urls')
         ),
         url(
-            r'^cuentas/login/',
+            r'^cuentas/login/$',
             login,
             {'template_name':'app_reservas/login.html'},
             name='login'
@@ -58,6 +58,10 @@ urlpatterns = [
             r'^logout/',
             logout_then_login,
             name='logout'
+        ),
+        url(
+            r'^cuentas/',
+            include('app_usuarios.urls')
         ),
         ]
     )),

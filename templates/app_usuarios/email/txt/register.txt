@@ -1,0 +1,8 @@
+Bienvenido
+¡Gracias por registrarte en el sistema de reservas de la UTN-FRM!
+Para completar el proceso de registro y acceder al sistema utiliza el siguiente link para activar tu cuenta:
+{{ confirm_url }}
+
+
+Gestion Tecnológica - SeTic
+UTN-FRM
