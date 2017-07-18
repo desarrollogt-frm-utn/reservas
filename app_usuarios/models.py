@@ -18,19 +18,13 @@ def establecer_destino_archivo_imagen(instance, filename):
     return os.path.join(ruta_archivos_ubicacion, filename)
 
 
-class Docente(models.Model):
+class Docente(User):
     # Atributos
 
     legajo = models.PositiveIntegerField(
         blank=False,
         default=1,
     )
-
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='docente'
-        )
 
     telefono = models.CharField(
         validators=[
@@ -56,7 +50,7 @@ class Docente(models.Model):
         Información de la clase.
         """
         app_label = 'app_usuarios'
-        ordering = ['user__username']
+        ordering = ['email']
         verbose_name = 'Docente'
         verbose_name_plural = 'Docentes'
 
