@@ -23,7 +23,6 @@ from .reserva import Reserva
 from .solicitud import Solicitud
 from .tipoLaboratorio import TipoLaboratorio
 from .tipoRecursoAli import TipoRecursoAli
-from .tipoSolicitud import TipoSolicitud
 from .visorTv import VisorTv
 
 __all__ = [
@@ -51,6 +50,5 @@ __all__ = [
     'Solicitud',
     'TipoLaboratorio',
     'TipoRecursoAli',
-    'TipoSolicitud',
     'VisorTv',
 ]
