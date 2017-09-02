@@ -6,7 +6,7 @@ from .area import AreaDetailView
 from .aula import AulaDetailView
 from .cuerpo import CuerpoDetailView
 from .fechasSemestre import FechasSemestreConfig
-from .index import IndexView
+from .index import IndexView, LoginIndexView
 from .laboratorio import LaboratorioDetailView
 from .laboratorio_informatico import (
     LaboratorioInformaticoDetailView,
@@ -27,6 +27,7 @@ from .solicitud import (
     SolicitudList,
     SolicitudDetail,
 )
+from .reserva import ReservaCreate, ReservaList
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
 from .tv import (

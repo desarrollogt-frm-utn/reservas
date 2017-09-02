@@ -8,28 +8,37 @@ from django.views.generic.base import TemplateView
 from django.core.urlresolvers import reverse_lazy
 
 from rolepermissions.decorators import has_role_decorator
+from rolepermissions.checkers import has_permission
 
-from app_reservas.adapters.google_calendar import crear_evento
-from app_reservas.utils import obtener_siguiente_dia_vigente, obtener_fecha_finalizacion_reserva
+from app_reservas.utils import (
+    obtener_siguiente_dia_vigente,
+    obtener_fecha_finalizacion_reserva_cursado,
+    obtener_fecha_finalizacion_reserva_fuera_cursado
+)
 
 from app_reservas.models import (
     Aula,
-    Comision,
     Docente,
     EstadoSolicitud,
     HistoricoEstadoSolicitud,
+    HistoricoEstadoReserva,
     HorarioSolicitud,
+    HorarioReserva,
     Laboratorio,
     LaboratorioInformatico,
     RecursoAli,
     Reserva,
     Solicitud,
-    TipoSolicitud,
     )
 from app_reservas.models.horarioSolicitud import DIAS_SEMANA, TIPO_RECURSO
+from app_reservas.models.solicitud import TIPO_SOLICITUD
 from app_reservas.form import FilterSolicitudForm, ReservaAssignForm, SolicitudInlineFormset, SolicitudForm
 
-from app_reservas.tasks import obtener_eventos_recurso_especifico, crear_evento_recurso_especifico
+from app_usuarios.models import Docente as DocenteModel
+
+from app_reservas.tasks import crear_evento_recurso_especifico
+from app_reservas.cursor import obtener_comisiones, obtener_docente_comision, obtener_horarios
+
 
 class SolicitudAliReclamosSugerencias(TemplateView):
     """
@@ -65,32 +74,34 @@ class SolicitudMaterialMultimediaView(TemplateView):
     """
     template_name = 'app_reservas/solicitud_material_multimedia.html'
 
+
 def SolicitudCreate(request):
     solicitud = Solicitud()
-    solicitud_form = SolicitudForm()  # setup a form for the parent
+    solicitud_form = SolicitudForm(request)  # setup a form for the parent
     formset = SolicitudInlineFormset(instance=solicitud)
 
     if request.method == "POST":
-        solicitud_form = SolicitudForm(request.POST)
+        solicitud_form = SolicitudForm(request, request.POST)
 
         formset = SolicitudInlineFormset(request.POST, request.FILES)
 
         if solicitud_form.is_valid():
-            print('solicitud_form_valido')
             formset = SolicitudInlineFormset(request.POST, request.FILES)
 
             if formset.is_valid():
-                print('formset_valido')
-                docente_obj = Docente.objects.get(id=request.POST.get("docente"))
-                tipo_solicitud_obj = TipoSolicitud.objects.get(id=request.POST.get("tipoSolicitud"))
+                docente_model = DocenteModel.objects.get(id=request.user.id)
+                docente_obj = Docente.objects.get(legajo=docente_model.legajo)
                 comision_obj = None
-                if request.POST.get("comision"):
-                    comision_obj = Comision.objects.get(id=request.POST.get("comision"))
+                if solicitud_form.cleaned_data.get('comision'):
+                    comision_obj = solicitud_form.cleaned_data.get('comision')
                 solicitud_obj = Solicitud.objects.create(
                     fechaCreacion=timezone.now(),
-                    tipoSolicitud=tipo_solicitud_obj,
+                    tipoSolicitud=solicitud_form.cleaned_data.get('tipoSolicitud'),
                     docente=docente_obj,
-                    comision=comision_obj
+                    comision=comision_obj,
+                    fechaInicio=solicitud_form.cleaned_data.get('fechaInicio'),
+                    fechaFin=solicitud_form.cleaned_data.get('fechaFin'),
+                    solicitante=docente_model,
                 )
                 estado = EstadoSolicitud.objects.get(nombre="Pendiente")
                 HistoricoEstadoSolicitud.objects.create(
@@ -103,9 +114,6 @@ def SolicitudCreate(request):
                 for horario in formset.forms:
                     horario.save()
                 return render(request, 'app_reservas/solicitud_created.html', {})
-        else:
-            import ipdb; ipdb.set_trace()
-            print('not_valid')
     return render(request, 'app_reservas/solicitud_material.html', {
         "form": solicitud_form,
         "formset": formset,
@@ -115,25 +123,30 @@ def SolicitudCreate(request):
 
 class SolicitudList(ListView):
     model = Solicitud
-    template_name = 'app_reservas/reservas_list.html'
+    template_name = 'app_reservas/solicitud_list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(SolicitudList, self).get_context_data(**kwargs)
         estado = FilterSolicitudForm(self.request.GET)
         context['estado'] = estado
+        context['tipos_solicitudes'] = TIPO_SOLICITUD
         return context
 
     def get_queryset(self):
         filter_val = self.request.GET.get('estado', '')
         order = self.request.GET.get('orderby', '')
+        user = self.request.user
+        solicitudes_qs = Solicitud.objects.all()
+        if not has_permission(user, 'edit_reserva_estado'):
+            docente = DocenteModel.objects.get(id=user.id)
+            solicitudes_qs = solicitudes_qs.filter(solicitante=docente)
         if filter_val:
-            new_context = Solicitud.objects.filter(
-                HistoricoEstadoSolicitud_set__estado__id=filter_val,
-                historicosEstados__fechaFin__isnull=True,
+            solicitudes_qs = solicitudes_qs.filter(
+                historicoestadosolicitud__estadoSolicitud__id=filter_val,
+                historicoestadosolicitud__fechaFin__isnull=True,
             )
-            return new_context
-        return super(SolicitudList, self).get_queryset()
+        return solicitudes_qs
 
 
 class SolicitudDetail(DetailView):
@@ -144,6 +157,7 @@ class SolicitudDetail(DetailView):
             context = super(SolicitudDetail, self).get_context_data(**kwargs)
             context['dias_semana'] = DIAS_SEMANA
             context['tipo_recursos'] = TIPO_RECURSO
+            context['tipos_solicitudes'] = TIPO_SOLICITUD
             return context
 
 @has_role_decorator('administrador')
@@ -176,21 +190,45 @@ def RecursoAssign(request, solicitud, horario):
 
                 )
 
-            Reserva.objects.create(
-                asignado_por=request.user,
-                fecha_creacion=timezone.now(),
-                horario=horario_obj,
-                recurso=recurso_list[0]
-            )
-            inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio)
-            fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin)
+            inicio = datetime.datetime.combine(solicitud_obj.fechaInicio, horario_obj.inicio).isoformat()
+            fin = datetime.datetime.combine(solicitud_obj.fechaInicio, horario_obj.fin).isoformat()
             hasta = None
+            if solicitud_obj.tipoSolicitud == '1':
+                hasta = obtener_fecha_finalizacion_reserva_cursado(solicitud_obj.comision.cuatrimestre)
+                inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio)
+                fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin)
+            elif solicitud_obj.tipoSolicitud == '3':
+                hasta = obtener_fecha_finalizacion_reserva_fuera_cursado(solicitud_obj.fechaFin)
+
             if solicitud_obj.comision is not None:
-                hasta = obtener_fecha_finalizacion_reserva(solicitud_obj.comision.cuatrimestre)
-            if solicitud_obj.comision is not None:
-                titulo = "{0!s} - {1!s}".format(solicitud_obj.comision.materia.nombre, solicitud_obj.docente.nombre)
+                titulo = "{0!s} - {1!s} - {2!s}".format(solicitud_obj.comision.materia.nombre, solicitud_obj.comision.comision, solicitud_obj.docente.nombre)
             else:
                 titulo = "Solicitud fuera de horario - {0!s}".format(solicitud_obj.docente.nombre)
+
+            reserva_obj = Reserva.objects.create(
+                asignado_por=request.user,
+                fecha_creacion=timezone.now(),
+                recurso=recurso_list[0],
+                docente=solicitud_obj.solicitante,
+                nombreEvento=titulo,
+                fechaInicio=solicitud_obj.fechaInicio,
+                fechaFin=solicitud_obj.fechaFin,
+            )
+
+            HorarioReserva.objects.create(
+                reserva=reserva_obj,
+                dia=horario_obj.dia,
+                inicio=horario_obj.inicio,
+                fin=horario_obj.fin,
+
+            )
+
+            HistoricoEstadoReserva.objects.create(
+                fechaInicio=timezone.now(),
+                estado='1',
+                reserva=reserva_obj,
+            )
+
             crear_evento_recurso_especifico.delay(
                 calendar_id=recurso_list[0].calendar_codigo,
                 titulo=titulo,
