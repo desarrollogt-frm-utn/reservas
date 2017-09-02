@@ -37,13 +37,6 @@ class Solicitud(models.Model):
 
     tipoSolicitud = TipoSolicitudField()
 
-    nombreEvento = models.CharField(
-        max_length=50,
-        verbose_name='Nombre del evento',
-        blank=True,
-        null=True,
-    )
-
     # relaciones
 
     docente = models.ForeignKey(

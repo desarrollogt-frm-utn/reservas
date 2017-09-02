@@ -8,8 +8,10 @@ from .docenteComision import DocenteComision
 from .especialidad import Especialidad
 from .estadoSolicitud import EstadoSolicitud
 from .historicoEstadoSolicitud import HistoricoEstadoSolicitud
+from .historicoEstadoReserva import HistoricoEstadoReserva
 from .horario import Horario
 from .horarioSolicitud import HorarioSolicitud
+from .horarioReserva import HorarioReserva
 from .comision import Comision
 from .imagenCarrusel import ImagenCarrusel
 from .laboratorio import Laboratorio
@@ -32,11 +34,14 @@ __all__ = [
     'CarruselImagenes',
     'Cuerpo',
     'Docente',
+    'DocenteComision',
     'Especialidad',
     'EstadoSolicitud',
     'HistoricoEstadoSolicitud',
+    'HistoricoEstadoReserva',
     'Horario',
     'HorarioSolicitud',
+    'HorarioReserva',
     'Comision',
     'ImagenCarrusel',
     'Laboratorio',

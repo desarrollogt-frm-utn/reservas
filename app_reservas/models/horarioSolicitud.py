@@ -74,7 +74,6 @@ class HorarioSolicitud(models.Model):
     tipoRecursoAli = models.ManyToManyField(
         'TipoRecursoAli',
         verbose_name='Tipo de Recurso ALI',
-        null=True,
         blank=True,
     )
 
