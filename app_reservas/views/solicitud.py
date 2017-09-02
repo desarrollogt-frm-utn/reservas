@@ -37,8 +37,6 @@ from app_reservas.form import FilterSolicitudForm, ReservaAssignForm, SolicitudI
 from app_usuarios.models import Docente as DocenteModel
 
 from app_reservas.tasks import crear_evento_recurso_especifico
-from app_reservas.cursor import obtener_comisiones, obtener_docente_comision, obtener_horarios
-
 
 class SolicitudAliReclamosSugerencias(TemplateView):
     """
