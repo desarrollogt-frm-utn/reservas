@@ -1,0 +1,42 @@
+{% extends 'app_reservas/base_carrusel.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block title %}
+    Gestión de recursos
+{% endblock title %}
+
+
+{% block contenido %}
+        <div class="page-header">
+            <h1>Gestión de recursos</h1>
+        </div>
+
+        <p class="text-center">
+            ¡Bienvenido! En este sitio podrá consultar las reservas de aulas pertenecientes a la Facultad Regional Mendoza,
+            Universidad Tecnológica Nacional.
+        </p>
+
+
+      <div class="row">
+      	<div class="col-md-6 col-md-offset-3">
+          		<table>
+          		  <thead>
+          		    <th>Mis Reservas</th>
+          		  </thead>
+                <tbody>
+
+                  {% for reserva in reservas%}
+                  <tr>
+                    <td>{{reserva.recurso.id|get_nombre_recurso}} - {{reserva.fechaInicio}} {% if reserva.fechaFin %} a {{reserva.fechaFin}} {% endif %}
+                    {% for horario in reserva.horarioreserva_set.all %}
+                    <li>{{ dias_semana|get_item:horario.dia }} - {{horario.inicio}} a {{horario.fin}}</li>
+                    {% endfor %}
+                  </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+          		</table>
+          </div>
+      </div>
+{% endblock contenido %}

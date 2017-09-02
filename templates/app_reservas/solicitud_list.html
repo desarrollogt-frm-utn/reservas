@@ -1,11 +1,12 @@
 {% extends 'app_reservas/base.html' %}
 {% load static %}
+{% load navbar_tags %}
 
 {% block static_js %}
 {% endblock %}
 
 {% block title %}
-Listado de Reservas
+Listado de Solicitudes
 {% endblock %}
 
 {% block contenido %}
@@ -33,7 +34,7 @@ Listado de Reservas
 		{% for solicitud in object_list %}
 		<tr>
 			<td>{{ solicitud.docente.nombre }}</td>
-			<td>{{ solicitud.tipoSolicitud.nombre }}</td>
+			<td>{{ tipos_solicitudes|get_item:solicitud.tipoSolicitud }}</td>
 			<td>{{ solicitud.fechaCreacion }}</td>
 			<td>
 				{% for historico in solicitud.historicoestadosolicitud_set.all %}

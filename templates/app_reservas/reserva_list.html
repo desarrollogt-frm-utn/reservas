@@ -1,0 +1,80 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Listado de Reservas
+{% endblock %}
+
+{% block contenido %}
+
+
+<form method="get" action="{% url 'solicitud_listar' %}">
+<p> Estado: {{ estado.estado }} </p>
+<p><input type="submit" value="Filtrar"/></p>
+</form>
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Recurso</td>
+			<td>Usuario</td>
+			<td>Fecha de Reserva</td>
+			<td>Estado</td>
+			<td>Comision</td>
+			<td>Acciones</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% if object_list %}
+		{% for reserva in object_list %}
+		<tr>
+			<td>{{reserva.recurso.id|get_nombre_recurso}}</td>
+			<td>{{ reserva.docente.get_full_name }}</td>
+			<td>{{ reserva.fechaInicio }} {% if reserva.fechaFin %} a {{reserva.fechaFin}} {% endif %}</td>
+			<td>
+				{% for historico in reserva.historicoestadoreserva_set.all %}
+				{% if historico.fechaFin == None  %}
+					{{ historico.estado }}
+				{% endif %}
+				{% endfor %}
+			</td>
+    		</td>
+			<td>
+			{% if reserva.comision %}
+			<li>Materia: {{ reserva.comision.materia.nombre }}</li>
+			<li>Comisión: {{ reserva.comision.comision }}</li>
+			<li>Especialidad: {{ reserva.comision.materia.especialidad.nombre }}</li>
+			{% else %}
+			---
+			{% endif %}
+			</td>
+			<td>
+				<a class="btn btn-primary" href="">Visualizar</a>
+				<a class="btn btn-danger" href="">Eliminar</a>
+			</td>
+		</tr>
+		{% endfor %}
+
+		{% else %}
+		<h1>No existen solicitudes para mostrar</h1>
+		{% endif %}
+	</tbody>
+</table>
+<ul class="pager">
+	<li>
+		{% if page_obj.has_previous %}
+       	 <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+		{% endif %}
+        </li>
+	<li>
+		{% if page_obj.has_next %}
+     	 <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+    	{% endif %}
+    </li>
+</ul>
+{% endblock%}

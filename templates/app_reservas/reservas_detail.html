@@ -15,7 +15,7 @@ Detalle de Reserva
 
 <h1>{{ object.docente.nombre }}</h1>
 <p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
-<p>Tipo de solicitud: {{ object.tipoSolicitud.nombre }}</p>
+<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:object.tipoSolicitud }}</p>
 <p>Estado:
   {% for historico in solicitud.historicoestadosolicitud_set.all %}
   {% if historico.fechaFin == None  %}

@@ -136,11 +136,19 @@
                         <li><a href="{% url 'solicitud_instalacion_software' %}">Instalación de software</a></li>
                         <li><a href="{% url 'solicitud_laboratorio_informatico' %}">Laboratorio informático</a></li>
                         <li><a href="{% url 'solicitud_material_multimedia' %}">Material multimedia</a></li>
-                        <li><a href="{% url 'solicitud_nueva' %}">Solicitudes</a></li>
-
                         {% if user.is_authenticated %}
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'solicitud_nueva' %}">Realizar solicitud</a></li>
+                        <li><a href="{% url 'solicitud_listar' %}">Mis solicitudes</a></li>
+                        {% endif %}
+
+
+                        {% if user|can:'edit_reserva_estado' %}
                           <li role="separator" class="divider"></li>
                           <li><a href="{% url 'solicitud_listar' %}">Gestionar Solicitudes</a></li>
+
+                          <li><a href="{% url 'reserva_crear' %}">Crear Reserva</a></li>
+                          <li><a href="{% url 'reserva_listar' %}">Ver Reservas</a></li>
                         {% endif %}
 
                     </ul>
@@ -159,13 +167,8 @@
             </ul>
             {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown">
-										<a>
-										 	Hola <strong>{% firstof user.get_short_name user.get_username %}</strong>
-										</a>
-							</li>
             	<li class="dropdown">
-            		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Opciones<span class="caret"></span></a>
+            		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Hola <strong>{% firstof user.get_short_name user.get_username %}</strong><span class="caret"></span></a>
             		<ul class="dropdown-menu" role="menu">
               			<li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
             		</ul>

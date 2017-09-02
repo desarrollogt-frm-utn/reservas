@@ -9,6 +9,8 @@ from ..models import (
     TipoRecursoAli,
 )
 
+from app_reservas.utils import obtener_recurso
+
 
 register = template.Library()
 
@@ -27,3 +29,8 @@ def obtener_informacion_navbar(context):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@register.filter
+def get_nombre_recurso(id):
+    return str(obtener_recurso(id))

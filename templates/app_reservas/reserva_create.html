@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-  Solicitud de Recursos
+    Reserva de material multimedia
 {% endblock title %}
 
 
@@ -28,7 +28,7 @@
          {% for field in form %}
              {% for error in field.errors %}
                  <div class="alert alert-danger">
-                     <strong>{{ error|escape }}</strong>
+                     <strong>{{ field|escape }}</strong>
                      {{error}}
                  </div>
              {% endfor %}
@@ -40,20 +40,28 @@
          {% endfor %}
       {% endif %}
 
-      <div class="page-header">
-          <h1>Formulario de Solicitud de Recursos</h1>
-      </div>
-
-      <div class="col-md-6 col-md-offset-3">
-        <p class="text-center">
-            Si observa algún error dentro del las comisiones listadas o en alguno de los horarios,
-             por favor informeselos al bedel correspondiente.
-            Muchas Gracias
-        </p>
-      </div>
 
         <form id="solicitud_form" method="post">
             {% csrf_token %}
+
+            <div class="page-header">
+                <h1>Formulario de Carga de Reservas</h1>
+            </div>
+
+            <div class="col-md-6 col-md-offset-3">
+              <p class="text-center">
+                  En esta sección podras cargar reservas de material multimedia
+              </p>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="tipoSolicitud">Docente:</label>
+                    {{ form.docente }}
+                 </div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                   <div class="form-group">
@@ -62,29 +70,28 @@
                    </div>
                   </div>
                 </div>
-              <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                  <div class="form-group">
-                      <label for="comision">Comision:</label>
-                      {{ form.comision }}
-                   </div>
-                  </div>
-                </div>
-
-              <div class="row">
-                <div class="col-md-3 col-md-offset-3">
-              		<div class="form-group">
-                  		<label for="fechaIncio">Fecha Inicio:</label>
-                  		{{ form.fechaInicio }}
-              	   </div>
-                  </div>
-                  <div class="col-md-3 col-md-offset-0">
-                		<div class="form-group">
-                    		<label for="last_name">Fecha Fin:</label>
-                    		{{ form.fechaFin }}
-                	   </div>
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-3">
+                    <div class="form-group">
+                        <label for="tipoSolicitud">Comision:</label>
+                        {{ form.comision }}
                     </div>
                   </div>
+                </div>
+                  <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                  		<div class="form-group">
+                      		<label for="fechaIncio">Fecha Inicio:</label>
+                      		{{ form.fechaInicio }}
+                  	   </div>
+                      </div>
+                      <div class="col-md-3 col-md-offset-0">
+                    		<div class="form-group">
+                        		<label for="last_name">Fecha Fin:</label>
+                        		{{ form.fechaFin }}
+                    	   </div>
+                        </div>
+                    </div>
 
 
             <table border="0" cellpadding="0" cellspacing="0">
@@ -122,12 +129,8 @@
                          {{ form.cantidad_alumnos }}
                        </td>
                        <td>
-                         {{ form.tipoLaboratorio.label_tag }}
-                         {{ form.tipoLaboratorio }}
-                       </td>
-                       <td>
-                         {{ form.tipoRecursoAli.label_tag }}
-                         {{ form.tipoRecursoAli }}
+                         {{ form.recurso.label_tag }}
+                         {{ form.recurso }}
                        </td>
                        <td></td>
                     </tr>
@@ -136,7 +139,7 @@
             </table>
             {{ formset.management_form }}
             <div style="width:100px; float:right">
-                    <input class="form-control" type="submit" value="Solicitar" />
+                    <input class="btn btn-primary" type="submit" value="Solicitar" />
                 </div>
         </form>
 
@@ -168,14 +171,26 @@
           minDate: moment(),
           maxDate: moment().endOf('year'),
       });
-    })
+    });
 </script>
 
 
 <script>
+    // Función que detecta el cambio en el select de docente
+
+    $("#docente_select").change(function() {
+      $('#tipo_select').attr("disabled", false);
+      $('#tipo_select').val("");
+      $('#mat_select').attr("disabled", true);
+      $('#mat_select').html('<option value="" selected="selected">---------</option>');
+
+    });
 
     $('#tipo_select').change(function(){
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      $select = $('#mat_select');
+      $('#mat_select').attr("disabled", false);
+      $('#com_select').html('<option value="" selected="selected">---------</option>');
       $select = $('#mat_select');
       $('#mat_select').attr("disabled", true);
       $('#id_fechaInicio').attr("disabled", true);
@@ -194,6 +209,35 @@
         else {
           $('#id_fechaInicio').attr("disabled", false);
         };
+      if ($(this).val()== 1 || $(this).val()== 2) {
+        $.ajax({
+            url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+            dataType:'JSON',
+            success:function(data){
+                // Vacio las opciones de local en caso que se haya seleccionado
+                $select.html('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $select.append('<option value="' + val.id_materia + '">' + val.nombre + '</option>');
+
+                })
+            }
+        }) }
+        else {
+          $('#mat_select').attr("disabled", true);
+        };
+
+      $.ajax({
+          url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+          dataType:'JSON',
+          success:function(data){
+              // Vacio las opciones de local en caso que se haya seleccionado
+              $select.html('<option value="" selected="selected">---------</option>');
+              $.each(data, function(key, val){
+                  $select.append('<option value="' + val.id_comision + '">' + val.nombre_comision + " - " + val.nombre_materia + " - " + val.nombre_plan + '</option>');
+
+              })
+          }
+      });
     });
 
 
