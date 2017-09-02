@@ -15,6 +15,7 @@ from .views import (
     LaboratorioDetailView,
     LaboratorioInformaticoDetailView,
     LaboratorioInformaticoListView,
+    LoginIndexView,
     NivelDetailView,
     RecursoAssign,
     recurso_eventos_json,
@@ -28,6 +29,8 @@ from .views import (
     SolicitudLaboratorioInformaticoView,
     SolicitudList,
     SolicitudMaterialMultimediaView,
+    ReservaCreate,
+    ReservaList,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
     TvCuerposListView,
@@ -43,6 +46,11 @@ urlpatterns = [
         r'^$',
         IndexView.as_view(),
         name='index'
+    ),
+    url(
+        r'^inicio/$',
+        login_required(LoginIndexView.as_view()),
+        name='login_index'
     ),
     url(
         r'^cuerpo/(?P<numero>\d+)/$',
@@ -181,6 +189,15 @@ urlpatterns = [
         login_required(RecursoAssign),
         name='recurso_assign'
     ),
+
+    url(
+        r'^reservas/crear/$',
+        login_required(ReservaCreate),
+        name='reserva_crear'),
+    url(
+        r'^reservas/listar/$',
+        login_required(ReservaList.as_view()),
+        name='reserva_listar'),
 
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se
     # mantienen para compatibilidad con los visores que funcionan actualmente.

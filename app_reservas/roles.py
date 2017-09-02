@@ -10,7 +10,7 @@ class Soporte(AbstractUserRole):
 
 class Tecnico(AbstractUserRole):
     available_permissions = {
-        'edit_patient_file': True,
+        'edit_recurso_estado': True,
     }
 
 
