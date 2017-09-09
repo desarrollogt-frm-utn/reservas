@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'djangobower',
     'app_facturacion',
     'app_reservas.apps.ReservasConfig',
+    'app_usuarios',
     'rolepermissions',
     'constance',
     'constance.backends.database',
@@ -127,6 +128,8 @@ if DJANGO_URL_PREFIX:
     DJANGO_URL_PREFIX += '/'
 
 
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8080' + DJANGO_URL_PREFIX)
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -175,11 +178,16 @@ BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit//')
 
 LOGIN_URL = '/' + DJANGO_URL_PREFIX + 'cuentas/login/'
 
-LOGIN_REDIRECT_URL = reverse_lazy('solicitud_listar')
+LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
 
 GOOGLE_SECRET_JSON_FILE = os.path.join(BASE_DIR, 'Reservas-FRM-UTN.json')
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'app_usuarios.emailLogin.EmailLogin', # Email login
+)
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
@@ -189,3 +197,12 @@ CONSTANCE_CONFIG = {
     'FECHA_INICIO_SEGUNDO_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de inicio del segundo semestre', datetime.date),
     'FECHA_FIN_SEGUNDO_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de fin del segundo semestre', datetime.date),
 }
+
+# Configuración de para el envío de emails
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_USER', '')

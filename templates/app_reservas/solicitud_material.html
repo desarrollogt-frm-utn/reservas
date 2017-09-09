@@ -201,7 +201,7 @@
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
       $select = $('#com_select');
       $.ajax({
-          url: "http://localhost:8080/reservas/api/horarios/" + $('#mat_select').val(),
+          url: "{{SITE_URL}}" + "api/horarios/" + $('#mat_select').val(),
           dataType:'JSON',
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado

@@ -7,6 +7,9 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.base import TemplateView
 from django.core.urlresolvers import reverse_lazy
 
+from django.conf import settings
+
+
 from rolepermissions.decorators import has_role_decorator
 from rolepermissions.checkers import has_permission
 
@@ -115,6 +118,7 @@ def SolicitudCreate(request):
     return render(request, 'app_reservas/solicitud_material.html', {
         "form": solicitud_form,
         "formset": formset,
+        "SITE_URL": settings.SITE_URL
     })
 
 
