@@ -9,7 +9,10 @@ def validateEmail(email):
     """Método utilizado para validar emails"""
     try:
         validate_email(email)
-        return True
+        from app_usuarios.forms import EMAIL_EXTENSION
+        if any(s[1] in "@" + email.split("@")[1] for s in EMAIL_EXTENSION):
+            return True
+        return False
     except ValidationError:
         return False
 
