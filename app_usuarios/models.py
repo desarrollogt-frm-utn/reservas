@@ -39,6 +39,17 @@ class Docente(User):
         null=True
     )
 
+    celular = models.CharField(
+        validators=[
+            RegexValidator(
+                regex=r'^\+?[\d()*-]+$',
+                message='El formato de número de teléfono es incorrecto.'
+            )
+        ],
+        max_length=30,
+        verbose_name='celular'
+    )
+
     foto = models.ImageField(
         null=True,
         blank=True,

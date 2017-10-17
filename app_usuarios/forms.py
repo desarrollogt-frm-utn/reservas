@@ -41,12 +41,13 @@ class CreateDocenteConfirmForm(forms.ModelForm):
 
     class Meta:
         model = Docente
-        fields = ['password', 'first_name', 'last_name', 'foto', 'legajo', 'telefono']
+        fields = ['password', 'first_name', 'last_name', 'foto', 'legajo', 'celular', 'telefono']
         widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'legajo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'celular': forms.TextInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
