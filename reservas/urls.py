@@ -63,6 +63,7 @@ urlpatterns = [
             r'^cuentas/',
             include('app_usuarios.urls')
         ),
+        url(r'^captcha/', include('captcha.urls')),
         ]
     )),
 ]

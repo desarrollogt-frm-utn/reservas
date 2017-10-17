@@ -41,13 +41,14 @@
 
           <p>
             <div class="form-inline">
-        		{{ form.email }} {{form.email_extesion}}
+        		{{ form.email}} {{form.email_extesion}}
           </div>
           </p>
+          <strong> {{form.captcha.label}} </strong>
+          <div class="form-inline"> {{ form.captcha}}</div>
     	   </div>
         </div>
-    </div>
-
+      </div>
     <div class="row">
     	<div class="col-md-6 col-md-offset-3">
     		<div class="form-group">

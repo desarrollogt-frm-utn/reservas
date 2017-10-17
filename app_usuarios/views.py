@@ -16,10 +16,15 @@ def CreateDocente(request):
             email = form.cleaned_data['email']
             docente_list = Docente.objects.filter(email=email)[:1]
             if docente_list:
-                return render(request, 'app_usuarios/error_message.html', {
-                    'message': 'Ya existe un usuario registrado con este email.'
-                })
-            import ipdb; ipdb.set_trace()
+                if not docente_list[0].is_active:
+                    return render(request, 'app_usuarios/warning_message.html', {
+                        'title': 'Su registro requiere la aprobación de un administrador',
+                        'message': 'Ya existe un usuario registrado con este email, pero requiere la aprobación de un administrador'
+                    })
+                else:
+                    return render(request, 'app_usuarios/error_message.html', {
+                        'message': 'Ya existe un usuario registrado con este email.'
+                    })
             enviarMailRegistro.delay(email)
 
             return render(request, 'app_usuarios/success_message.html', {
@@ -42,9 +47,15 @@ def CreateDocenteConfirm(request, code):
         })
     docente_list = Docente.objects.filter(email=email)[:1]
     if docente_list:
-        return render(request, 'app_usuarios/error_message.html', {
-            'message': 'Ya existe un usuario registrado con este email.'
-        })
+        if not docente_list[0].is_active:
+            return render(request, 'app_usuarios/warning_message.html', {
+                'title': 'Su registro requiere la aprobación de un administrador',
+                'message': 'Ya existe un usuario registrado con este email, pero requiere la aprobación de un administrador'
+            })
+        else:
+            return render(request, 'app_usuarios/error_message.html', {
+                'message': 'Ya existe un usuario registrado con este email.'
+            })
     else:
         form = CreateDocenteConfirmForm()
         if request.method == "POST":
@@ -64,7 +75,7 @@ def CreateDocenteConfirm(request, code):
                         'message': 'Su registro se ha realizado con exito.'
                     })
                 else:
-                    return render(request, 'app_usuarios/success_message.html', {
+                    return render(request, 'app_usuarios/warning_message.html', {
                         'title': 'Su registro requiere la aprobación de un administrador',
                         'message': 'Su usuario se ha creado con exito. Pero no podrá acceder al sistema hasta que un admistrador lo habilite'
                     })

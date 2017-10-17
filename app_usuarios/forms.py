@@ -1,6 +1,7 @@
 from django import forms
 from app_usuarios.models import Docente
 from app_usuarios.utils import validateEmail
+from captcha.fields import CaptchaField
 
 
 EMAIL_EXTENSION = (
@@ -18,6 +19,7 @@ class CreateDocenteForm(forms.Form):
     email = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    captcha = CaptchaField(label="Código de verificación")
 
     def clean_email(self):
         email = self.cleaned_data['email']

@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'rolepermissions',
     'constance',
     'constance.backends.database',
+    'captcha',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -206,3 +207,6 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_USER', '')
+
+
+CAPTCHA_OUTPUT_FORMAT = u'%(hidden_field)s<p>%(text_field)s</p><p>%(image)s</p>'
