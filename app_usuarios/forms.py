@@ -2,6 +2,7 @@ from django import forms
 from app_usuarios.models import Docente
 from app_usuarios.utils import validateEmail
 from captcha.fields import CaptchaField
+from django.utils.translation import ugettext as _
 
 
 EMAIL_EXTENSION = (
@@ -10,6 +11,12 @@ EMAIL_EXTENSION = (
     ('3', '@tic.frm.utn.edu.ar'),
 )
 
+
+ESTADO_USUARIO = {
+    '0': _(u'Todos'),
+    '1': _(u'Activo'),
+    '2': _(u'Inactivo'),
+}
 
 class CreateDocenteForm(forms.Form):
     email_extesion = forms.ChoiceField(
@@ -59,4 +66,10 @@ class CreateDocenteConfirmForm(forms.ModelForm):
         if password != confirm_password:
             raise forms.ValidationError(
                 "Las contraseñas ingresadas no coinciden"
+            )
+
+class FilterUsuariosForm(forms.Form):
+    estado = forms.ChoiceField(
+                choices=sorted(ESTADO_USUARIO.items()),
+                widget=forms.Select(attrs={'id': 'estado_select', 'class': 'form-control'})
             )

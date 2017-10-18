@@ -14,7 +14,10 @@ Listado de usuarios
   <p>
     <input name="search" placeholder="Buscador" id="buscador" class="form-control">
   </p>
+<p>{{ estado }} </p>
+<p><input class="btn btn-primary" type="submit" value="Filtrar"/></p>
 </form>
+
 
 
 <table class="table table-bordered">
@@ -22,6 +25,7 @@ Listado de usuarios
 		<tr>
 			<td>Usuario</td>
 			<td>Nombre</td>
+      <td>Estado</td>
 			<td>Técnico</td>
 			<td>Soporte</td>
 			<td>Administrador</td>
@@ -34,8 +38,17 @@ Listado de usuarios
 		{% if users %}
 		{% for user in users %}
 		<tr>
-			<td>{{ user.username }}</td>
+      {% if user.is_docente %}
+      <td><a href="{% url 'docente_detalle' user.id %}">{{ user.username }}</a></td>
+      {% else %}
+      <td>{{ user.username }}</td>
+      {% endif %}
 			<td>{{ user.first_name }} {{ user.last_name }}</td>
+      {%if user.is_active%}
+      <td><div class="btn btn-success">Activo</div></td>
+      {% else %}
+      <td><div class="btn btn-danger">Inactivo</div></td>
+      {% endif %}
 			<td>
 				{% if user.tecnico %}
 				<a class="btn btn-danger" href="{% url 'user_remove_role' 'tecnico' user.id %}">Quitar Rol</a>
@@ -75,7 +88,7 @@ Listado de usuarios
 		{% endfor %}
 
 		{% else %}
-		<h1>No existen usuarios cargados</h1>
+		<h1>No se encontraron usuarios</h1>
 		{% endif %}
 	</tbody>
 </table>

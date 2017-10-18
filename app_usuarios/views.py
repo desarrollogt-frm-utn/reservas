@@ -1,11 +1,16 @@
 import base64
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import DetailView
 from app_usuarios.utils import validateEmail
 from .models import Docente
 from .utils import obtenerUsername
 from .forms import CreateDocenteForm, CreateDocenteConfirmForm
 from .tasks import enviarMailRegistro
 from app_reservas.models import Docente as DocenteReserva
+from rolepermissions.decorators import has_role_decorator
+from rolepermissions.checkers import has_permission, has_role
+from rolepermissions.mixins import HasRoleMixin
 
 
 def CreateDocente(request):
@@ -91,3 +96,39 @@ def _getUserIsActive(email, form):
     if not form.cleaned_data.get('last_name').lower() in email or not docenteObj:
         isActive = False
     return isActive
+
+
+class DocenteDetail(HasRoleMixin, DetailView):
+    allowed_roles = 'administrador'
+    template_name = 'app_usuarios/docente_detail.html'
+    model = Docente
+
+    def get_context_data(self, **kwargs):
+        context = super(DocenteDetail, self).get_context_data(**kwargs)
+        context['edit_docente_estado'] = has_permission(self.request.user, 'edit_docente_estado')
+        docente_obj = context['docente']
+        context['tecnico'] = has_role(docente_obj, 'tecnico')
+        context['soporte'] = has_role(docente_obj, 'soporte')
+        context['administrador'] = has_role(docente_obj, 'administrador')
+        context['bedel'] = has_role(docente_obj, 'bedel')
+        context['aliano'] = has_role(docente_obj, 'aliano')
+        return context
+
+
+@has_role_decorator('administrador')
+def DocenteApprove(request, pk):
+    docente_obj = Docente.objects.get(id=pk)
+    docente_obj.is_active = True
+    docente_obj.save()
+    return redirect(reverse_lazy('docente_detalle', kwargs={'pk': pk}))
+
+
+@has_role_decorator('administrador')
+def DocenteReject(request, pk):
+    docente_obj = Docente.objects.get(id=pk)
+    if request.method == 'POST':
+        docente_obj.email = 'None'
+        docente_obj.is_active = False
+        docente_obj.save()
+        return redirect(reverse_lazy('user_roles'))
+    return render(request, 'app_usuarios/docente_reject_confirm.html', {'docente': docente_obj, })

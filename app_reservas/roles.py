@@ -17,6 +17,7 @@ class Tecnico(AbstractUserRole):
 class Administrador(AbstractUserRole):
     available_permissions = {
         'edit_recurso_estado': True,
+        'edit_docente_estado': True
     }
 
 

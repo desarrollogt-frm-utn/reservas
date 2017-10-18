@@ -1,0 +1,100 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Detalle de usuario {{ object.name }}
+{% endblock %}
+
+{% block contenido %}
+{% if edit_docente_estado %}
+
+  {% if not object.is_active  %}
+  <div class="text-center">
+    <h3>El usuario requiere la aprobación de un administrador</h3>
+		<a class="btn btn-primary" href="{% url 'docente_approve' object.id %}">Aprobar Usuario</a>
+		<a class="btn btn-danger" href="{% url 'docente_reject' object.id %}">Rechazar Usuario</a>
+  </div>
+	{% endif %}
+{% endif %}
+
+<div class="col-md-6 col-md-offset-3">
+  <h1>{{ object.first_name }} {{ object.last_name }}</h1>
+  <p>Legajo: {{ object.legajo }}</p>
+  <p>Email: {{ object.email }}</p>
+  <p>Celular: {{ object.celular }}</p>
+  <p>Teléfono Fijo: {{ object.telefono }}</p>
+  <p>Estado:
+  	{% if object.is_active  %}
+  		Activo
+    {% else %}
+      Inactivo
+  	{% endif %}
+  </p>
+  <p>
+    Permisos:
+  </p>
+  <table class="table table-bordered">
+  	<thead>
+  		<tr>
+  			<td>Técnico</td>
+  			<td>Soporte</td>
+  			<td>Administrador</td>
+        <td>Bedel</td>
+        <td>Aliano</td>
+  		</tr>
+
+  	</thead>
+    <tbody>
+  		<tr>
+  			<td>
+  				{% if tecnico %}
+  				<a class="btn btn-danger" href="{% url 'user_remove_role' 'tecnico' object.id %}">Quitar Rol</a>
+  				{% else %}
+  				<a class="btn btn-primary" href="{% url 'user_asing_role' 'tecnico' object.id %}">Asignar Rol</a>
+  				{% endif %}
+  			</td>
+  			<td>
+  				{% if soporte %}
+  				<a class="btn btn-danger" href="{% url 'user_remove_role' 'soporte' object.id %}">Quitar Rol</a>
+  				{% else %}
+  				<a class="btn btn-primary" href="{% url 'user_asing_role' 'soporte' object.id %}">Asignar Rol</a>
+  				{% endif %}
+  			</td>
+  			<td>
+  				{% if administrador %}
+  				<a class="btn btn-danger" href="{% url 'user_remove_role' 'administrador' object.id %}">Quitar Rol</a>
+  				{% else %}
+  				<a class="btn btn-primary" href="{% url 'user_asing_role' 'administrador' object.id %}">Asignar Rol</a>
+  				{% endif %}
+  			</td>
+        <td>
+  				{% if bedel %}
+  				<a class="btn btn-danger" href="{% url 'user_remove_role' 'bedel' object.id %}">Quitar Rol</a>
+  				{% else %}
+  				<a class="btn btn-primary" href="{% url 'user_asing_role' 'bedel' object.id %}">Asignar Rol</a>
+  				{% endif %}
+  			</td>
+        <td>
+  				{% if aliano %}
+  				<a class="btn btn-danger" href="{% url 'user_remove_role' 'aliano' object.id %}">Quitar Rol</a>
+  				{% else %}
+  				<a class="btn btn-primary" href="{% url 'user_asing_role' 'aliano' object.id %}">Asignar Rol</a>
+  				{% endif %}
+  			</td>
+  		</tr>
+    </tbody>
+  </table>
+
+{% if edit_docente_estado %}
+
+  {% if object.is_active  %}
+  <div class="text-right">
+    <a class="btn btn-danger" href="{% url 'docente_reject' object.id %}">Eliminar Usuario</a>
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
+</div>

@@ -1,0 +1,21 @@
+{% extends 'app_reservas/base.html' %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Rechazar usuario {{ docente.first_name }} {{ docente.last_name}}
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+<h1>Rechazo/Eliminación de usuario {{ docente.first_name }} {{ docente.last_name}}</h1>
+<form method="post">
+	{% csrf_token %}
+	<h4>¿Esta seguro que desea rechazar/eliminar el usuario? Esta acción no se podrá deshacer.</h4>
+	<p>{{ form.descripcion }}</p>
+	<button class="btn btn-danger" type="submit">Sí, estoy seguro</button>
+	<a class= "btn btn-default" href="{% url 'docente_detalle' docente.id %}">Cancelar</a>
+</form>
+</div>
+{% endblock %}
