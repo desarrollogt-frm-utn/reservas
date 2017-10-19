@@ -3,14 +3,16 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
-from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
 
 from .views import (
     CreateDocente,
     CreateDocenteConfirm,
     DocenteApprove,
     DocenteDetail,
-    DocenteReject
+    DocenteReject,
+    UserProfileDetail,
+    UserProfileUpdate
 )
 
 
@@ -59,4 +61,13 @@ urlpatterns = [
         r'^usuario/rechazar/(?P<pk>\d+)/$',
         login_required(DocenteReject),
         name='docente_reject'),
+
+    url(
+        r'^mi_perfil/$',
+        login_required(UserProfileDetail.as_view()),
+        name='my_profile'),
+    url(
+        r'^mi_perfil/editar$',
+        login_required(UserProfileUpdate.as_view(success_url=reverse_lazy('my_profile'))),
+        name='my_profile_edit'),
 ]

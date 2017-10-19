@@ -1,0 +1,44 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Mi Perfil
+{% endblock %}
+
+{% block contenido %}
+
+<div class="page-header">
+    <h1>Mi perfil</h1>
+</div>
+
+<div class="col-md-6 col-md-offset-3">
+  <div class="center">
+    <div style="max-width: 150px;height: 150px;">
+      {% if object.foto %}
+        <img style="max-width: 100%; max-height: 100%" alt="Cinque Terre" src='{{ object.foto.url }}'></img>
+      {% else %}
+        <img style="max-width: 100%; max-height: 100%" alt="Cinque Terre" src='{% static 'apps/reservas/images/default-profile-picture.png'%}'></img>
+      {% endif %}
+    </div>
+  </div>
+  <h3>{{ object.first_name }} {{ object.last_name }}</h3>
+  <p>Legajo: {{ object.legajo }}</p>
+  <p>Email: {{ object.email }}</p>
+  <p>Celular: {{ object.celular }}</p>
+  <p>Teléfono Fijo: {{ object.telefono }}</p>
+  <p>Estado:
+  	{% if object.is_active  %}
+  		Activo
+    {% else %}
+      Inactivo
+  	{% endif %}
+  </p>
+  <div class="text-right">
+    <a class="btn btn-primary" href="{% url 'my_profile_edit'%}">Editar Perfil</a>
+  </div>
+
+</div>
+{% endblock %}

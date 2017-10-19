@@ -2,7 +2,9 @@ import base64
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import DetailView
+from django.views.generic.edit import UpdateView
 from app_usuarios.utils import validateEmail
+from django.contrib.auth.models import User
 from .models import Docente
 from .utils import obtenerUsername
 from .forms import CreateDocenteForm, CreateDocenteConfirmForm
@@ -64,7 +66,7 @@ def CreateDocenteConfirm(request, code):
     else:
         form = CreateDocenteConfirmForm()
         if request.method == "POST":
-            form = CreateDocenteConfirmForm(request.POST)
+            form = CreateDocenteConfirmForm(request.POST, request.FILES)
             if form.is_valid():
                 password = form.cleaned_data.pop('password')
                 user = Docente(**form.cleaned_data)
@@ -132,3 +134,25 @@ def DocenteReject(request, pk):
         docente_obj.save()
         return redirect(reverse_lazy('user_roles'))
     return render(request, 'app_usuarios/docente_reject_confirm.html', {'docente': docente_obj, })
+
+
+class UserProfileDetail(DetailView):
+    template_name = 'app_usuarios/user_profile.html'
+    model = User
+
+    def get_object(self):
+        docente_obj = Docente.objects.filter(id=self.request.user.id)
+        if docente_obj:
+            return docente_obj[0]
+        return User.objects.get(id=self.request.user.id)
+
+
+class UserProfileUpdate(UpdateView):
+    model = Docente
+    fields = ['celular', 'telefono', 'foto']
+    template_name = 'app_usuarios/user_profile_edit.html'
+
+    def get_object(self):
+        docente_obj = Docente.objects.filter(id=self.request.user.id)
+        if docente_obj:
+            return docente_obj[0]

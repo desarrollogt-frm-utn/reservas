@@ -1,0 +1,78 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Mi Perfil
+{% endblock %}
+
+{% block contenido %}
+
+<div class="col-md-6 col-md-offset-3">
+  <form method="post" enctype="multipart/form-data">
+  	{% csrf_token %}
+    <div class="row">
+      {% if form.errors %}
+         {% for field in form %}
+             {% for error in field.errors %}
+                 <div class="alert alert-danger">
+                     <strong> {{field.label_tag}} {{ error|escape }}</strong>
+                 </div>
+             {% endfor %}
+         {% endfor %}
+         {% for error in form.non_field_errors %}
+             <div class="alert alert-danger">
+                 <strong>{{ error|escape }}</strong>
+             </div>
+         {% endfor %}
+     {% endif %}
+    </div>
+    <div class="page-header">
+        <h1>Editar mi perfil</h1>
+    </div>
+
+
+      <div class="row">
+
+        <div class="col-md-6 col-md-offset-3">
+      		<div class="form-group">
+            Solo los datos listados abajo pueden ser editados
+          </div>
+        </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+            		<div class="form-group">
+                		<label for="username">Celular:</label>
+                    <input class="form-control" id="id_celular" maxlength="30" name="celular" type="text" value={{form.celular.value}}>
+            	   </div>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+            		<div class="form-group">
+                		<label for="username">Teléfono Fijo(opcional):</label>
+                		<input class="form-control" id="id_telefono" maxlength="30" name="telefono" type="text" value={{form.telefono.value}}>
+            	   </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+              		<div class="form-group">
+                  		<label for="foto">Foto de perfil:</label>
+                  		{{ form.foto}}
+              	   </div>
+                  </div>
+                </div>
+
+      <div class="row">
+      	<div class="col-md-6 col-md-offset-3">
+      		<div class="form-group">
+          		<input class="btn btn-primary" type="submit" value="Guardar">
+      	   </div>
+          </div>
+      </div>
+  </form>
+</div>
+{% endblock %}

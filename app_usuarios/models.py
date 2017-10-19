@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from django.core.validators import RegexValidator
+from django.utils.text import slugify
 
 
 def establecer_destino_archivo_imagen(instance, filename):
@@ -13,9 +14,12 @@ def establecer_destino_archivo_imagen(instance, filename):
     # Almacena el archivo en:
     # 'app_reservas/carruseles/<carrusel>/<imagen>'
     ruta_archivos_ubicacion = 'app_usuarios/perfil/{}/'.format(
-        instance.email.slug,
+        slugify(instance.username),
     )
-    return os.path.join(ruta_archivos_ubicacion, filename)
+    nombre_imagen = filename.split('.')[0] if '.' in filename else filename
+    extension_imagen = filename.split('.')[-1] if '.' in filename else ''
+    nombre_imagen = '%s.%s' % (slugify(str(nombre_imagen)), extension_imagen)
+    return os.path.join(ruta_archivos_ubicacion, nombre_imagen)
 
 
 class Docente(User):

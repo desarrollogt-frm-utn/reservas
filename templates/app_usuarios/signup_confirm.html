@@ -10,7 +10,7 @@
 
 {% block navbar %} {% endblock %}
 {% block contenido %}
-<form method="post">
+<form method="post" enctype="multipart/form-data">
 	{% csrf_token %}
   <div class="row">
     {% if form.errors %}
