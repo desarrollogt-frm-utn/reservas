@@ -20,6 +20,9 @@ from .views import (
     RecursoAssign,
     recurso_eventos_json,
     RecursoAliDetailView,
+    ReservaCreate,
+    ReservaList,
+    ReservaListDocente,
     RemoveRole,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
@@ -29,8 +32,7 @@ from .views import (
     SolicitudLaboratorioInformaticoView,
     SolicitudList,
     SolicitudMaterialMultimediaView,
-    ReservaCreate,
-    ReservaList,
+    SolicitudReject,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
     TvCuerposListView,
@@ -183,13 +185,20 @@ urlpatterns = [
         r'^solicitud/(?P<pk>\d+)/$',
         login_required(SolicitudDetail.as_view()),
         name='solicitud_detalle'),
+    url(
+        r'^solicitud/baja/(?P<pk>\d+)/$',
+        login_required(SolicitudReject),
+        name='solicitud_baja'),
 
     url(
         r'^recurso/asignar/(?P<solicitud>\d+)/(?P<horario>\d+)$',
         login_required(RecursoAssign),
         name='recurso_assign'
     ),
-
+    url(
+        r'^mis_reservas/$',
+        login_required(ReservaListDocente.as_view()),
+        name='mis_reservas'),
     url(
         r'^reservas/crear/$',
         login_required(ReservaCreate),

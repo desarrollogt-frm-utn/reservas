@@ -17,6 +17,7 @@ import os
 import random
 from django.core.urlresolvers import reverse_lazy
 import datetime
+import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = (
     'constance',
     'constance.backends.database',
     'captcha',
+    'raven.contrib.django.raven_compat',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -210,3 +212,11 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_USER', '')
 
 
 CAPTCHA_OUTPUT_FORMAT = u'%(hidden_field)s<p>%(text_field)s</p><p>%(image)s</p>'
+
+SENTRY_DNS = os.environ.get('SENTRY_DNS', '')
+RAVEN_CONFIG = {
+    'dsn': SENTRY_DNS,
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
+}

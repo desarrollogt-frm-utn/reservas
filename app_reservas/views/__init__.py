@@ -26,8 +26,9 @@ from .solicitud import (
     SolicitudMaterialMultimediaView,
     SolicitudList,
     SolicitudDetail,
+    SolicitudReject,
 )
-from .reserva import ReservaCreate, ReservaList
+from .reserva import ReservaCreate, ReservaList, ReservaListDocente
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
 from .tv import (

@@ -162,6 +162,18 @@ class SolicitudDetail(DetailView):
             context['tipos_solicitudes'] = TIPO_SOLICITUD
             return context
 
+    def get_template_names(self):
+        user = self.request.user
+        solicitud_obj = self.object
+        docente_list = DocenteModel.objects.filter(id=user.id)[:1]
+        if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
+            return render(self.request, 'app_usuarios/error_message.html', {
+                'message': 'El link desde el intentas ingresar no es un link valido.'
+            })
+
+        else:
+            return [self.template_name]
+
 @has_role_decorator('administrador')
 def RecursoAssign(request, solicitud, horario):
     solicitud_obj = Solicitud.objects.get(id=solicitud)
@@ -250,3 +262,29 @@ def RecursoAssign(request, solicitud, horario):
         'dias_semana': DIAS_SEMANA,
         'tipo_recursos': TIPO_RECURSO,
     })
+
+
+def SolicitudReject(request, pk):
+    solicitud_qs = Solicitud.objects.filter(id=pk)[:1]
+    if not solicitud_qs:
+        return render(request, 'app_usuarios/error_message.html', {
+            'message': 'El link desde el intentas ingresar no es un link valido.'
+        })
+    solicitud_obj = solicitud_qs[0]
+    user = request.user
+    docente_list = DocenteModel.objects.filter(id=user.id)[:1]
+
+    if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
+        return render(request, 'app_usuarios/error_message.html', {
+            'message': 'El link desde el intentas ingresar no es un link valido.'
+        })
+
+    if request.method == 'POST':
+        solicitud_obj.email = 'None'
+        solicitud_obj.is_active = False
+        solicitud_obj.save()
+        return redirect(reverse_lazy('user_roles'))
+    return render(request, 'app_reservas/solicitud_reject.html', {
+            'solicitud_obj': solicitud_obj,
+            'tipos_solicitudes': TIPO_SOLICITUD,
+        })

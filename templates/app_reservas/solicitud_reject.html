@@ -1,0 +1,42 @@
+{% extends 'app_reservas/base.html' %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Baja Solicitud
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+	<h1>Baja de solicitud de reserva</h1>
+</div>
+<form method="post">
+	{% csrf_token %}
+	<div class="col-md-6 col-md-offset-3">
+		<div class="text-center">
+			<h4>¿Esta seguro que desea dar de baja la solicitud de reserva? Esta acción no se podrá deshacer.</h4>
+		</div>
+		<div class="text-left">
+
+			<h2>{{ solicitud_obj.docente.nombre }}</h2>
+			<p>Fecha de solicitud: {{ solicitud_obj.fechaCreacion }}</p>
+			<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:solicitud_obj.tipoSolicitud }}</p>
+			<p>Comision:
+			  {% if solicitud_obj.comision %}
+			  <li>Materia: {{solicitud_obj.comision.materia.nombre }}</li>
+			  <li>Comisión: {{ solicitud_obj.comision.comision }}</li>
+			  <li>Especialidad: {{ solicitud_obj.comision.materia.especialidad.nombre }}</li>
+			  {% else %}
+			  ---
+			  {% endif %}
+			</p>
+		<div class="text-center">
+			<button class="btn btn-danger" type="submit">Sí, estoy seguro</button>
+			<a class= "btn btn-default" href="{% url 'solicitud_detalle' solicitud_obj.id %}">Cancelar</a>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

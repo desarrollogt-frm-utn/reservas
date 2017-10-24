@@ -1,6 +1,7 @@
 {% extends 'app_reservas/base.html' %}
 {% load static %}
 {% load navbar_tags %}
+{% load permission_tags %}
 
 {% block static_js %}
 {% endblock %}
@@ -73,8 +74,10 @@ Detalle de Reserva
       </td>
 			<td>
         {% if not horario.reservas.get %}
-        <a class="btn btn-primary" href="{% url 'recurso_assign' object.id horario.id %}">Asignar</a>
-				<a class="btn btn-danger" href="">Eliminar</a>
+          {% if user|has_role:'administrador' %}
+            <a class="btn btn-primary" href="{% url 'recurso_assign' object.id horario.id %}">Asignar</a>
+          {% endif %}
+				<a class="btn btn-danger" href="{% url 'solicitud_baja' object.id %}">Dar Baja</a>
         {% else %}
         <li>Recurso: {{horario.reservas.get.recurso }}</li>
         <li>Asignado por: {{horario.reservas.get.asignado_por }}</li>

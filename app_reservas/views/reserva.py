@@ -87,3 +87,25 @@ class ReservaList(ListView):
                 historicoestadosolicitud__fechaFin__isnull=True,
             )
         return reservas_qs
+
+class ReservaListDocente(ListView):
+    model = Reserva
+    template_name = 'app_reservas/reservas_list.html'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(ReservaListDocente, self).get_context_data(**kwargs)
+        estado = FilterReservaForm(self.request.GET)
+        context['estado'] = estado
+        return context
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('estado', '')
+        order = self.request.GET.get('orderby', '')
+        reservas_qs = Reserva.objects.filter(docente__id=self.request.user.id)
+        if filter_val:
+            reservas_qs = reservas_qs.filter(
+                historicoestadosolicitud__estadoSolicitud__id=filter_val,
+                historicoestadosolicitud__fechaFin__isnull=True,
+            )
+        return reservas_qs
