@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class EstadoSolicitud(models.Model):
+class TipoAccesorio(models.Model):
     # Atributos
     nombre = models.CharField(
         max_length=50,
@@ -13,16 +13,14 @@ class EstadoSolicitud(models.Model):
         verbose_name='Descripción',
     )
 
-
     class Meta:
         """
         Información de la clase.
         """
         app_label = 'app_reservas'
         ordering = ['nombre']
-        verbose_name = 'Estado de solicitud'
-        verbose_name_plural = 'Estados de solicitudes'
-
+        verbose_name = 'Tipo de Accesorio'
+        verbose_name_plural = 'Tipo de Accesorios'
 
     def __str__(self):
         """
@@ -30,7 +28,6 @@ class EstadoSolicitud(models.Model):
         """
         s = '{0!s}'.format(self.get_nombre_corto())
         return s
-
 
     def get_nombre_corto(self):
         """

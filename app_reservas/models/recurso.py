@@ -3,8 +3,15 @@
 import json
 
 from django.db import models
-
+from django.utils.crypto import get_random_string
 from ..adapters.google_calendar import generar_lista_eventos
+
+
+def obtener_codigo_aleatorio():
+    random = get_random_string().upper()
+    while Recurso.objects.filter(codigo=random).exists():
+        random = get_random_string().upper()
+    return random
 
 
 class Recurso(models.Model):
@@ -25,6 +32,10 @@ class Recurso(models.Model):
                   'Debe estar en formato hexadecimal. Por ejemplo, un valor válido es: '
                   '"#ff8c0a"',
     )
+
+    activo = models.BooleanField(default=True)
+
+    codigo = models.CharField(max_length=12, unique=True, default=obtener_codigo_aleatorio)
 
     class Meta:
         """

@@ -1,4 +1,20 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+
+ESTADO_SOLICITUD = {
+    '1': _(u'Pendiente'),
+    '2': _(u'En curso'),
+    '3': _(u'Finalizada'),
+    '4': _(u'Dada de baja por usuario'),
+}
+
+
+class EstadoSolicitudField(models.CharField):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = tuple(sorted(ESTADO_SOLICITUD.items()))
+        kwargs['max_length'] = 1
+        super(EstadoSolicitudField, self).__init__(*args, **kwargs)
 
 
 class HistoricoEstadoSolicitud(models.Model):
@@ -18,18 +34,13 @@ class HistoricoEstadoSolicitud(models.Model):
         verbose_name='Descripción de cierre de solicitud'
     )
 
+    # relaciones
+    estadoSolicitud = EstadoSolicitudField()
 
-    #relaciones
-    estadoSolicitud = models.ForeignKey(
-        'EstadoSolicitud',
-        verbose_name='Estado de la Solicitud',
-    )
-
-    solicitud= models.ForeignKey(
+    solicitud = models.ForeignKey(
         'Solicitud',
         verbose_name='Solicitud',
     )
-
 
     class Meta:
         """
@@ -40,14 +51,15 @@ class HistoricoEstadoSolicitud(models.Model):
         verbose_name = 'Historico del Estado de la Solicitud'
         verbose_name_plural = 'Historicos de los Estados de las Solicitudes'
 
-
     def __str__(self):
         """
         Representación de la instancia.
         """
         if self.solicitud:
-            s = '{0!s} - {1!s}'.format(self.get_nombre_corto(),
-                                      self.solicitud.get_nombre_corto())
+            s = '{0!s} - {1!s}'.format(
+                self.get_nombre_corto(),
+                self.solicitud.get_nombre_corto()
+                )
         else:
             s = '{0!s}'.format(self.get_nombre_corto())
         return s
@@ -56,6 +68,8 @@ class HistoricoEstadoSolicitud(models.Model):
         """
         Retorna el nombre corto de la instancia.
         """
-        s= '{0!s} - {1!s}'.format(self.estadoSolicitud.get_nombre_corto(),
-                                  self.fechaInicio)
+        s = '{0!s} - {1!s}'.format(
+            self.estadoSolicitud.get_nombre_corto(),
+            self.fechaInicio
+            )
         return s

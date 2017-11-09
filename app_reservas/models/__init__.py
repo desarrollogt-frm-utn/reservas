@@ -1,3 +1,5 @@
+from .accesorio import Accesorio
+from .accesorioPrestamo import AccesorioPrestamo
 from .alumnoComision import AlumnoComision
 from .area import Area
 from .aula import Aula
@@ -6,7 +8,6 @@ from .cuerpo import Cuerpo
 from .docente import Docente
 from .docenteComision import DocenteComision
 from .especialidad import Especialidad
-from .estadoSolicitud import EstadoSolicitud
 from .historicoEstadoSolicitud import HistoricoEstadoSolicitud
 from .historicoEstadoReserva import HistoricoEstadoReserva
 from .horario import Horario
@@ -19,15 +20,20 @@ from .laboratorioInformatico import LaboratorioInformatico
 from .materia import Materia
 from .nivel import Nivel
 from .plan import Plan
+from .prestamo import Prestamo
 from .recurso import Recurso
 from .recursoAli import RecursoAli
+from .recursoPrestamo import RecursoPrestamo
 from .reserva import Reserva
 from .solicitud import Solicitud
+from .tipoAccesorio import TipoAccesorio
 from .tipoLaboratorio import TipoLaboratorio
 from .tipoRecursoAli import TipoRecursoAli
 from .visorTv import VisorTv
 
 __all__ = [
+    'Accesorio',
+    'AccesorioPrestamo',
     'AlumnoComision',
     'Area',
     'Aula',
@@ -36,7 +42,6 @@ __all__ = [
     'Docente',
     'DocenteComision',
     'Especialidad',
-    'EstadoSolicitud',
     'HistoricoEstadoSolicitud',
     'HistoricoEstadoReserva',
     'Horario',
@@ -49,10 +54,13 @@ __all__ = [
     'Materia',
     'Nivel',
     'Plan',
+    'Prestamo',
     'Recurso',
     'RecursoAli',
+    'RecursoPrestamo',
     'Reserva',
     'Solicitud',
+    'TipoAccesorio',
     'TipoLaboratorio',
     'TipoRecursoAli',
     'VisorTv',

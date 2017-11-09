@@ -6,7 +6,6 @@ from .cuerpo import CuerpoAdmin
 from .docente import Docente
 from .docenteComision import DocenteComision
 from .especialidad import Especialidad
-from .estadoSolicitud import EstadoSolicitud
 from .comision import HorarioCursadoAdmin
 from .imagenCarrusel import ImagenCarrusel
 from .laboratorio import LaboratorioAdmin
