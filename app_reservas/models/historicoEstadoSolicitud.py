@@ -69,7 +69,7 @@ class HistoricoEstadoSolicitud(models.Model):
         Retorna el nombre corto de la instancia.
         """
         s = '{0!s} - {1!s}'.format(
-            self.estadoSolicitud.get_nombre_corto(),
+            self.estadoSolicitud,
             self.fechaInicio
             )
         return s

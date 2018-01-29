@@ -17,6 +17,14 @@ from .views import (
     LaboratorioInformaticoListView,
     LoginIndexView,
     NivelDetailView,
+    PrestamoCreate,
+    PrestamoConfirm,
+    PrestamoDetail,
+    PrestamoElementAdd,
+    PrestamoElementsRemove,
+    PrestamoFinalize,
+    PrestamoList,
+    PrestamoRegister,
     RecursoAssign,
     recurso_eventos_json,
     RecursoAliDetailView,
@@ -221,6 +229,43 @@ urlpatterns = [
         name='tv_bedelia_cuerpos'
     ),
 
+
+    # Ali Prestamos
+    url(
+        r'^prestamos/registrar/$',
+        login_required(PrestamoRegister),
+        name='prestamo_registar'),
+
+    url(
+        r'^prestamos/crear/$',
+        login_required(PrestamoCreate),
+        name='prestamo_crear'),
+
+    url(
+        r'^prestamos/detalle/(?P<pk>\d+)$',
+        login_required(PrestamoDetail.as_view()),
+        name='prestamo_detalle'),
+
+    url(
+        r'^prestamos/finalizar/(?P<pk>\d+)/$',
+        login_required(PrestamoFinalize),
+        name='prestamo_finalizar'),
+    url(
+        r'^prestamos/listar/$',
+        login_required(PrestamoList.as_view()),
+        name='prestamo_listar'),
+    url(
+        r'^prestamos/agregar_elemento/$',
+        login_required(PrestamoElementAdd),
+        name='prestamo_agregar_elemento'),
+    url(
+        r'^prestamos/quitar_elementos/$',
+        login_required(PrestamoElementsRemove),
+        name='prestamo_quitar_elementos'),
+    url(
+        r'^prestamos/confirmar/$',
+        login_required(PrestamoConfirm),
+        name='prestamo_confirmar'),
 
     # Administración de usuarios
     url(

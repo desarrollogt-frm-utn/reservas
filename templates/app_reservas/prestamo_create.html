@@ -1,0 +1,109 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_css %}
+    {{ block.super }}
+
+
+    <link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
+{% endblock static_css %}
+
+{% block static_js_body %}
+
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'seiyria-bootstrap-slider/dist/bootstrap-slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
+{% endblock static_js_body %}
+
+{% block title %}
+  Registo de Prestamo
+{% endblock %}
+
+{% block contenido %}
+<form id="prestamo_form" method="post">
+	{% csrf_token %}
+	 <div class="row">
+     {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{field.label}}: {{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+    <div class="row">
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+        		{{form.recurso.label_tag}}
+            {{form.recurso}}
+    	   </div>
+        </div>
+    </div>
+    {{ form.fechaInicio.as_hidden }}
+    <div class="row">
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+          <p>
+            <a href="{% url 'prestamo_quitar_elementos'%}"><button type="button" class="btn btn-danger">Limpiar Reserva</button></a>
+            <a href="{% url 'prestamo_agregar_elemento'%}"><button type="button" class="btn btn-success">Agregar Elemento</button></a>
+        		<input class="btn btn-primary" type="submit" value="Continuar">
+          </p>
+    	   </div>
+        </div>
+    </div>
+
+    <div>
+      <h3>Recursos:</h3>
+    <table class="table table-bordered">
+    	<thead>
+    		<tr>
+    			<td>Recurso</td>
+    			<td>Reserva</td>
+    		</tr>
+
+    	</thead>
+    	<tbody>
+        {% for recurso in recursos %}
+        <tr>
+           <td>
+             {{ recurso.object}}
+           </td>
+           <td> {{ recurso.form.reserva }}</td>
+        </tr>
+        {% endfor %}
+    	</tbody>
+    </table>
+    </div>
+
+    <div>
+      <h3>Accesorios:</h3>
+    <table class="table table-bordered">
+    	<thead>
+    		<tr>
+    			<td>Accesorio</td>
+    			<td>Tipo de accesorio</td>
+    		</tr>
+
+    	</thead>
+    	<tbody>
+    		{% for accesorio in accesorios %}
+        <tr>
+           <td>
+             {{ accesorio }}
+           </td>
+           <td> {{ accesorio.tipo }}</td>
+        </tr>
+    		{% endfor %}
+    	</tbody>
+    </table>
+    </div>
+</form>
+{% endblock contenido%}

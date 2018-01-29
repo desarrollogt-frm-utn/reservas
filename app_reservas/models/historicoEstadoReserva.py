@@ -68,6 +68,6 @@ class HistoricoEstadoReserva(models.Model):
         Retorna el nombre corto de la instancia.
         """
         s = '{0!s} - {1!s}'.format(
-            self.estado.get_nombre_corto(),
+            self.estado,
             self.fechaInicio)
         return s

@@ -7,7 +7,7 @@ class AccesorioPrestamo(models.Model):
 
     accesorio = models.ForeignKey(
         'Accesorio',
-        verbose_name='Recurso',
+        verbose_name='Accesorio',
         related_name='accesorios_all'
     )
 

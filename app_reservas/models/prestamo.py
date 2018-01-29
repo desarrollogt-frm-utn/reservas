@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 
@@ -6,11 +7,12 @@ from django.contrib.auth.models import User
 class Prestamo(models.Model):
     # Atributos
     inicio = models.DateTimeField(
-        verbose_name='Fecha de Inicio',
+        verbose_name='Inicio',
+        default=timezone.now
     )
 
     fin = models.DateTimeField(
-        verbose_name='Fecha de Fin',
+        verbose_name='Fin',
         blank=True,
         null=True,
     )
@@ -19,7 +21,16 @@ class Prestamo(models.Model):
 
     asignado_por = models.ForeignKey(
         User,
-        verbose_name='Asignado por'
+        verbose_name='Asignado por',
+        related_name='prestamos_asignados'
+    )
+
+    recibido_por = models.ForeignKey(
+        User,
+        verbose_name='Recibido por',
+        related_name='prestamos_recibidos',
+        blank=True,
+        null=True,
     )
 
     class Meta:

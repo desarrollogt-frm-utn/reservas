@@ -3,6 +3,7 @@
 import json
 
 from django.db import models
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from ..adapters.google_calendar import generar_lista_eventos
 
@@ -86,3 +87,35 @@ class Recurso(models.Model):
             eventos_json += evento_str
         eventos_json += ']'
         return eventos_json
+
+    def get_nearby_reservations(self):
+        from app_reservas.models import Reserva
+        reserva_qs = Reserva.objects.filter(
+                 recurso__id=self.id,
+                 historicoestadoreserva__estado='1',
+                 historicoestadoreserva__fechaFin__isnull=True,
+                 # horarioreserva__dia=timezone.now().weekday()
+             )
+        inicio = timezone.localtime(timezone.now()) - timezone.timedelta(minutes=10)
+        fin = timezone.localtime(timezone.now()) + timezone.timedelta(minutes=100)
+        neaby_reservation = []
+        #for reserva in reserva_qs:
+        #    horario_obj = reserva.horarioreserva_set.get(dia=timezone.now().weekday())
+        #    if horario_obj.inicio > inicio.time() or horario_obj.inicio < fin.time():
+        #        neaby_reservation.append(reserva)
+        return reserva_qs
+
+    def get_active_reservations(self):
+        from app_reservas.models import Reserva
+        reservas_qs = Reserva.objects.filter(
+            recurso__id=self.id,
+            historicoestadoreserva__estado='1',
+            historicoestadoreserva__fechaFin__isnull=True
+        )
+        return reservas_qs
+
+    def get_active_loan(self):
+        prestamos = self.prestamos_all.filter(prestamo__fin__isnull=True)[:1]
+        if prestamos:
+            return prestamos[0].prestamo
+        return None

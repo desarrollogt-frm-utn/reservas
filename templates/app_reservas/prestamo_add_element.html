@@ -1,0 +1,58 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+  Registo de Prestamo
+{% endblock %}
+
+{% block contenido %}
+<form method="post">
+	{% csrf_token %}
+	 <div class="row">
+     {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+    <div class="page-header">
+    	<h1>Agregar elemento</h1>
+    </div>
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="text-center">
+    			<h4>Por favor, escanee el recurso que desea agregar</h4>
+    		</div>
+      </div>
+    <div class="row">
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+        		{{form.recurso.label_tag}}
+            {{form.recurso}}
+    	   </div>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+          <p>
+            <a href="{% url 'prestamo_crear'%}"><button type="button" class="btn btn-danger">Cancelar</button></a>
+        		<input class="btn btn-primary" type="submit" value="Continuar">
+          </p>
+    	   </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

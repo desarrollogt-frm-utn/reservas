@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.auth.models import User
 from app_usuarios.models import Docente
@@ -7,7 +8,8 @@ class Reserva(models.Model):
     # Atributos
 
     fecha_creacion = models.DateTimeField(
-        verbose_name='Fecha de Creación'
+        verbose_name='Fecha de Creación',
+        default=django.utils.timezone.now
     )
 
     fechaInicio = models.DateField(
@@ -21,7 +23,7 @@ class Reserva(models.Model):
     )
 
     nombreEvento = models.CharField(
-        max_length=50,
+        max_length=150,
         verbose_name='Nombre del evento',
     )
 
@@ -63,20 +65,29 @@ class Reserva(models.Model):
         """
         Representación de la instancia.
         """
-        s = '{0!s} - {1!s} {2!s} - {3!s}'.format(
-            self.recurso,
-            self.docente.first_name,
-            self.docente.last_name,
-            self.fecha_creacion
-        )
-        return s
+        return str(self.id)
 
     def get_nombre_corto(self):
         """
         Retorna el nombre corto de la instancia.
         """
-        nombre_corto = '{0!s} - {1!s}'.format(
-            self.solicitud.docente.nombre,
-            self.fecha_creacion
-        )
+        if self.docente:
+            nombre_corto = '{0!s} - {1!s} {2!s} - {3!s}'.format(
+                self.recurso,
+                self.docente.first_name,
+                self.docente.last_name,
+                self.fecha_creacion
+            )
+        else:
+            nombre_corto = '{0!s} - {1!s}'.format(
+                self.recurso,
+                self.fecha_creacion
+            )
         return nombre_corto
+
+    def get_estado_reserva(self):
+        """
+        Retorna el estado actual de la reserva
+        """
+        estado = self.historicoestadoreserva_set.filter(fechaFin__isnull=True)[0]
+        return estado

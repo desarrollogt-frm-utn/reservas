@@ -4,7 +4,6 @@ from django.forms import inlineformset_factory
 from app_reservas.models import (
     Solicitud,
     HorarioSolicitud,
-    EstadoSolicitud,
     Comision,
     DocenteComision,
 )
@@ -14,6 +13,7 @@ from app_reservas.utils import (
 )
 
 from app_usuarios.models import Docente as DocenteModel
+from app_reservas.models.historicoEstadoSolicitud import ESTADO_SOLICITUD
 
 
 class SolicitudForm(forms.ModelForm):
@@ -149,9 +149,9 @@ class HorarioSolicitudForm(forms.ModelForm):
 
 SolicitudInlineFormset = inlineformset_factory(Solicitud, HorarioSolicitud, form=HorarioSolicitudForm, extra=3)
 
+
 class FilterSolicitudForm(forms.Form):
     estado = forms.ChoiceField(
-                choices=[('', 'Todos')] +
-                [(estado.id, estado.nombre) for estado in EstadoSolicitud.objects.all()],
+                choices=sorted(ESTADO_SOLICITUD.items()),
                 widget=forms.Select(attrs={'id': 'estado_select', 'class': 'form-control'})
             )

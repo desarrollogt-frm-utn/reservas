@@ -119,6 +119,11 @@
                                 </a>
                             </li>
                         {% endfor %}
+                        {% if user|has_role:'administrador' %}
+                          <li role="separator" class="divider"></li>
+                          <li><a href="{% url 'prestamo_registar' %}">Registrar Prestamo</a></li>
+                          <li><a href="{% url 'prestamo_listar' %}">Listado de Prestamo</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 <li class="dropdown">

@@ -51,3 +51,9 @@ class Accesorio(models.Model):
         """
         nombre_corto = self.identificador
         return nombre_corto
+
+    def get_active_loan(self):
+        prestamos = self.accesorios_all.filter(prestamo__fin=None)[:1]
+        if prestamos:
+            return prestamos[0]
+        return None

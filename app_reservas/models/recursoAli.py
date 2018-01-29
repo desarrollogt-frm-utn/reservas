@@ -5,6 +5,13 @@ from django.db import models
 from .recurso import Recurso
 
 
+def overrides(interface_class):
+    def overrider(method):
+        assert(method.__name__ in dir(interface_class))
+        return method
+    return overrider
+
+
 class RecursoAli(Recurso):
     # Atributos
     identificador = models.CharField(
@@ -30,6 +37,7 @@ class RecursoAli(Recurso):
         verbose_name = 'Recurso del ALI'
         verbose_name_plural = 'Recursos del ALI'
 
+    @overrides(Recurso)
     def __str__(self):
         """
         Representación de la instancia.

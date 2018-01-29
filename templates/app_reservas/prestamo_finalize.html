@@ -1,0 +1,32 @@
+{% extends 'app_reservas/base.html' %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Finlizar Prestamo
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+	<h1>Finalizar prestamo #{{prestamo_obj.id}}</h1>
+</div>
+<form method="post">
+	{% csrf_token %}
+	<div class="col-md-6 col-md-offset-3">
+		<div class="text-center">
+			<h4>¿Esta seguro que desea dar marcar este prestamo como devuelto? Esta acción no se podrá deshacer.</h4>
+		</div>
+		<div class="text-left">
+
+			<p>Inicio del prestamo: {{ prestamo_obj.inicio }}</p>
+      <p>Prestado por: {{ prestamo_obj.asignado_por}}
+		<div class="text-center">
+			<button class="btn btn-danger" type="submit">Sí, estoy seguro</button>
+			<a class= "btn btn-default" href="{% url 'prestamo_detalle' prestamo_obj.id %}">Cancelar</a>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

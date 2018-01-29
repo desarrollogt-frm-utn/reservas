@@ -10,6 +10,7 @@ from .utils import obtenerUsername
 from .forms import CreateDocenteForm, CreateDocenteConfirmForm
 from .tasks import enviarMailRegistro
 from app_reservas.models import Docente as DocenteReserva
+from app_reservas.errors import not_found_error
 from rolepermissions.decorators import has_role_decorator
 from rolepermissions.checkers import has_permission, has_role
 from rolepermissions.mixins import HasRoleMixin
@@ -49,9 +50,7 @@ def CreateDocenteConfirm(request, code):
     except Exception:
         email = "Byte no válido"
     if not validateEmail(email):
-        return render(request, 'app_usuarios/error_message.html', {
-            'message': 'El link desde el intentas ingresar no es un link valido.'
-        })
+        return not_found_error(request)
     docente_list = Docente.objects.filter(email=email)[:1]
     if docente_list:
         if not docente_list[0].is_active:

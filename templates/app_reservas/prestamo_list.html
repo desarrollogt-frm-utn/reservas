@@ -1,0 +1,71 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Listado de Prestamos
+{% endblock %}
+
+{% block contenido %}
+
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>ID</td>
+      <td>Solicitante</td>
+			<td>Prestado a las</td>
+			<td>Devuelto a las</td>
+			<td>Estado</td>
+			<td>Acciones</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% if object_list %}
+		{% for prestamo in object_list %}
+		<tr>
+			<td>{{ prestamo.id }}</td>
+      <td>{{prestamo.recursos_all.first.reserva.docente.first_name}} {{prestamo.recursos_all.first.reserva.docente.last_name}}</td>
+			<td>{{ prestamo.inicio }}</td>
+			<td>
+        {% if prestamo.fin == None  %}
+          ---
+        {% else %}
+          {{prestamo.fin}}
+        {% endif %}
+    </td>
+			<td>
+        {% if prestamo.fin == None  %}
+          En curso
+        {% else %}
+          Finalizado
+        {% endif %}
+			</td>
+			<td>
+				<a class="btn btn-primary" href="{% url 'prestamo_detalle' prestamo.id %}">Visualizar</a>
+			</td>
+		</tr>
+		{% endfor %}
+
+		{% else %}
+		<h1>No existen prestamos para mostrar</h1>
+		{% endif %}
+	</tbody>
+</table>
+<ul class="pager">
+	<li>
+		{% if page_obj.has_previous %}
+       	 <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+		{% endif %}
+        </li>
+	<li>
+		{% if page_obj.has_next %}
+     	 <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+    	{% endif %}
+    </li>
+</ul>
+{% endblock%}

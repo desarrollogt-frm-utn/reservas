@@ -1,0 +1,224 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block title %}
+    Registo de Prestamo
+{% endblock title %}
+
+
+{% block static_css %}
+    {{ block.super }}
+
+
+    <link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
+{% endblock static_css %}
+
+{% block static_js_body %}
+
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'seiyria-bootstrap-slider/dist/bootstrap-slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
+{% endblock static_js_body %}
+
+
+{% block contenido %}
+
+      {% if form.errors %}
+         {% for field in form %}
+             {% for error in field.errors %}
+                 <div class="alert alert-danger">
+                     <strong>{{ field|escape }}</strong>
+                     {{error}}
+                 </div>
+             {% endfor %}
+         {% endfor %}
+         {% for error in form.non_field_errors %}
+             <div class="alert alert-danger">
+                 <strong>{{ error|escape }}</strong>
+             </div>
+         {% endfor %}
+      {% endif %}
+
+
+        <form id="solicitud_form" method="post">
+            {% csrf_token %}
+
+            <div class="page-header">
+                <h1>Registro de prestamo</h1>
+            </div>
+
+            <div class="col-md-6 col-md-offset-3">
+              <p class="text-center">
+                  Por favor confirme los siguientes datos para registrar el prestamo
+              </p>
+            </div>
+            {% if form %}
+
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="docente">Docente:</label>
+                    {{ form.docente }}
+                 </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                  <div class="form-group">
+                      <label for="tipoSolicitud">Tipo de Solicitud:</label>
+                      {{ form.tipoSolicitud }}
+                   </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-3">
+                    <div class="form-group">
+                        <label for="comision">Comision:</label>
+                        {{ form.comision }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-3">
+                    <div class="form-group">
+                        <label for="nombreEvento">Nombre del Evento:</label>
+                        {{ form.nombreEvento }}
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+
+                    <div>
+                      <h3>Recursos:</h3>
+                    <table class="table table-bordered">
+                    	<thead>
+                    		<tr>
+                    			<td>Recurso</td>
+                    			<td>Reserva</td>
+                    		</tr>
+
+                    	</thead>
+                    	<tbody>
+                        {% for recurso in recursos %}
+                        <tr>
+                           <td>
+                             {{ recurso.object}}
+                           </td>
+                           {% if recurso.reserva %}
+                           <td> {{ recurso.reserva }}</td>
+                           {% else %}
+                           <td>Nueva reserva</td>
+                           {% endif %}
+                        </tr>
+                        {% endfor %}
+                    	</tbody>
+                    </table>
+                    </div>
+
+                    <div>
+                      <h3>Accesorios:</h3>
+                    <table class="table table-bordered">
+                    	<thead>
+                    		<tr>
+                    			<td>Accesorio</td>
+                    			<td>Tipo de accesorio</td>
+                    		</tr>
+
+                    	</thead>
+                    	<tbody>
+                    		{% for accesorio in accesorios %}
+                        <tr>
+                           <td>
+                             {{ accesorio }}
+                           </td>
+                           <td> {{ accesorio.tipo }}</td>
+                        </tr>
+                    		{% endfor %}
+                    	</tbody>
+                    </table>
+                    </div>
+
+
+            <div style="width:100px; float:right">
+                    <input class="btn btn-primary" type="submit" value="Confirmar" />
+                </div>
+        </form>
+
+{% endblock contenido %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+    $(function() {
+      $('[id$=-inicio]').datetimepicker({
+          format: 'HH:mm',
+          minDate: moment({h:8}),
+      });
+      $('[id$=-fin]').datetimepicker({
+          format: 'HH:mm',
+          minDate: moment({h:8}),
+      });
+    });
+</script>
+
+
+<script>
+    // Función que detecta el cambio en el select de docente
+
+    $("#docente_select").change(function() {
+      $('#tipo_select').attr("disabled", false);
+      $('#tipo_select').val("");
+      $('#id_nombreEvento').val("");
+      $('#mat_select').attr("disabled", true);
+      $('#id_nombreEvento').attr("disabled", true);
+      $select = $('#mat_select');
+      $.ajax({
+          url: "{{SITE_URL}}" + "api/materia/" + $("#docente_select").val(),
+          dataType:'JSON',
+          success:function(data){
+              // Vacio las opciones de local en caso que se haya seleccionado
+              $select.html('<option value="" selected="selected">---------</option>');
+              $.each(data, function(key, val){
+                console.log('2ª');
+                console.log('<option value="' + val.id_materia + '">' + val.nombre + '</option>');
+                  $select.append('<option value="' + val.id_comision + '">' + val.nombre_comision + " - " + val.nombre_materia + " - " + val.nombre_plan + '</option>');
+
+              })
+          }
+      });
+
+    });
+
+    $('#tipo_select').change(function(){
+      // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      $select = $('#mat_select');
+      $('#mat_select').attr("disabled", false);
+      $('#com_select').html('<option value="" selected="selected">---------</option>');
+      $select = $('#mat_select');
+      $('#mat_select').attr("disabled", true);
+      $('#id_fechaInicio').attr("disabled", true);
+      $('#id_fechaFin').attr("disabled", true);
+      $('#id_nombreEvento').val("");
+      if ($(this).val()== 1) {
+          $('#mat_select').attr("disabled", false);
+         }
+       else if ($(this).val()== 2) {
+         $('#mat_select').attr("disabled", false);
+         $('#id_fechaInicio').attr("disabled", false);
+         $('#id_nombreEvento').attr("disabled", true);
+       }
+       else if ($(this).val()== 3) {
+         $('#id_fechaInicio').attr("disabled", false);
+         $('#id_fechaFin').attr("disabled", false);
+       }
+        else {
+          $('#id_fechaInicio').attr("disabled", false);
+          $('#id_nombreEvento').attr("disabled", false);
+        };
+    });
+
+</script>
+
+
+{% endblock %}

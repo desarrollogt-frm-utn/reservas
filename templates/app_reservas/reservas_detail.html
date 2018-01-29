@@ -20,7 +20,7 @@ Detalle de Reserva
 <p>Estado:
   {% for historico in solicitud.historicoestadosolicitud_set.all %}
   {% if historico.fechaFin == None  %}
-    {{ historico.estadoSolicitud.nombre }}
+    {{ historico.estadoSolicitud }}
   {% endif %}
   {% endfor %}
 </p>

@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import ListView
+from django.conf import settings
+
 
 from app_reservas.models import (
     Solicitud,
-    EstadoSolicitud,
     HistoricoEstadoSolicitud,
     Reserva,
 )
@@ -49,11 +50,10 @@ def ReservaCreate(request):
                     fechaFin=reserva_form.cleaned_data.get('fechaFin'),
                     solicitante=docente_model,
                 )
-                estado = EstadoSolicitud.objects.get(nombre="Pendiente")
                 HistoricoEstadoSolicitud.objects.create(
                     fechaInicio=timezone.now(),
                     fechaFin=None,
-                    estadoSolicitud=estado,
+                    estadoSolicitud=1,
                     solicitud=solicitud_obj,
                 )
                 formset = ReservaInlineFormset(request.POST, request.FILES, instance=solicitud_obj)

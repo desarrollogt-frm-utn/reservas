@@ -1,6 +1,15 @@
 from .ali import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
+    PrestamoElementAdd,
+    PrestamoCreate,
+    PrestamoConfirm,
+    PrestamoDetail,
+    PrestamoElementsRemove,
+    PrestamoFinalize,
+    PrestamoList,
+    PrestamoRegister,
+
 )
 from .area import AreaDetailView
 from .aula import AulaDetailView

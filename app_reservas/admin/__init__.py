@@ -1,3 +1,4 @@
+from .accesorio import AccesorioAdmin
 from .alumnoComision import AlumnoComision
 from .area import AreaAdmin
 from .aula import AulaAdmin
@@ -14,6 +15,7 @@ from .materia import Materia
 from .nivel import NivelAdmin
 from .plan import Plan
 from .recursoAli import RecursoAliAdmin
+from .tipoAccesorio import TipoAccesorio
 from .tipoLaboratorio import TipoLaboratorioAdmin
 from .tipoRecursoAli import TipoRecursoAliAdmin
 from .visorTv import VisorTvAdmin

@@ -28,6 +28,7 @@ class Docente(User):
     legajo = models.PositiveIntegerField(
         blank=False,
         default=1,
+        unique=True,
     )
 
     telefono = models.CharField(

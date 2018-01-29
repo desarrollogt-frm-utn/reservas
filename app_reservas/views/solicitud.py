@@ -19,10 +19,11 @@ from app_reservas.utils import (
     obtener_fecha_finalizacion_reserva_fuera_cursado
 )
 
+from app_reservas.errors import not_found_error
+
 from app_reservas.models import (
     Aula,
     Docente,
-    EstadoSolicitud,
     HistoricoEstadoSolicitud,
     HistoricoEstadoReserva,
     HorarioSolicitud,
@@ -104,11 +105,10 @@ def SolicitudCreate(request):
                     fechaFin=solicitud_form.cleaned_data.get('fechaFin'),
                     solicitante=docente_model,
                 )
-                estado = EstadoSolicitud.objects.get(nombre="Pendiente")
                 HistoricoEstadoSolicitud.objects.create(
                     fechaInicio=timezone.now(),
                     fechaFin=None,
-                    estadoSolicitud=estado,
+                    estadoSolicitud=1,
                     solicitud=solicitud_obj,
                 )
                 formset = SolicitudInlineFormset(request.POST, request.FILES, instance=solicitud_obj)
@@ -167,9 +167,7 @@ class SolicitudDetail(DetailView):
         solicitud_obj = self.object
         docente_list = DocenteModel.objects.filter(id=user.id)[:1]
         if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
-            return render(self.request, 'app_usuarios/error_message.html', {
-                'message': 'El link desde el intentas ingresar no es un link valido.'
-            })
+            return not_found_error(self.request)
 
         else:
             return [self.template_name]
@@ -196,9 +194,8 @@ def RecursoAssign(request, solicitud, horario):
             if estado_solicitud.estadoSolicitud.nombre == 'Pendiente':
                 estado_solicitud.fechaFin = timezone.now()
                 estado_solicitud.save()
-                estado_en_curso_obj = EstadoSolicitud.objects.get(nombre='En curso')
                 HistoricoEstadoSolicitud.objects.create(
-                    estadoSolicitud=estado_en_curso_obj,
+                    estadoSolicitud=2,
                     solicitud=solicitud_obj,
                     fechaInicio=timezone.now(),
 
@@ -267,17 +264,13 @@ def RecursoAssign(request, solicitud, horario):
 def SolicitudReject(request, pk):
     solicitud_qs = Solicitud.objects.filter(id=pk)[:1]
     if not solicitud_qs:
-        return render(request, 'app_usuarios/error_message.html', {
-            'message': 'El link desde el intentas ingresar no es un link valido.'
-        })
+        return not_found_error(request)
     solicitud_obj = solicitud_qs[0]
     user = request.user
     docente_list = DocenteModel.objects.filter(id=user.id)[:1]
 
     if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
-        return render(request, 'app_usuarios/error_message.html', {
-            'message': 'El link desde el intentas ingresar no es un link valido.'
-        })
+        return not_found_error(request)
 
     if request.method == 'POST':
         solicitud_obj.email = 'None'

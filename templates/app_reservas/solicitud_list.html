@@ -39,7 +39,7 @@ Listado de Solicitudes
 			<td>
 				{% for historico in solicitud.historicoestadosolicitud_set.all %}
 				{% if historico.fechaFin == None  %}
-					{{ historico.estadoSolicitud.nombre }}
+					{{ historico.estadoSolicitud }}
 				{% endif %}
 				{% endfor %}
 			</td>
@@ -55,7 +55,7 @@ Listado de Solicitudes
 			</td>
 			<td>
 				<a class="btn btn-primary" href="{% url 'solicitud_detalle' solicitud.id %}">Visualizar</a>
-				<a class="btn btn-danger" href="">Cancelar</a>
+				<a class="btn btn-danger" href="{% url 'solicitud_baja' solicitud.id %}">Dar de baja</a>
 			</td>
 		</tr>
 		{% endfor %}

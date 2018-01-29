@@ -1,0 +1,104 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+{% load navbar_tags %}
+{% load permission_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Detalle de Prestamo
+{% endblock %}
+
+{% block contenido %}
+
+<a href="{{request.META.HTTP_REFERER}}">Atrás</a>
+
+<h1>Prestamo #{{ object.id }}</h1>
+<div style="height: 180px">
+  <div style="width: 70%; float:left">
+    {% if object.recursos_all.first.reserva.comision != None %}
+    <p>Comision: {{object.recursos_all.first.reserva.comision}}</p>
+    {% else%}
+    <p>Solicitante: {{object.recursos_all.first.reserva.docente.first_name}} {{object.recursos_all.first.reserva.docente.last_name}}
+    {% endif %}
+<p>Estado:
+  {% if object.fin == None  %}
+    En curso
+  {% else %}
+    Finalizado
+  {% endif %}
+</p>
+<p>Inicio del Prestamo: {{ object.inicio }}</p>
+<p>Prestado Por: {{ object.asignado_por}} </p>
+<p>Devolución:
+  {% if object.fin != None  %}
+    {{ object.fin }}
+    {% else%}
+    ---
+  {% endif%}
+</p>
+<p>Recibido Por:
+  {% if object.recibido_por != None  %}
+    {{ object.recibido_por}}
+  {% else%}
+    ---
+{% endif%} </p>
+</div>
+<div style="width: 30%; float:right; text-align:center;">
+  {% if object.fin == None %}
+  <h3>Marcar como devuelto</h3>
+
+  <a class="btn btn-danger" href="{% url 'prestamo_finalizar' object.id %}">Finalizar Prestamo</a>
+
+  {% endif %}
+</div>
+</div>
+<div style="width: 100%; float:center">
+  <div>
+  <h3>Recursos:</h3>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Recurso</td>
+			<td>Reserva</td>
+			<td>Acciones</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% for prestamo_recurso in object.recursos_all.all %}
+		<tr>
+			<td>{{ prestamo_recurso.recurso }}</td>
+			<td>{{ prestamo_recurso.reserva }}</td>
+			<td>
+        <a class="btn btn-primary" href="">Ver Reserva</a>
+      </td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+<div>
+  <h3>Accesorios:</h3>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Accesorio</td>
+			<td>Tipo de accesorio</td>
+		</tr>
+
+	</thead>
+	<tbody>
+		{% for accesorio_recurso in object.prestamosAccesorios_all.all %}
+		<tr>
+			<td>{{ accesorio_recurso.accesorio }}</td>
+			<td>{{ accesorio_recurso.accesorio.tipo }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+</div>
+
+{% endblock %}
