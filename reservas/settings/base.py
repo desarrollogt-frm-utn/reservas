@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'djangobower',
     'app_facturacion',
+    'app_usuarios',
     'app_reservas.apps.ReservasConfig',
 )
 
@@ -133,6 +134,11 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'app_usuarios.emailLogin.EmailLogin', # Email login
+)
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -148,7 +154,7 @@ MEDIA_URL = '/' + DJANGO_URL_PREFIX + 'media/'
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
-    'bootstrap-datepicker',
+    'bootstrap-datepicker##1.6.0',
     'bootswatch-dist#flatly',
     'font-awesome',
     'fullcalendar-scheduler',
