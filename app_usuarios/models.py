@@ -51,7 +51,9 @@ class Usuario(User):
             )
         ],
         max_length=30,
-        verbose_name='celular'
+        verbose_name='celular',
+        blank=True,
+        null=True
     )
 
     foto = models.ImageField(

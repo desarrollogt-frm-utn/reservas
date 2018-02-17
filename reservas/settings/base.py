@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'djangobower',
     'app_facturacion',
     'app_usuarios',
+    'app_parque_tecnologico',
     'app_reservas.apps.ReservasConfig',
 )
 
