@@ -138,6 +138,7 @@ STATICFILES_DIRS = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
     'app_usuarios.emailLogin.EmailLogin', # Email login
+    'app_parque_tecnologico.adapters.glpiLogin.GlpiLogin'
 )
 
 STATICFILES_FINDERS = (
@@ -171,3 +172,7 @@ BOWER_INSTALLED_APPS = (
 GOOGLE_CALENDAR_TOKEN = os.environ.get('GOOGLE_CALENDAR_TOKEN', '')
 
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit//')
+
+GLPI_URL = os.environ.get('GLPI_URL', 'http://localhost/glpi')
+GLPI_USER = os.environ.get('GLPI_USER', '')
+GLPI_PASS = os.environ.get('GLPI_PASS', '')

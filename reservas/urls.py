@@ -47,6 +47,10 @@ urlpatterns = [
             r'',
             include('app_reservas.urls')
         ),
+        url(
+            r'^parque_tecnologico/',
+            include('app_parque_tecnologico.urls')
+        ),
         ]
     )),
 ]
