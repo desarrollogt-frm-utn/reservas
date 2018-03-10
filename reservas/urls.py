@@ -64,6 +64,10 @@ urlpatterns = [
             include('app_usuarios.urls')
         ),
         url(r'^captcha/', include('captcha.urls')),
+        url(
+            r'^parque_tecnologico/',
+            include('app_parque_tecnologico.urls')
+        ),
         ]
     )),
 ]

@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../favicon.ico">-->
+
+    <title>{% block title %}Fixed Top Navbar Example for Bootstrap{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{% static 'bootswatch-dist/css/bootstrap.min.css' %}">
+
+    {% block static_css %}
+		<link rel="stylesheet" href="{% static 'apps/parque_tecnologico/css/base.css' %}">
+	{% endblock %}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    {% block static_js %}{% endblock %}
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+    {% block navbar %}
+		<div class="bs-docs-section clearfix">
+		    <div class="row">
+		        <div class="col-lg-12">
+		            <div class="bs-component">
+		            	<nav class="navbar navbar-default">
+		                	<div class="container-fluid">
+		                  		<div class="navbar-header">
+		                    		<a class="navbar-brand" href="#">Home</a>
+		                  		</div>
+		                  	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		                    	<ul class="nav navbar-nav">
+		                      		<li class="dropdown">
+		                        		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Parque Tecnologico <span class="caret"></span></a>
+				                        <ul class="dropdown-menu" role="menu">
+				                        	<li><a href="{% url 'recurso-alta' %}">Alta</a></li>
+				                        </ul>
+		                      		</li>
+
+		                    	</ul>
+		                    	<ul class="nav navbar-nav navbar-right">
+		                        	<li class="dropdown"><a href="http://frm.utn.edu.ar" onclick="pageTracker._link(this.href); return false;">FRM-UTN</a>
+		                        	</li>
+									<li class="dropdown">
+										<a>
+										 	Hola <strong>{% firstof user.get_short_name user.get_username %}</strong>
+										</a>
+									</li>
+		                        	<li class="dropdown">
+		                        		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Opciones<span class="caret"></span></a>
+		                        		<ul class="dropdown-menu" role="menu">
+		                          			<li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+		                        		</ul>
+		                      		</li>
+		                    	</ul>
+		                    </div>
+		                </div>
+		            </nav>
+		        </div>
+           	</div>
+        </div>
+    </div>
+
+	{% endblock %}
+
+    {% block contenido %}{% endblock %}
+
+	{% block footer %}
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+            <div id="footer-left-column" class="hidden-xs col-sm-6 col-md-6 col-lg-6">
+                {% block footer_left %}{% endblock footer_left %}
+            </div>
+            <div id="footer-right-column" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                {% block footer_right %}
+                    <div id="footer-right-image" class="footer-image">
+                        <img src='{% static 'apps/reservas/images/gtlogo-50px.png'%}'></img>
+                    </div>
+                    <div id="footer-right-content">
+                        <p>
+                            Gestión Tecnológica, DiTIC
+                            <br />
+                            FRM &#8212; UTN
+                        </p>
+                    </div>
+                {% endblock footer_right %}
+            </div>
+        </div>
+    </nav>
+{% endblock footer %}
+
+</div> <!-- /container-fluid -->
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src='{% static 'jquery/jquery.min.js' %}'></script>
+<!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
+<script src='{% static 'bootswatch-dist/js/bootstrap.min.js' %}'></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<!--<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
+
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

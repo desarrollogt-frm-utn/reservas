@@ -22,12 +22,11 @@ def establecer_destino_archivo_imagen(instance, filename):
     return os.path.join(ruta_archivos_ubicacion, nombre_imagen)
 
 
-class Docente(User):
+class Usuario(User):
     # Atributos
 
     legajo = models.PositiveIntegerField(
         blank=False,
-        default=1,
         unique=True,
     )
 
@@ -52,7 +51,9 @@ class Docente(User):
             )
         ],
         max_length=30,
-        verbose_name='celular'
+        verbose_name='celular',
+        blank=True,
+        null=True
     )
 
     foto = models.ImageField(
@@ -67,8 +68,8 @@ class Docente(User):
         """
         app_label = 'app_usuarios'
         ordering = ['email']
-        verbose_name = 'Docente'
-        verbose_name_plural = 'Docentes'
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
 
 
     def __str__(self):

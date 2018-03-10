@@ -15,7 +15,7 @@ from app_reservas.errors import not_found_error, custom_error
 from app_reservas.tasks import crear_evento_recurso_especifico
 from app_reservas.utils import obtener_siguiente_dia_vigente
 
-from app_usuarios.models import Docente as DocenteModel
+from app_usuarios.models import Usuario as UsuarioModel
 
 from ..models import (
     Aula,
@@ -221,10 +221,10 @@ def PrestamoConfirm(request):
                     reserva_form.pop('tipoSolicitud')
                     docente_obj = reserva_form.pop('docente')
                     try:
-                        docente_model_obj = DocenteModel.objects.get(legajo=docente_obj.legajo)
-                    except DocenteModel.DoesNotExist:
-                        docente_model_obj = None
-                    reserva_obj = Reserva(docente=docente_model_obj, **reserva_form)
+                        user_model_obj = UsuarioModel.objects.get(legajo=docente_obj.legajo)
+                    except UsuarioModel.DoesNotExist:
+                        user_model_obj = None
+                    reserva_obj = Reserva(usuario=user_model_obj, **reserva_form)
                     reserva_obj.asignado_por = request.user
                     reserva_obj.recurso = recurso.get('object')
                     reserva_obj.save()

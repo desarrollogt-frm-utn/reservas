@@ -5,28 +5,36 @@ from django.db import migrations, models
 import django.core.validators
 import app_usuarios.models
 from django.conf import settings
+from django.conf import settings
+import app_usuarios.models
+import django.contrib.auth.models
+import django.core.validators
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('auth', '0006_require_contenttypes_0002'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Docente',
+            name='Usuario',
             fields=[
-                ('id', models.AutoField(auto_created=True, serialize=False, verbose_name='ID', primary_key=True)),
-                ('legajo', models.PositiveIntegerField(default=1)),
-                ('telefono', models.CharField(validators=[django.core.validators.RegexValidator(regex='^\\+?[\\d()*-]+$', message='El formato de número de teléfono es incorrecto.')], max_length=30, verbose_name='teléfono', null=True, blank=True)),
-                ('foto', models.ImageField(null=True, upload_to=app_usuarios.models.establecer_destino_archivo_imagen, blank=True)),
-                ('user', models.OneToOneField(related_name='docente', to=settings.AUTH_USER_MODEL)),
+                ('user_ptr', models.OneToOneField(primary_key=True, serialize=False, auto_created=True, parent_link=True, to=settings.AUTH_USER_MODEL)),
+                ('legajo', models.PositiveIntegerField(unique=True)),
+                ('telefono', models.CharField(verbose_name='teléfono', max_length=30, blank=True, null=True, validators=[django.core.validators.RegexValidator(regex='^\\+?[\\d()*-]+$', message='El formato de número de teléfono es incorrecto.')])),
+                ('celular', models.CharField(verbose_name='celular', max_length=30, validators=[django.core.validators.RegexValidator(regex='^\\+?[\\d()*-]+$', message='El formato de número de teléfono es incorrecto.')])),
+                ('foto', models.ImageField(blank=True, null=True, upload_to=app_usuarios.models.establecer_destino_archivo_imagen)),
             ],
             options={
-                'verbose_name': 'Docente',
-                'verbose_name_plural': 'Docentes',
-                'ordering': ['user__username'],
+                'verbose_name': 'Usuario',
+                'verbose_name_plural': 'Usuarios',
+                'ordering': ['email'],
             },
+            bases=('auth.user',),
+            managers=[
+                ('objects', django.contrib.auth.models.UserManager()),
+            ],
         ),
     ]

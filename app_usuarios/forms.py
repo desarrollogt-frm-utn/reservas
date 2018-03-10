@@ -1,5 +1,5 @@
 from django import forms
-from app_usuarios.models import Docente
+from app_usuarios.models import Usuario
 from app_usuarios.utils import validateEmail
 from captcha.fields import CaptchaField
 from django.utils.translation import ugettext as _
@@ -47,7 +47,7 @@ class CreateDocenteConfirmForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Docente
+        model = Usuario
         fields = ['password', 'first_name', 'last_name', 'foto', 'legajo', 'celular', 'telefono']
         widgets = {
             'password': forms.PasswordInput(attrs={'class': 'form-control'}),

@@ -3,13 +3,12 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse_lazy
 
-from app_usuarios.models import Docente
+from app_usuarios.models import Usuario
 from app_usuarios.forms import FilterUsuariosForm
 
 from rolepermissions.roles import assign_role, remove_role
-from rolepermissions.checkers import has_permission, has_role
+from rolepermissions.checkers import has_role
 from rolepermissions.decorators import has_role_decorator
 
 
@@ -32,9 +31,9 @@ def UserList(request):
         elif filter_val == '2':
             users = users.filter(is_active=False)
     for user in users:
-        docente_list = Docente.objects.filter(id=user.id)[:1]
+        users_list = Usuario.objects.filter(id=user.id)[:1]
         is_docente = False
-        if docente_list:
+        if users_list:
             is_docente = True
         usr = {
             'id': user.id,

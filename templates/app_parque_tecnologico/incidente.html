@@ -1,0 +1,75 @@
+{% extends 'app_parque_tecnologico/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Alta Recurso
+{% endblock %}
+
+{% block contenido %}
+<style type="text/css">
+    div.inline {
+        float:left;
+        margin:6px;  }
+    .clearBoth { clear:both; }
+</style>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+</div>
+<form method="post">
+{% csrf_token %}
+{{ form.as_p }}
+    <input id = "btnObtenerIncidente" type="button" value="Obtener Incidente"/>
+
+    <div>
+    Titulo:
+    <input class="form-control" id="id_titulo_incidente" name="id_titulo_incidente" type="text" contenteditable="false" disabled="disabled"/>
+</div>
+<div>
+    Usuario/s:
+    <input class="form-control" id="id_autor_incidente" name="id_autor_incidente" type="text" contenteditable="false" disabled="disabled"/>
+</div>
+    <div>
+    Ubicación:
+    <input class="form-control" id="id_ubicacion_incidente" name="id_ubicacion_incidente" type="text" contenteditable="false" disabled="disabled"/>
+</div>
+    <div>
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+        		<input class="btn btn-primary" type="submit" value="Continuar">
+    	   </div>
+        </div>
+    </div>
+
+</form>
+
+{% include 'app_parque_tecnologico/recurso.html' %}
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $("#btnObtenerIncidente").click(function(){
+            console.log("entre");
+            $.ajax({
+                url: "http://localhost:8000/parque_tecnologico/api/incidente/?inc=" + $('#id_nro_incidente').val() ,
+                dataType:'JSON',
+                success:function(data){
+                    $('#id_titulo_incidente').val(data[0].nombre);
+                    $('#id_ubicacion_incidente').val(data[0].ubicacion);
+                    user = "";
+                    $.each(data[1], function(key, val){
+                        user += val.firstname + " " + val.lastname + ", ";
+                    });
+                    $('#id_autor_incidente').val(user);
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}

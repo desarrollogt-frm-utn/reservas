@@ -1,7 +1,7 @@
 import django
 from django.db import models
 from django.contrib.auth.models import User
-from app_usuarios.models import Docente
+from app_usuarios.models import Usuario
 
 
 class Reserva(models.Model):
@@ -39,8 +39,8 @@ class Reserva(models.Model):
         verbose_name='Recurso de la Reserva',
     )
 
-    docente = models.ForeignKey(
-        Docente,
+    usuario = models.ForeignKey(
+        Usuario,
         related_name='reservas',
         blank=True,
         null=True

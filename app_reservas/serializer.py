@@ -4,8 +4,9 @@ from app_reservas.models import Comision, Docente
 
 from django.http import HttpResponse
 
-
 from app_reservas.models.horario import DIAS_SEMANA
+
+from .errors import not_found_error
 
 
 def get_materia_json(request, legajo):
@@ -24,6 +25,8 @@ def get_materia_json(request, legajo):
                 }
             )
         return HttpResponse(json.dumps(json_string), content_type='application/json')
+    else:
+        return not_found_error(request)
 
 
 def get_horarios_json(request, comision):
@@ -45,3 +48,5 @@ def get_horarios_json(request, comision):
             )
 
         return HttpResponse(json.dumps(json_string), content_type='application/json')
+    else:
+        return not_found_error(request)

@@ -12,7 +12,7 @@ from app_reservas.utils import (
     obtener_fecha_fin_reserva_cursado,
 )
 
-from app_usuarios.models import Docente as DocenteModel
+from app_usuarios.models import Usuario as UsuarioModel
 from app_reservas.models.historicoEstadoSolicitud import ESTADO_SOLICITUD
 
 
@@ -21,8 +21,8 @@ class SolicitudForm(forms.ModelForm):
     def __init__(self, request=None, *args, **kwargs):
         super(SolicitudForm, self).__init__(*args, **kwargs)
         try:
-            user = DocenteModel.objects.get(id=request.user.id)
-        except DocenteModel.DoesNotExist:
+            user = UsuarioModel.objects.get(id=request.user.id)
+        except UsuarioModel.DoesNotExist:
             user = None
 
         docente_comisiones_qs = []

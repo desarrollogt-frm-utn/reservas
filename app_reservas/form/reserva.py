@@ -4,11 +4,12 @@ from django.utils import timezone
 
 from app_reservas.models import (
     Comision,
-    Docente,
     HorarioSolicitud,
     Recurso,
     Solicitud,
 )
+
+from app_usuarios.models import Usuario
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
@@ -201,8 +202,8 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
             attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
     )
     docente = forms.ChoiceField(
-        label='Docente:',
-        choices=[('', '---------')] + [(docente.id, docente) for docente in Docente.objects.all()],
+        label='Usuario:',
+        choices=[('', '---------')] + [(user.id, user) for user in Usuario.objects.all()],
         widget=forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
     )
     nombreEvento = forms.CharField(
@@ -223,9 +224,9 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         return comision_obj
 
     def clean_docente(self):
-        docente = self.data['docente']
-        docente_obj = Docente.objects.get(id=docente)
-        return docente_obj
+        usuario = self.data['usuario']
+        usuario_obj = Usuario.objects.get(id=usuario)
+        return usuario_obj
 
     def clean_fechaFin(self):
         inicio = self.cleaned_data.get('fechaInicio')
@@ -268,8 +269,8 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         if not nombre_evento or nombre_evento == '':
             if tipo_solicitud == '1' or tipo_solicitud == '2':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                docente_obj = Docente.objects.get(id=self.data.get('docente'))
-                nombre_evento = "{0!s} - {1!s} - {2!s}".format(comision_obj.materia.nombre, comision_obj.comision, docente_obj.nombre)
+                usuario_obj = Usuario.objects.get(id=self.data.get('docente'))
+                nombre_evento = "{0!s} - {1!s} - {2!s}".format(comision_obj.materia.nombre, comision_obj.comision, usuario_obj.nombre)
             else:
                 raise forms.ValidationError(
                     "El nombre del evento no puede ser nulo"

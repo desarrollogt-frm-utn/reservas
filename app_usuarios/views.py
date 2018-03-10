@@ -5,7 +5,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
 from app_usuarios.utils import validateEmail
 from django.contrib.auth.models import User
-from .models import Docente
+from .models import Usuario
 from .utils import obtenerUsername
 from .forms import CreateDocenteForm, CreateDocenteConfirmForm
 from .tasks import enviarMailRegistro
@@ -22,9 +22,9 @@ def CreateDocente(request):
         form = CreateDocenteForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            docente_list = Docente.objects.filter(email=email)[:1]
-            if docente_list:
-                if not docente_list[0].is_active:
+            user_list = Usuario.objects.filter(email=email)[:1]
+            if user_list:
+                if not user_list[0].is_active:
                     return render(request, 'app_usuarios/warning_message.html', {
                         'title': 'Su registro requiere la aprobación de un administrador',
                         'message': 'Ya existe un usuario registrado con este email, pero requiere la aprobación de un administrador'
@@ -51,7 +51,7 @@ def CreateDocenteConfirm(request, code):
         email = "Byte no válido"
     if not validateEmail(email):
         return not_found_error(request)
-    docente_list = Docente.objects.filter(email=email)[:1]
+    docente_list = Usuario.objects.filter(email=email)[:1]
     if docente_list:
         if not docente_list[0].is_active:
             return render(request, 'app_usuarios/warning_message.html', {
@@ -68,7 +68,7 @@ def CreateDocenteConfirm(request, code):
             form = CreateDocenteConfirmForm(request.POST, request.FILES)
             if form.is_valid():
                 password = form.cleaned_data.pop('password')
-                user = Docente(**form.cleaned_data)
+                user = Usuario(**form.cleaned_data)
                 user.is_active = _getUserIsActive(email, form)
                 user.email = email
                 user.username = obtenerUsername(email)
@@ -102,7 +102,7 @@ def _getUserIsActive(email, form):
 class DocenteDetail(HasRoleMixin, DetailView):
     allowed_roles = 'administrador'
     template_name = 'app_usuarios/docente_detail.html'
-    model = Docente
+    model = Usuario
 
     def get_context_data(self, **kwargs):
         context = super(DocenteDetail, self).get_context_data(**kwargs)
@@ -118,7 +118,7 @@ class DocenteDetail(HasRoleMixin, DetailView):
 
 @has_role_decorator('administrador')
 def DocenteApprove(request, pk):
-    docente_obj = Docente.objects.get(id=pk)
+    docente_obj = Usuario.objects.get(id=pk)
     docente_obj.is_active = True
     docente_obj.save()
     return redirect(reverse_lazy('docente_detalle', kwargs={'pk': pk}))
@@ -126,7 +126,7 @@ def DocenteApprove(request, pk):
 
 @has_role_decorator('administrador')
 def DocenteReject(request, pk):
-    docente_obj = Docente.objects.get(id=pk)
+    docente_obj = Usuario.objects.get(id=pk)
     if request.method == 'POST':
         docente_obj.email = 'None'
         docente_obj.is_active = False
@@ -140,18 +140,18 @@ class UserProfileDetail(DetailView):
     model = User
 
     def get_object(self):
-        docente_obj = Docente.objects.filter(id=self.request.user.id)
-        if docente_obj:
-            return docente_obj[0]
+        user_obj = Usuario.objects.filter(id=self.request.user.id)
+        if user_obj:
+            return user_obj[0]
         return User.objects.get(id=self.request.user.id)
 
 
 class UserProfileUpdate(UpdateView):
-    model = Docente
+    model = Usuario
     fields = ['celular', 'telefono', 'foto']
     template_name = 'app_usuarios/user_profile_edit.html'
 
     def get_object(self):
-        docente_obj = Docente.objects.filter(id=self.request.user.id)
-        if docente_obj:
-            return docente_obj[0]
+        user_obj = Usuario.objects.filter(id=self.request.user.id)
+        if user_obj:
+            return user_obj[0]

@@ -16,7 +16,7 @@ from app_reservas.form import (
 
 from app_reservas.form.reserva import ReservaInlineFormset
 
-from app_usuarios.models import Docente as DocenteModel
+from app_usuarios.models import Usuario as UsarioModel
 
 
 def ReservaCreate(request):
@@ -34,10 +34,10 @@ def ReservaCreate(request):
 
             if formset.is_valid():
                 docente_obj = reserva_form.cleaned_data.get('docente')
-                docente_model_qs = DocenteModel.objects.filter(legajo=docente_obj.legajo)[:1]
-                docente_model = None
-                if docente_model_qs:
-                    docente_model = docente_model_qs[0]
+                usuario_model_qs = UsarioModel.objects.filter(legajo=docente_obj.legajo)[:1]
+                usuario_model = None
+                if usuario_model_qs:
+                    usuario_model = usuario_model_qs[0]
                 comision_obj = None
                 if reserva_form.cleaned_data.get('comision'):
                     comision_obj = reserva_form.cleaned_data.get('comision')
@@ -48,7 +48,7 @@ def ReservaCreate(request):
                     comision=comision_obj,
                     fechaInicio=reserva_form.cleaned_data.get('fechaInicio'),
                     fechaFin=reserva_form.cleaned_data.get('fechaFin'),
-                    solicitante=docente_model,
+                    solicitante=usuario_model,
                 )
                 HistoricoEstadoSolicitud.objects.create(
                     fechaInicio=timezone.now(),

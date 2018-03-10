@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 
 from ..models import CarruselImagenes, Reserva
 from app_reservas.models.horarioSolicitud import DIAS_SEMANA
-from app_usuarios.models import Docente
+from app_usuarios.models import Usuario
 
 
 class IndexView(TemplateView):
@@ -48,10 +48,10 @@ class LoginIndexView(TemplateView):
         context = super(LoginIndexView, self).get_context_data(**kwargs)
         # Añade el carrusel de imágenes del index, en caso de que exista.
         try:
-            docente_obj = Docente.objects.get(id=self.request.user.id)
-            reservas_list = Reserva.objects.filter(docente=docente_obj)[:5]
+            usuario_obj = Usuario.objects.get(id=self.request.user.id)
+            reservas_list = Reserva.objects.filter(usuario=usuario_obj)[:5]
 
-            context['docente'] = docente_obj
+            context['docente'] = usuario_obj
             context['reservas'] = reservas_list
             context['dias_semana'] = DIAS_SEMANA
         except ObjectDoesNotExist:

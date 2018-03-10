@@ -1,0 +1,281 @@
+{% extends 'app_parque_tecnologico/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Alta Recurso
+{% endblock %}
+
+{% block contenido %}
+<style type="text/css">
+    div.inline {
+        float:left;
+        margin:6px;  }
+    .clearBoth { clear:both; }
+</style>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+</div>
+<form method="post">
+{% csrf_token %}
+    {{form.tipo_recurso.label}}
+    {{form.tipo_recurso }}
+{{form.nombre.label}}
+{{form.nombre}}
+<div>
+    {{ form.nro_incidente.label }}
+    {{ form.nro_incidente }}
+    <input id = "btnObtenerIncidente" type="button" value="Obtener Incidente"/>
+</div>
+<div>
+    Titulo:
+    <input class="form-control" id="id_titulo_incidente" name="id_titulo_incidente" type="text" contenteditable="false" disabled="disabled"/>
+</div>
+<div>
+    Usuario/s:
+    <input class="form-control" id="id_autor_incidente" name="id_autor_incidente" type="text" contenteditable="false" disabled="disabled"/>
+</div>
+<div class="inline">
+    {{ trazabilidad.cuerpo.label }}
+    {{ trazabilidad.cuerpo }}
+</div>
+<div class="inline">
+    {{ trazabilidad.nivel.label }}
+    {{ trazabilidad.nivel }}
+</div>
+<div class="inline">
+    {{ trazabilidad.local.label }}
+    {{ trazabilidad.local }}
+</div>
+<div class="inline">
+    {{ trazabilidad.seccion.label }}
+    {{ trazabilidad.seccion }}
+</div>
+<div>
+    <table id="tabla_componentes" class="table">
+        <thead>
+        <tr>
+            <th>
+                {{componente.tipo_componente.label}}
+            </th>
+            <th>
+                {{componente.marca.label}}
+            </th>
+            <th>
+                {{componente.modelo.label}}
+            </th>
+            <th>
+                {{componente.capacidad.label}}
+            </th>
+            <th>
+                {{componente.nro_serie.label}}
+            </th>
+            <th>
+                {{componente.MAC.label}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                {{componente.tipo_componente}}
+            </td>
+            <td>
+                {{componente.marca}}
+            </td>
+            <td>
+                {{componente.modelo}}
+            </td>
+            <td>
+                {{componente.capacidad}}
+            </td>
+            <td>
+                {{componente.nro_serie}}
+            </td>
+            <td>
+                {{componente.MAC}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <input id = "btnAddComponent" type="button" value="Agregar Componente"/>
+</div>
+<div>
+    <p>
+        {{ patrimonial.patrimonial_boolean.label }}
+        {{ patrimonial.patrimonial_boolean }}
+    </p>
+    <table class="table">
+        <tr>
+            <td>
+                {{ patrimonial.id_patrimonial.label }}
+                {{ patrimonial.id_patrimonial }}
+            </td>
+            <td>
+                {{ patrimonial.nro_expediente.label }}
+                {{ patrimonial.nro_expediente }}
+            </td>
+            <td>
+                {{ patrimonial.responsable.label }}
+                {{ patrimonial.responsable }}
+            </td>
+        </tr>
+    </table>
+</div>
+    <div>
+        {{ form.observaciones.label }}
+        {{ form.observaciones }}
+    </div>
+    <div>
+    	<div class="col-md-6 col-md-offset-3">
+    		<div class="form-group">
+        		<input class="btn btn-primary" type="submit" value="Dar Alta">
+    	   </div>
+        </div>
+        </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Detecta cambios en el boolean de patrimonial para activar/desactivar campos
+    $('#id_patrimonial_boolean').change(function () {
+        var ckvalue = true;
+        if ($('#id_patrimonial_boolean').is(':checked')){
+            ckvalue = false
+        };
+        document.getElementById('id_id_patrimonial').disabled = ckvalue;
+        document.getElementById('id_nro_expediente').disabled = ckvalue;
+        document.getElementById('id_responsable').disabled = ckvalue;
+    });
+</script>
+<!--<script>-->
+<!--$('#tabla_componentes tr:last').after(-->
+<!--"<tr> \-->
+<!--<td> \-->
+<!--{{ patrimonial.id_patrimonial.label }} \-->
+<!--{{ patrimonial.id_patrimonial }} \-->
+<!--</td> \-->
+<!--<td> \-->
+<!--{{ patrimonial.nro_expediente.label }} \-->
+<!--{{ patrimonial.nro_expediente }} \-->
+<!--</td> \-->
+<!--<td> \-->
+<!--{{ patrimonial.responsable.label }} \-->
+<!--{{ patrimonial.responsable }} \-->
+<!--</td> \-->
+<!--</tr>"-->
+<!--);-->
+<!--</script>-->
+
+<script>
+    $(document).ready(function() {
+        $("#btnAddComponent").click(function(){
+            var rowCount = $('#tabla_componentes tr').length;
+//        $('#tabla_componentes tr:last').after(
+//                '<tr>' +
+//                '<td><input class="form-control" id="id_modelo" + rowCount +" maxlength="25" name="modelo" type="text" /></td>' +
+//                '<td>hola</td>' +
+//                '<td>hola</td>' +
+//                '<td>hola</td>' +
+//                '<td>hola</td>' +
+//                '<td>hola</td>' +
+//                '</tr>'
+//        );
+            var table = document.getElementById("tabla_componentes");
+            var row = table.insertRow(rowCount);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            cell1.innerHTML = '<select class="form-control" id="id_tipo_componente'+ rowCount +'" name="tipo_componente' + rowCount + '"></select>';
+            cell2.innerHTML = '<select class="form-control" id="id_marca'+ rowCount +'" name="marca' + rowCount + '"></select>';
+            cell3.innerHTML = '<input class="form-control" id="id_modelo'+ rowCount +'" maxlength="25" name="modelo' + rowCount + '" type="text" />';
+            cell4.innerHTML = '<input class="form-control" id="id_capacidad'+ rowCount +'" maxlength="10" name="capacidad' + rowCount + '" type="text" />';
+            cell5.innerHTML = '<input class="form-control" id="id_nro_serie'+ rowCount +'" maxlength="30" name="nro_serie' + rowCount + '" type="text" />';
+            cell6.innerHTML = '<input class="form-control" id="id_MAC'+ rowCount +'" maxlength="17" name="MAC' + rowCount + '" type="text" />';
+            rellenar_select(rowCount);
+        });
+        $("#btnObtenerIncidente").click(function(){
+            $.ajax({
+                url: "http://localhost:8000/parque_tecnologico/api/incidente/?inc=" + $('#id_nro_incidente').val() ,
+                dataType:'JSON',
+                success:function(data){
+                    $('#id_titulo_incidente').val(data[0].nombre);
+                    user = "";
+                    $.each(data[1], function(key, val){
+                        user += val.firstname + " " + val.lastname + ", ";
+                    });
+                    $('#id_autor_incidente').val(user);
+                }
+            });
+        });
+    });
+
+
+    function rellenar_select(id) {
+        var comp = '#id_tipo_componente' + id;
+        var marc = '#id_marca' + id;
+        $componete = $(comp);
+        $marca = $(marc);
+        $.ajax({
+            url: "http://localhost:8000/parque_tecnologico/api/tipo_componente/",
+            dataType:'JSON',
+            success:function(data){
+                $componete.append('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $componete.append("<option value='" + val.id + "'>" + val.nombre + "</option>");
+
+                })
+            }
+        });
+        $.ajax({
+            url: "http://localhost:8000/parque_tecnologico/api/marcas/",
+            dataType:'JSON',
+            success:function(data){
+                $marca.append('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $marca.append("<option value='" + val.id + "'>" + val.nombre + "</option>");
+
+                })
+            }
+        });
+    }
+
+</script>
+<script>
+    $("#id_cuerpo").change(function() {
+        // Script que detecta cambios en el select de cuerpo y rellena las opciones de nivel
+        $select = $('#id_nivel');
+        $.ajax({
+            url: "http://localhost:8000/parque_tecnologico/api/nivel/?c=" + $(this).val(),
+            dataType:'JSON',
+            success:function(data){
+                // Vacio las opciones de local en caso que se haya seleccionado
+                $("#id_local").html('<option value="" selected="selected">---------</option>');
+                $select.html('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $select.append('<option value="' + val.id + '">' + val.numero + '</option>');
+
+                })
+            }
+        });
+    });
+    $("#id_nivel").change(function() {
+        $select = $('#id_local');
+        $.ajax({
+            url: "http://localhost:8000/parque_tecnologico/api/local/?n=" + $(this).val(),
+            dataType:'JSON',
+            success:function(data){
+                $select.html('<option value="" selected="selected">---------</option>');
+                $.each(data, function(key, val){
+                    $select.append('<option value="' + val.id + '">' + val.numero + '</option>');
+
+                })
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.db import models
 
-from app_usuarios.models import Docente as DocenteModel
+from app_usuarios.models import Usuario as UsuarioModel
 
 from django.utils.translation import ugettext as _
 
@@ -52,7 +52,7 @@ class Solicitud(models.Model):
     )
 
     solicitante = models.ForeignKey(
-        DocenteModel,
+        UsuarioModel,
         related_name='solicutudes',
         blank=True,
         null=True

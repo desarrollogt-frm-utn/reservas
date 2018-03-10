@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'djangobower',
     'app_facturacion',
+    'app_parque_tecnologico',
     'app_reservas.apps.ReservasConfig',
     'app_usuarios',
     'rolepermissions',
@@ -144,6 +145,12 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'app_usuarios.emailLogin.EmailLogin', # Email login
+    'app_parque_tecnologico.adapters.glpiLogin.GlpiLogin'
+)
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -159,18 +166,16 @@ MEDIA_URL = '/' + DJANGO_URL_PREFIX + 'media/'
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
-    'bootstrap-datepicker',
-    'bootswatch-dist#flatly',
+    'bootstrap-datepicker#1.6.0',
+    'bootswatch-dist#3.3.6-flatly',
     'font-awesome',
     'fullcalendar-scheduler',
     'handsontable#0.31.2',
     'jquery#1.9.1',
-    'pace',
-    'qtip2',
-    'slick-carousel',
-    'bootstrap',
-    'seiyria-bootstrap-slider#7.0.0',
-    'eonasdan-bootstrap-datetimepicker',
+    'pace#1.0.2',
+    'qtip2#2.2.1',
+    'slick-carousel#1.6.0',
+    'bootstrap'
 )
 
 # Token de Google Calendar, utilizado para consultar la información de eventos
@@ -187,10 +192,6 @@ ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
 
 GOOGLE_SECRET_JSON_FILE = os.path.join(BASE_DIR, 'Reservas-FRM-UTN.json')
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend', # default
-    'app_usuarios.emailLogin.EmailLogin', # Email login
-)
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
@@ -220,3 +221,6 @@ RAVEN_CONFIG = {
     # release based on the git info.
     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
+GLPI_URL = os.environ.get('GLPI_URL', 'http://localhost/glpi')
+GLPI_USER = os.environ.get('GLPI_USER', '')
+GLPI_PASS = os.environ.get('GLPI_PASS', '')

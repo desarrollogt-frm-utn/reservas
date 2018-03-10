@@ -38,7 +38,7 @@ from app_reservas.models.horarioSolicitud import DIAS_SEMANA, TIPO_RECURSO
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 from app_reservas.form import FilterSolicitudForm, ReservaAssignForm, SolicitudInlineFormset, SolicitudForm
 
-from app_usuarios.models import Docente as DocenteModel
+from app_usuarios.models import Usuario as UsuarioModel
 
 from app_reservas.tasks import crear_evento_recurso_especifico
 
@@ -91,8 +91,8 @@ def SolicitudCreate(request):
             formset = SolicitudInlineFormset(request.POST, request.FILES)
 
             if formset.is_valid():
-                docente_model = DocenteModel.objects.get(id=request.user.id)
-                docente_obj = Docente.objects.get(legajo=docente_model.legajo)
+                usuario_model = UsuarioModel.objects.get(id=request.user.id)
+                docente_obj = Docente.objects.get(legajo=usuario_model.legajo)
                 comision_obj = None
                 if solicitud_form.cleaned_data.get('comision'):
                     comision_obj = solicitud_form.cleaned_data.get('comision')
@@ -103,7 +103,7 @@ def SolicitudCreate(request):
                     comision=comision_obj,
                     fechaInicio=solicitud_form.cleaned_data.get('fechaInicio'),
                     fechaFin=solicitud_form.cleaned_data.get('fechaFin'),
-                    solicitante=docente_model,
+                    solicitante=usuario_model,
                 )
                 HistoricoEstadoSolicitud.objects.create(
                     fechaInicio=timezone.now(),
@@ -141,8 +141,8 @@ class SolicitudList(ListView):
         user = self.request.user
         solicitudes_qs = Solicitud.objects.all()
         if not has_permission(user, 'edit_reserva_estado'):
-            docente = DocenteModel.objects.get(id=user.id)
-            solicitudes_qs = solicitudes_qs.filter(solicitante=docente)
+            usuario = UsuarioModel.objects.get(id=user.id)
+            solicitudes_qs = solicitudes_qs.filter(solicitante=usuario)
         if filter_val:
             solicitudes_qs = solicitudes_qs.filter(
                 historicoestadosolicitud__estadoSolicitud__id=filter_val,
@@ -165,8 +165,8 @@ class SolicitudDetail(DetailView):
     def get_template_names(self):
         user = self.request.user
         solicitud_obj = self.object
-        docente_list = DocenteModel.objects.filter(id=user.id)[:1]
-        if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
+        usuarios_list = UsuarioModel.objects.filter(id=user.id)[:1]
+        if not (has_permission(user, 'edit_reserva_estado') or (usuarios_list and usuarios_list[0].legajo == solicitud_obj.docente.legajo)):
             return not_found_error(self.request)
 
         else:
@@ -267,9 +267,9 @@ def SolicitudReject(request, pk):
         return not_found_error(request)
     solicitud_obj = solicitud_qs[0]
     user = request.user
-    docente_list = DocenteModel.objects.filter(id=user.id)[:1]
+    usuarios_list = UsuarioModel.objects.filter(id=user.id)[:1]
 
-    if not (has_permission(user, 'edit_reserva_estado') or (docente_list and docente_list[0].legajo == solicitud_obj.docente.legajo)):
+    if not (has_permission(user, 'edit_reserva_estado') or (usuarios_list and usuarios_list[0].legajo == solicitud_obj.docente.legajo)):
         return not_found_error(request)
 
     if request.method == 'POST':
