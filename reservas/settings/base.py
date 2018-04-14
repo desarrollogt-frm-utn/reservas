@@ -148,7 +148,7 @@ STATICFILES_DIRS = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
     'app_usuarios.emailLogin.EmailLogin', # Email login
-    'app_parque_tecnologico.adapters.glpiLogin.GlpiLogin'
+    'app_usuarios.glpiLogin.GlpiLogin'
 )
 
 STATICFILES_FINDERS = (
