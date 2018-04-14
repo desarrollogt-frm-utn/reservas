@@ -4,7 +4,7 @@ from django.db import models
 class DocenteComision(models.Model):
     # Atributos
     grado = models.CharField(
-        max_length=25,
+        max_length=255,
         blank=True,
         verbose_name='Grado',
     )

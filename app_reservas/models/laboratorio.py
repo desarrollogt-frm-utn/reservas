@@ -28,7 +28,7 @@ class Laboratorio(Recurso):
     """
     # Atributos
     nombre = models.CharField(
-        max_length=50,
+        max_length=255,
         verbose_name='Nombre',
     )
     alias = models.CharField(

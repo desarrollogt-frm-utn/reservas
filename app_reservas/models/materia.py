@@ -5,12 +5,12 @@ from django.db import models
 class Materia(models.Model):
     # Atributos
     nombre = models.CharField(
-        max_length=50,
+        max_length=255,
         blank=True,
         verbose_name='Nombre',
     )
     codigo = models.CharField(
-        max_length=5,
+        max_length=255,
         blank=False,
         verbose_name='Código',
     )

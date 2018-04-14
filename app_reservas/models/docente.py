@@ -4,12 +4,12 @@ from django.db import models
 class Docente(models.Model):
     # Atributos
     nombre = models.CharField(
-        max_length=50,
+        max_length=255,
         blank=True,
         verbose_name='Nombre',
     )
     correo = models.EmailField(
-        max_length=50,
+        max_length=255,
         blank=True,
         verbose_name='Correo',
     )

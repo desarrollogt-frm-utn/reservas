@@ -12,7 +12,7 @@ def obtener_codigo_aleatorio():
 class Accesorio(models.Model):
     # Atributos
     identificador = models.CharField(
-        max_length=50,
+        max_length=255,
         verbose_name='Nombre',
     )
 
