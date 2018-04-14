@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import os
+import sys
 from celery import (
     group,
     shared_task,
@@ -8,6 +9,9 @@ from celery import (
 import json
 
 from app_reservas.adapters.google_calendar import crear_evento
+
+from app_reservas.adapters.frm_utn import get_especialidades, get_materias
+
 
 @shared_task(name='obtener_eventos_recursos')
 def obtener_eventos_recursos():
@@ -62,3 +66,44 @@ def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta):
     from .models import Recurso
     recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
     obtener_eventos_recurso_especifico(recurso_obj)
+
+
+@shared_task(name='obtener_especialidades')
+def obtener_especialidades():
+    from .models import Especialidad
+    try:
+        json_especialidades = get_especialidades()
+        for especialidad in json_especialidades:
+            especialidad_obj = Especialidad.objects.filter(codigo=especialidad.get('especialid'))
+            if not especialidad_obj:
+                Especialidad.object.create(
+                    codigo=especialidad.get('especialid'),
+                    nombre=especialidad.get('Column1')
+                )
+    except:
+        print("Error al obtener especialidades: ", sys.exc_info()[0])
+        raise
+
+
+@shared_task(name='obtener_materias')
+def obtener_materias():
+    from .models import Materia, Plan, Especialidad
+    try:
+        json_materias = get_materias()
+        for materia in json_materias:
+            materia_obj = Materia.objects.filter(codigo=materia.get('especialid'))
+            if not materia_obj:
+                plan_obj = Plan.objects.filter(nombre=materia.get('plan'))
+                especialidad_obj = Especialidad.object.filter(codigo=materia.get('especialid'))
+                if not plan_obj:
+                    plan_obj = Plan.object.create(nombre=materia.get('plan'))
+                if especialidad_obj and plan_obj:
+                    Materia.object.create(
+                        codigo=materia.get('especialid'),
+                        nombre=materia.get('Column1'),
+                        plan=plan_obj,
+                        especialidad=especialidad_obj
+                    )
+    except:
+        print("Error al obtener materias: ", sys.exc_info()[0])
+        raise

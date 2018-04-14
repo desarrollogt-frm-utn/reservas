@@ -224,3 +224,5 @@ RAVEN_CONFIG = {
 GLPI_URL = os.environ.get('GLPI_URL', 'http://localhost/glpi')
 GLPI_USER = os.environ.get('GLPI_USER', '')
 GLPI_PASS = os.environ.get('GLPI_PASS', '')
+
+WSDL_URL = os.environ.get('WSDL_URL','')

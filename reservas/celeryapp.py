@@ -23,6 +23,14 @@ app.conf.CELERYBEAT_SCHEDULE = {
         'task': 'obtener_eventos_recursos',
         'schedule': timedelta(minutes=15)
     },
+    'obtener_especialidades': {
+        'task': 'obtener_especialidades',
+        'schedule': timedelta(days=30)
+    },
+    'obtener_materias': {
+        'task': 'obtener_materias',
+        'schedule': timedelta(days=30)
+    },
 }
 
 
