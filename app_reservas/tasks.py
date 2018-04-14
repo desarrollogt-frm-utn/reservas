@@ -95,23 +95,25 @@ def obtener_materias():
     try:
         json_materias = get_materias()
         for materia in json_materias:
-            try:
-                materia_obj = Materia.objects.filter(codigo=materia.get('especialid'))
+            #try:
+                materia_obj = Materia.objects.filter(codigo=materia.get('materia'))
                 if not materia_obj:
-                    plan_obj = Plan.objects.filter(nombre=materia.get('plan'))
-                    especialidad_obj = Especialidad.object.filter(codigo=materia.get('especialid'))
-                    if not plan_obj:
-                        plan_obj = Plan.object.create(nombre=materia.get('plan'))
-                    if especialidad_obj and plan_obj:
+                    plan_list = Plan.objects.filter(nombre=materia.get('plan'))
+                    especialidad_list = Especialidad.objects.filter(codigo=materia.get('especialid'))
+                    if not plan_list:
+                        plan_obj = Plan.objects.create(nombre=materia.get('plan'))
+                    else:
+                        plan_obj = plan_list[0]
+                    if especialidad_list and plan_obj:
                         nombre = materia.get('Column1')
-                        Materia.object.create(
-                            codigo=materia.get('especialid'),
+                        Materia.objects.create(
+                            codigo=materia.get('materia'),
                             nombre=nombre[:255] if nombre else "",
                             plan=plan_obj,
-                            especialidad=especialidad_obj
+                            especialidad=especialidad_list[0]
                         )
-            except:
-                print("Error al guardar materia: ", sys.exc_info()[0])
+            #except:
+               # print("Error al guardar materia: ", sys.exc_info()[0])
     except:
         print("Error al obtener materias: ", sys.exc_info()[0])
         raise

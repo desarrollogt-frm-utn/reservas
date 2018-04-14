@@ -47,6 +47,6 @@ class MateriaAdmin(admin.ModelAdmin):
 
         if request.method == "POST":
             obtener_materias()
-            return redirect('admin/app_reservas/materia/')
+            return redirect('/admin/app_reservas/materia/')
 
         return render(request, 'admin/app_reservas/confirm.html', context)

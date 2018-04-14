@@ -43,6 +43,6 @@ class EspecialidadAdmin(admin.ModelAdmin):
 
         if request.method == "POST":
             obtener_especialidades()
-            return redirect('admin/app_reservas/especialidad/')
+            return redirect('/admin/app_reservas/especialidad/')
 
         return render(request, 'admin/app_reservas/confirm.html', context)
