@@ -76,7 +76,7 @@ def obtener_especialidades():
         for especialidad in json_especialidades:
             especialidad_obj = Especialidad.objects.filter(codigo=especialidad.get('especialid'))
             if not especialidad_obj:
-                Especialidad.object.create(
+                Especialidad.objects.create(
                     codigo=especialidad.get('especialid'),
                     nombre=especialidad.get('Column1')
                 )
