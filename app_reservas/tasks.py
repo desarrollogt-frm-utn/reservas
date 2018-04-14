@@ -74,13 +74,16 @@ def obtener_especialidades():
     try:
         json_especialidades = get_especialidades()
         for especialidad in json_especialidades:
-            especialidad_obj = Especialidad.objects.filter(codigo=especialidad.get('especialid'))
-            if not especialidad_obj:
-                nombre = especialidad.get('Column1')
-                Especialidad.objects.create(
-                    codigo=especialidad.get('especialid'),
-                    nombre=nombre[:255] if nombre else ""
-                )
+            try:
+                especialidad_obj = Especialidad.objects.filter(codigo=especialidad.get('especialid'))
+                if not especialidad_obj:
+                    nombre = especialidad.get('Column1')
+                    Especialidad.objects.create(
+                        codigo=especialidad.get('especialid'),
+                        nombre=nombre[:255] if nombre else ""
+                    )
+            except:
+                print("Error al guardar especialidad: ", sys.exc_info()[0])
     except:
         print("Error al obtener especialidades: ", sys.exc_info()[0])
         raise
@@ -92,20 +95,23 @@ def obtener_materias():
     try:
         json_materias = get_materias()
         for materia in json_materias:
-            materia_obj = Materia.objects.filter(codigo=materia.get('especialid'))
-            if not materia_obj:
-                plan_obj = Plan.objects.filter(nombre=materia.get('plan'))
-                especialidad_obj = Especialidad.object.filter(codigo=materia.get('especialid'))
-                if not plan_obj:
-                    plan_obj = Plan.object.create(nombre=materia.get('plan'))
-                if especialidad_obj and plan_obj:
-                    nombre = materia.get('Column1')
-                    Materia.object.create(
-                        codigo=materia.get('especialid'),
-                        nombre=nombre[:255] if nombre else "",
-                        plan=plan_obj,
-                        especialidad=especialidad_obj
-                    )
+            try:
+                materia_obj = Materia.objects.filter(codigo=materia.get('especialid'))
+                if not materia_obj:
+                    plan_obj = Plan.objects.filter(nombre=materia.get('plan'))
+                    especialidad_obj = Especialidad.object.filter(codigo=materia.get('especialid'))
+                    if not plan_obj:
+                        plan_obj = Plan.object.create(nombre=materia.get('plan'))
+                    if especialidad_obj and plan_obj:
+                        nombre = materia.get('Column1')
+                        Materia.object.create(
+                            codigo=materia.get('especialid'),
+                            nombre=nombre[:255] if nombre else "",
+                            plan=plan_obj,
+                            especialidad=especialidad_obj
+                        )
+            except:
+                print("Error al guardar materia: ", sys.exc_info()[0])
     except:
         print("Error al obtener materias: ", sys.exc_info()[0])
         raise
