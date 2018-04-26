@@ -8,9 +8,11 @@ from celery import (
 )
 import json
 
+from django.utils.timezone import datetime
 from app_reservas.adapters.google_calendar import crear_evento
 
-from app_reservas.adapters.frm_utn import get_especialidades, get_materias
+from app_reservas.adapters.frm_utn import get_especialidades, get_materias, get_comisiones_docentes, get_horarios
+from app_reservas.utils import filter_by_comision_materia_especialidad, parse_time
 
 
 @shared_task(name='obtener_eventos_recursos')
@@ -116,4 +118,60 @@ def obtener_materias():
                # print("Error al guardar materia: ", sys.exc_info()[0])
     except:
         print("Error al obtener materias: ", sys.exc_info()[0])
+        raise
+
+
+@shared_task(name='obtener_comisiones')
+def obtener_comisiones():
+    from .models import Comision, Docente, DocenteComision, Horario, Materia
+    try:
+        json_comisiones = get_comisiones_docentes(datetime.now().year)
+        json_horarios = get_horarios()
+        for comision in json_comisiones:
+            #try:
+                materia_list = Materia.objects.filter(codigo=comision.get('materia'))
+                if materia_list:
+                    materia_obj = materia_list[0]
+                    comision_str = comision.get('curso').replace(' ', '')
+                    comision_obj = Comision.objects.filter(comision=comision_str, materia=materia_obj, anioacademico=datetime.now().year)
+                    if not comision_obj:
+                        horario_list = filter_by_comision_materia_especialidad(json_horarios, comision.get('comision'), comision.get('materia'), comision.get('especialid'))
+                        if horario_list:
+                            created_comision_obj = Comision.objects.create(
+                                comision=comision_str,
+                                anioacademico=datetime.now().year,
+                                codigo=comision.get('comision'),
+                                cuatrimestre=horario_list[0]['cuatrimest'],
+                                materia=materia_obj
+                            )
+                            for horario in horario_list:
+                                Horario.objects.create(
+                                    dia=horario.get('dia'),
+                                    duracion=horario.get('duracion'),
+                                    horaInicio=parse_time(horario.get('horacomien')),
+                                    comision=created_comision_obj
+                                )
+                            docente_list = filter_by_comision_materia_especialidad(json_comisiones, comision.get('comision'), comision.get('materia'), comision.get('especialid'))
+                            for docente in docente_list:
+                                docente_list = Docente.objects.filter(legajo=docente.get('legajo'))
+                                if not docente_list:
+                                    docente_obj = Docente.objects.create(
+                                        nombre=docente.get('nombre'),
+                                        legajo=docente.get('legajo'),
+                                        correo=""
+                                    )
+                                else:
+                                    docente_obj = docente_list[0]
+
+                                DocenteComision.objects.create(
+                                    docente=docente_obj,
+                                    comision=created_comision_obj,
+                                    grado=docente.get('grado')
+                                )
+
+
+            #except:
+             #   print("Error al guardar la comision: ", sys.exc_info()[0])
+    except:
+        print("Error al obtener comisiones: ", sys.exc_info()[0])
         raise

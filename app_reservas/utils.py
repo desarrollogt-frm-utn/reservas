@@ -85,3 +85,22 @@ def obtener_recurso(id):
     if model:
         return model.objects.filter(id=id)[0]
     return None
+
+
+def parse_time(time):
+    str_time = str(time)
+    if len(str_time) > 2:
+        hora = "{0!s}:{1!s}".format(str_time[:-2], str_time[-2:])
+    elif len(str_time) <= 2:
+        hora = "{0!s}:00".format(str_time)
+    return timezone.datetime.strptime(hora, "%H:%M").time()
+
+
+def add_minutes_to_time(time, minutes):
+    hora = (datetime.datetime.combine(datetime.date(1, 1, 1), time) + datetime.timedelta(
+        minutes=minutes))
+    return hora.time()
+
+
+def filter_by_comision_materia_especialidad(list_json, comision, materia, especialidad):
+    return [i for i in list_json if i['comision'] == comision and i['materia'] == materia and i['especialid'] == especialidad]

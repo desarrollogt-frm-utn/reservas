@@ -7,7 +7,7 @@ from .cuerpo import CuerpoAdmin
 from .docente import Docente
 from .docenteComision import DocenteComision
 from .especialidad import EspecialidadAdmin
-from .comision import HorarioCursadoAdmin
+from .comision import ComisionAdmin
 from .imagenCarrusel import ImagenCarrusel
 from .laboratorio import LaboratorioAdmin
 from .laboratorioInformatico import LaboratorioInformaticoAdmin
