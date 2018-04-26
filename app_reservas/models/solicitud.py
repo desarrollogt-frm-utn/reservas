@@ -2,7 +2,7 @@ from django.db import models
 
 from app_usuarios.models import Usuario as UsuarioModel
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 TIPO_SOLICITUD = {
     '1': _(u'Cursado Completo'),
