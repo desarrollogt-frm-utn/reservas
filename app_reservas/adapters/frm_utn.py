@@ -3,7 +3,6 @@ from suds.client import Client
 import json
 
 
-
 def get_horarios():
     url = WSDL_URL
     client = Client(url)
@@ -75,3 +74,14 @@ def get_cantidad_inscriptos(anio, especialidad, plan, materia, comision):
     }
 
     return response
+
+
+def get_horarios_comision(anio, especialidad, plan, materia, comision):
+
+    url = WSDL_URL
+    client = Client(url)
+
+    json_response = client.service.seticGetHorariosPorComision(anio, especialidad, plan, materia, comision)
+    parse_json = json.loads(json_response)
+
+    return parse_json

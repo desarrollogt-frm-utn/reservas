@@ -98,22 +98,24 @@ def obtener_materias():
         json_materias = get_materias()
         for materia in json_materias:
             #try:
-                materia_obj = Materia.objects.filter(codigo=materia.get('materia'))
-                if not materia_obj:
-                    plan_list = Plan.objects.filter(nombre=materia.get('plan'))
-                    especialidad_list = Especialidad.objects.filter(codigo=materia.get('especialid'))
-                    if not plan_list:
-                        plan_obj = Plan.objects.create(nombre=materia.get('plan'))
-                    else:
-                        plan_obj = plan_list[0]
-                    if especialidad_list and plan_obj:
-                        nombre = materia.get('Column1')
-                        Materia.objects.create(
-                            codigo=materia.get('materia'),
-                            nombre=nombre[:255] if nombre else "",
-                            plan=plan_obj,
-                            especialidad=especialidad_list[0]
-                        )
+                especialidad_list = Especialidad.objects.filter(codigo=materia.get('especialid'))
+                if especialidad_list:
+                    especialidad_obj = especialidad_list[0]
+                    materia_obj = Materia.objects.filter(codigo=materia.get('materia'), especialidad=especialidad_obj)
+                    if not materia_obj:
+                        plan_list = Plan.objects.filter(nombre=materia.get('plan'))
+                        if not plan_list:
+                            plan_obj = Plan.objects.create(nombre=materia.get('plan'))
+                        else:
+                            plan_obj = plan_list[0]
+                        if plan_obj:
+                            nombre = materia.get('Column1')
+                            Materia.objects.create(
+                                codigo=materia.get('materia'),
+                                nombre=nombre[:255] if nombre else "",
+                                plan=plan_obj,
+                                especialidad=especialidad_obj
+                            )
             #except:
                # print("Error al guardar materia: ", sys.exc_info()[0])
     except:
@@ -123,13 +125,16 @@ def obtener_materias():
 
 @shared_task(name='obtener_comisiones')
 def obtener_comisiones():
-    from .models import Comision, Docente, DocenteComision, Horario, Materia
+    from .models import Comision, Docente, DocenteComision, Especialidad, Horario, Materia
     try:
         json_comisiones = get_comisiones_docentes(datetime.now().year)
         json_horarios = get_horarios()
         for comision in json_comisiones:
             #try:
-                materia_list = Materia.objects.filter(codigo=comision.get('materia'))
+            especialidad_list = Especialidad.objects.filter(codigo=comision.get('especialid'))
+            if especialidad_list:
+                especialidad_obj = especialidad_list[0]
+                materia_list = Materia.objects.filter(codigo=comision.get('materia'), especialidad=especialidad_obj)
                 if materia_list:
                     materia_obj = materia_list[0]
                     comision_str = comision.get('curso').replace(' ', '')
