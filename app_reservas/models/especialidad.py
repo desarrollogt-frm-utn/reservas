@@ -18,6 +18,11 @@ class Especialidad(models.Model):
         verbose_name='Codigo',
     )
 
+    visible = models.BooleanField(
+        default=False,
+        verbose_name='Visible en administración de aulas'
+    )
+
 
     class Meta:
         """

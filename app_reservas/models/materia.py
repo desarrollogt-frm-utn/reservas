@@ -9,10 +9,10 @@ class Materia(models.Model):
         blank=True,
         verbose_name='Nombre',
     )
-    codigo = models.CharField(
-        max_length=255,
-        blank=False,
-        verbose_name='Código',
+    codigo = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Codigo',
     )
 
     #relaciones
@@ -32,7 +32,7 @@ class Materia(models.Model):
         Información de la clase.
         """
         app_label = 'app_reservas'
-        ordering = ['codigo']
+        ordering = ['nombre']
         verbose_name = 'Materia'
         verbose_name_plural = 'Materias'
 

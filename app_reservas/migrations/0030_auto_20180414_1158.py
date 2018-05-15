@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='materia',
             name='codigo',
-            field=models.CharField(verbose_name='Código', max_length=255),
+            field=models.PositiveIntegerField(verbose_name='Codigo', blank=True, null=True),
         ),
         migrations.AlterField(
             model_name='materia',
@@ -60,5 +60,14 @@ class Migration(migrations.Migration):
             model_name='tipoaccesorio',
             name='nombre',
             field=models.CharField(verbose_name='Nombre', max_length=255, blank=True),
+        ),
+        migrations.AlterModelOptions(
+            name='materia',
+            options={'verbose_name': 'Materia', 'verbose_name_plural': 'Materias', 'ordering': ['nombre']},
+        ),
+        migrations.AddField(
+            model_name='especialidad',
+            name='visible',
+            field=models.BooleanField(verbose_name='Visible en administración de aulas', default=False),
         ),
     ]

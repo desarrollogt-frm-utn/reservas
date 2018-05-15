@@ -23,6 +23,13 @@ class MateriaAdmin(admin.ModelAdmin):
         'plan',
     )
 
+    search_fields = (
+        'nombre',
+        'especialidad__nombre',
+        'codigo',
+
+    )
+
     def get_urls(self):
         urls = super(MateriaAdmin, self).get_urls()
         add_urls = [

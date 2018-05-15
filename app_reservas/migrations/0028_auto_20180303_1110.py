@@ -195,7 +195,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('nombre', models.CharField(verbose_name='Nombre', max_length=50, blank=True)),
-                ('codigo', models.CharField(verbose_name='Código', max_length=5)),
+                ('codigo', models.PositiveIntegerField(verbose_name='Código', blank=True, null=True)),
                 ('especialidad', models.ForeignKey(verbose_name='Especialidad', to='app_reservas.Especialidad')),
             ],
             options={

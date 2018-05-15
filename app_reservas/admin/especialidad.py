@@ -16,6 +16,15 @@ class EspecialidadAdmin(admin.ModelAdmin):
     list_display = (
         'nombre',
         'descripcion',
+        'visible'
+    )
+
+    list_filter = (
+        'visible',
+    )
+
+    search_fields = (
+        'nombre',
     )
 
 

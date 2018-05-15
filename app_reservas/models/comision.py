@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -82,3 +81,23 @@ class Comision(models.Model):
         else:
             s = '{0!s}'.format(self.get_nombre_corto())
         return s
+
+    def get_horarios_comision_academico(self):
+        from app_reservas.adapters.frm_utn import get_horarios_comision
+        return get_horarios_comision(
+            self.anioacademico,
+            self.materia.especialidad.codigo,
+            self.materia.plan.nombre,
+            self.materia.codigo,
+            self.codigo
+        )
+
+    def get_cantidad_inscriptos(self):
+        from app_reservas.adapters.frm_utn import get_cantidad_inscriptos
+        return get_cantidad_inscriptos(
+            self.anioacademico,
+            self.materia.especialidad.codigo,
+            self.materia.plan.nombre,
+            self.materia.codigo,
+            self.codigo
+        ).get('cantidad')
