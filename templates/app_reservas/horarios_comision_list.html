@@ -1,0 +1,213 @@
+{% extends 'app_reservas/base.html' %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Baja Solicitud
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+            <h1>Listado de comisiones</h1>
+        </div>
+
+<form method="get" action="{% url 'comisiones_listar' %}">
+    <div style="margin-top: 25px; margin-bottom: 50 px; margin-right: 100px; margin-left: 25px;" align="center">
+    <div align="left">
+        <div style="width:47%; margin-right: 2%;display:inline-table;"> Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
+        <div style="width:47%; margin-left: 2%;display:inline-table;"> Comision: {{comision_form.especialidad}} </div>
+    </div>
+    <div style="align:right; margin-right: 2%">
+        <input class="btn" type="submit" value="Filtrar"/>
+    </div>
+    </div>
+</form>
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<td>Detalle</td>
+			<td>Cantidad de inscriptos</td>
+			<td>Lunes</td>
+			<td>Martes</td>
+			<td>Miercoles</td>
+			<td>Jueves</td>
+			<td>Viernes</td>
+            <td>Sábado</td>
+		</tr>
+	</thead>
+	<tbody>
+		{% for comision in comisiones %}
+		<tr>
+			<td>{{comision.comision}} - {{comision.materia.nombre}} - {{comision.materia.especialidad.nombre}}</td>
+			<td>
+				{% if comision.get_cantidad_inscriptos %}
+					{{ comision.get_cantidad_inscriptos }}
+				{% else %}
+				   ---
+				{% endif %}
+			</td>
+
+			{% for dia in dias_semana %}
+				<td>
+					{% with horario_filtrado=comision.get_horarios_comision_academico|get_horario:dia %}
+						{% if horario_filtrado %}
+							{{ horario_filtrado.hora_inicio }} a {{ horario_filtrado.hora_fin }}
+						{% endif %}
+					{% endwith %}
+				</td>
+			{% endfor %}
+
+
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+
+<ul class="pager">
+	<li>
+		{% if page_obj.has_previous %}
+       	 <a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a>
+		{% endif %}
+        </li>
+	<li>
+		{% if page_obj.has_next %}
+     	 <a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a>
+    	{% endif %}
+    </li>
+</ul>
+
+{% if page_obj.has_other_pages %}
+  <ul class="pager">
+    {% if page_obj.has_previous %}
+      {% if page_obj.has_previous %}
+       	 <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+		{% endif %}
+    {% else %}
+      <li class="disabled"><span>Anterior</span></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+	  <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+    {% else %}
+      <li class="disabled"><span>Siguiente</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+{% if page_obj.has_other_pages %}
+  <ul class="pager">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+<div align="center">
+
+{% if page_obj.has_other_pages %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+</div>
+
+
+
+
+
+<div align="center">
+
+{% if page_obj.has_other_pages %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+    {% else %}
+      <li class="disabled"><span>Anterior</span></li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+    {% else %}
+      <li class="disabled"><span>Siguiente</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+</div>
+
+
+<div align="center">
+
+{% if page_obj.has_other_pages %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+    {% else %}
+      <li class="disabled"><span>Anterior</span></li>
+    {% endif %}
+    {% for i in page.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+    {% else %}
+      <li class="disabled"><span>Siguiente</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+</div>
+
+
+{% endblock %}

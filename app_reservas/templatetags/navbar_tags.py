@@ -9,7 +9,7 @@ from ..models import (
     TipoRecursoAli,
 )
 
-from app_reservas.utils import obtener_recurso
+from app_reservas.utils import obtener_recurso, parse_time, add_minutes_to_time
 
 
 register = template.Library()
@@ -29,6 +29,17 @@ def obtener_informacion_navbar(context):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@register.filter
+def get_horario(horarios, dia):
+    for horario in horarios:
+        if horario.get('dia') == int(dia):
+            hora_inicio = parse_time(horario.get('horacomien'))
+            horario['hora_inicio'] = hora_inicio
+            horario['hora_fin'] = add_minutes_to_time(hora_inicio, horario.get('duracion'))
+            return horario
+    return None
 
 
 @register.filter
