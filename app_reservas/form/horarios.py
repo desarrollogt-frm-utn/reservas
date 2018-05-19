@@ -14,3 +14,7 @@ class FilterComisionForm(forms.Form):
         queryset=Especialidad.objects.filter(visible=True),
         widget=forms.Select(attrs={'id': 'especialidad_select', 'class': 'form-control'})
     )
+
+    buscar = forms.CharField(
+        widget=forms.TextInput(attrs={'id': 'especialidad_select', 'class': 'form-control'})
+    )

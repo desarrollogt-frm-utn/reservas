@@ -34,6 +34,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY',
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEST = False
 
 ALLOWED_HOSTS = []
 
@@ -60,6 +61,7 @@ INSTALLED_APPS = (
     'constance.backends.database',
     'captcha',
     'raven.contrib.django.raven_compat',
+    'django.contrib.postgres',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -105,6 +107,15 @@ DATABASES = {
     }
 }
 
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 600,
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

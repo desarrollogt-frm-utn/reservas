@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block title %}
-Baja Solicitud
+Horarios de Comisiones
 {% endblock %}
 
 {% block contenido %}
@@ -15,13 +15,17 @@ Baja Solicitud
 
 <form method="get" action="{% url 'comisiones_listar' %}">
     <div style="margin-top: 25px; margin-bottom: 50 px; margin-right: 100px; margin-left: 25px;" align="center">
-    <div align="left">
-        <div style="width:47%; margin-right: 2%;display:inline-table;"> Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
-        <div style="width:47%; margin-left: 2%;display:inline-table;"> Comision: {{comision_form.especialidad}} </div>
-    </div>
-    <div style="align:right; margin-right: 2%">
-        <input class="btn" type="submit" value="Filtrar"/>
-    </div>
+        <div align="left">
+            <div style="width:47%; margin-right: 2%;display:inline-table;"> Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
+            <div style="width:47%; margin-left: 2%;display:inline-table;"> Comision: {{comision_form.especialidad}} </div>
+        </div>
+        <div align="left">
+            <div style="width:98%;margin-right: 2%;display:inline-table;"> Buscar: {{ comision_form.buscar }}</div>
+        </div>
+
+        <div style="align:right; margin-right: 2%">
+            <input class="btn" type="submit" value="Filtrar"/>
+        </div>
     </div>
 </form>
 

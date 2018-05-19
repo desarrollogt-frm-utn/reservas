@@ -8,6 +8,9 @@ from app_reservas.models.horario import DIAS_SEMANA
 
 from .errors import not_found_error
 
+from reservas.settings.base import WSDL_URL
+from suds.client import Client
+
 
 def get_materia_json(request, legajo):
     if request.is_ajax():
@@ -50,3 +53,46 @@ def get_horarios_json(request, comision):
         return HttpResponse(json.dumps(json_string), content_type='application/json')
     else:
         return not_found_error(request)
+
+
+def get_horarios(request):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.seticGetHorarios(), content_type='application/json')
+
+
+def get_alumnos(request):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.SeticGetAlumnos(), content_type='application/json')
+
+
+def get_especialidades(request):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.seticGetEspecialidades(), content_type='application/json')
+
+
+def get_materias(request):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.seticGetMaterias(), content_type='application/json')
+
+
+def get_comisiones_docentes(request, anio):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.seticGetComisionesDocentes(anio), content_type='application/json')
+
+
+def get_cursado(request, anio, legajo):
+    url = WSDL_URL
+    client = Client(url)
+
+    return HttpResponse(client.service.seticGetCursados(anio, legajo), content_type='application/json')
+

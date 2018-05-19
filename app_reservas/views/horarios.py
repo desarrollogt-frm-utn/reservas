@@ -59,6 +59,7 @@ class HorariosComisionListView(ListView):
     def get_queryset(self):
         especialidad = self.request.GET.get('especialidad', '')
         cuatrimestre = self.request.GET.get('cuatrimestre', '')
+        buscar = self.request.GET.get('buscar','')
         comisiones_qs = Comision.objects.filter(materia__especialidad__visible=True)
         if cuatrimestre == '0':
           comisiones_qs = comisiones_qs.filter(
@@ -72,6 +73,13 @@ class HorariosComisionListView(ListView):
             try:
                 int(especialidad)
                 comisiones_qs = comisiones_qs.filter(materia__especialidad__id=especialidad)
+            except ValueError:
+                pass
+        if buscar:
+            try:
+                comisiones_qs = comisiones_qs.filter(
+                Q(materia__nombre__icontains=buscar) | Q(comision__icontains=buscar)
+            )
             except ValueError:
                 pass
         return comisiones_qs

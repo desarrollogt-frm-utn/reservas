@@ -48,8 +48,9 @@ from .views import (
     TvVisorDetailView,
     UserList,
 )
-from .serializer import get_materia_json, get_horarios_json
+from .serializer import get_materia_json, get_horarios_json, get_horarios, get_alumnos, get_comisiones_docentes, get_cursado, get_especialidades, get_materias
 
+from .views.horarios import HorariosWeekView, HorariosComisionListView
 
 urlpatterns = [
     url(
@@ -288,4 +289,43 @@ urlpatterns = [
         login_required(RemoveRole),
         name='user_remove_role'
     ),
+
+    url(
+        r'^api/data/horarios/$',
+        get_horarios,
+        name='horario_json'
+    ),
+    url(
+        r'^api/data/especialidades/$',
+        get_especialidades,
+        name='especialidades_json'
+    ),
+    url(
+        r'^api/data/materias/$',
+        get_materias,
+        name='materias_json'
+    ),
+    url(
+        r'^api/data/alumnos/$',
+        get_alumnos,
+        name='alumnos_json'
+    ),
+    url(
+        r'^api/data/comision/(?P<anio>\d+)/$',
+        get_comisiones_docentes,
+        name='comision_json'
+    ),
+
+    url(
+        r'^api/data/cursado/(?P<anio>\d+)/(?P<legajo>\d+)/$',
+        get_cursado,
+        name='horario_json'
+    ),
+    url(r'^administracion_aulas/listas_comisiones/$',
+        HorariosWeekView,
+        name='comisiones_listar'),
+
+    url(r'^administracion_aulas/horario_comisiones/$',
+        HorariosComisionListView.as_view(),
+        name='comisiones_listar'),
 ]

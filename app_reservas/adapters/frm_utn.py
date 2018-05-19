@@ -1,10 +1,23 @@
-from reservas.settings.base import WSDL_URL
+from django.conf import settings
 from suds.client import Client
 import json
+import random
+from django.core.cache import cache
+
+
+from app_reservas.mock_response import (
+    get_alumnos as mock_alumnos,
+    get_comisiones_docentes as mock_docentes,
+    get_especialidades as mock_especialidades,
+    get_horarios as mock_horarios,
+    get_materias as mock_materias
+)
 
 
 def get_horarios():
-    url = WSDL_URL
+    if settings.TEST:
+        return mock_horarios
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetHorarios()
@@ -14,7 +27,9 @@ def get_horarios():
 
 
 def get_alumnos():
-    url = WSDL_URL
+    if settings.TEST:
+        return mock_alumnos
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.SeticGetAlumnos()
@@ -24,7 +39,9 @@ def get_alumnos():
 
 
 def get_especialidades():
-    url = WSDL_URL
+    if settings.TEST:
+        return mock_especialidades
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetEspecialidades()
@@ -34,7 +51,9 @@ def get_especialidades():
 
 
 def get_materias():
-    url = WSDL_URL
+    if settings.TEST:
+        return mock_materias
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetMaterias()
@@ -44,7 +63,9 @@ def get_materias():
 
 
 def get_comisiones_docentes(anio):
-    url = WSDL_URL
+    if settings.TEST:
+        return mock_docentes
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetComisionesDocentes(anio)
@@ -54,7 +75,7 @@ def get_comisiones_docentes(anio):
 
 
 def get_cursado(anio, legajo):
-    url = WSDL_URL
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetCursados(anio, legajo)
@@ -64,10 +85,12 @@ def get_cursado(anio, legajo):
 
 
 def get_cantidad_inscriptos(anio, especialidad, plan, materia, comision):
-    url = WSDL_URL
-    client = Client(url)
-
-    cantidad_inscriptos = client.service.seticGetCantidadInscriptos(anio, especialidad, plan, materia, comision)
+    if settings.TEST:
+        cantidad_inscriptos = random.randint(10, 30)
+    else:
+        url = settings.WSDL_URL
+        client = Client(url)
+        cantidad_inscriptos = client.service.seticGetCantidadInscriptos(anio, especialidad, plan, materia, comision)
 
     response = {
         'cantidad': cantidad_inscriptos
@@ -78,7 +101,15 @@ def get_cantidad_inscriptos(anio, especialidad, plan, materia, comision):
 
 def get_horarios_comision(anio, especialidad, plan, materia, comision):
 
-    url = WSDL_URL
+    if settings.TEST:
+        lista_horarios = cache.get('lista_horarios')
+        if not lista_horarios:
+            from app_reservas.adapters.frm_utn import get_horarios
+            lista_horarios = get_horarios()
+            cache.add('lista_horarios', lista_horarios)
+        from app_reservas.utils import filter_by_comision_materia_especialidad
+        return filter_by_comision_materia_especialidad(lista_horarios, comision, materia, especialidad)
+    url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetHorariosPorComision(anio, especialidad, plan, materia, comision)
