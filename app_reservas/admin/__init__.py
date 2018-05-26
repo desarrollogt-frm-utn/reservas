@@ -6,6 +6,7 @@ from .imagenCarrusel import ImagenCarrusel
 from .laboratorio import LaboratorioAdmin
 from .laboratorioInformatico import LaboratorioInformaticoAdmin
 from .nivel import NivelAdmin
+from .novedad import NovedadAdmin
 from .recursoAli import RecursoAliAdmin
 from .tipoLaboratorio import TipoLaboratorioAdmin
 from .tipoRecursoAli import TipoRecursoAliAdmin

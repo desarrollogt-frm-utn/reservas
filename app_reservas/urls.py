@@ -13,6 +13,7 @@ from .views import (
     LaboratorioInformaticoDetailView,
     LaboratorioInformaticoListView,
     NivelDetailView,
+    NovedadView,
     recurso_eventos_json,
     RecursoAliDetailView,
     SolicitudAliReclamosSugerencias,
@@ -140,6 +141,11 @@ urlpatterns = [
         name='tv_visor_cuerpos'
     ),
 
+    url(
+        r'^tv/novedad/(?P<slug>[-\w]+)/$',
+        NovedadView.as_view(),
+        name='tv_visor'
+    ),
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se
     # mantienen para compatibilidad con los visores que funcionan actualmente.
     url(

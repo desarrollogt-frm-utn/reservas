@@ -12,6 +12,7 @@ from .laboratorio_informatico import (
     LaboratorioInformaticoListView,
 )
 from .nivel import NivelDetailView
+from .novedad import NovedadView
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
 from .solicitud import (

@@ -29,11 +29,17 @@
         <p>
             Visitá nuestro sitio web:
             <br />
-            <a href="http://gt.frm.utn.edu.ar/reservas/">http://gt.frm.utn.edu.ar/reservas/</a>
+            <a href="http://gt.frm.utn.edu.ar/reservas/">gt.frm.utn.edu.ar/reservas/</a>
         </p>
     </div>
 {% endblock footer_left %}
 
+{% block footer_center %}
+<div id="footer-center-content">
+    <h3><marquee behavior="scroll" direction="left">{{ texto_pie_pagina }}</marquee></h3>
+    </div>
+
+{% endblock footer_center %}
 
 {% block fullcalendar_header %}
     left: '',

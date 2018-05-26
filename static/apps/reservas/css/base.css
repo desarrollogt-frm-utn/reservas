@@ -38,6 +38,13 @@ body {
     text-align: right;
 }
 
+#footer-center-content {
+    /* Márgenes */
+    margin: 12px;
+    /* Alineación horizontal: Derecha */
+    text-align: right;
+}
+
 /* Contenedor de imagen izquierda del pie de página */
 #footer-left-image {
     /* Posicionamiento flotante: Izquierda */

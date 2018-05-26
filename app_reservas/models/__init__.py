@@ -6,6 +6,7 @@ from .imagenCarrusel import ImagenCarrusel
 from .laboratorio import Laboratorio
 from .laboratorioInformatico import LaboratorioInformatico
 from .nivel import Nivel
+from .novedad import Novedad
 from .recurso import Recurso
 from .recursoAli import RecursoAli
 from .tipoLaboratorio import TipoLaboratorio
@@ -22,6 +23,7 @@ __all__ = [
     'Laboratorio',
     'LaboratorioInformatico',
     'Nivel',
+    'Novedad',
     'Recurso',
     'RecursoAli',
     'TipoLaboratorio',

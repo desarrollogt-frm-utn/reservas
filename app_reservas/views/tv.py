@@ -42,6 +42,7 @@ class TvVisorDetailView(DetailView):
             context['cuerpo_solicitado'] = int(cuerpo)
         if nivel and nivel.isdigit():
             context['nivel_solicitado'] = int(nivel)
+        context['texto_pie_pagina'] = self.object.texto_pie_pagina
         # Retorna el contexto modificado.
         return context
 
@@ -61,6 +62,17 @@ class TvVisorCuerposDetailView(DetailView):
         'slug' de la URL, o una respuesta 404 en caso de ser inválido.
         """
         return get_object_or_404(VisorTv, slug=self.kwargs['slug'])
+
+    def get_context_data(self, **kwargs):
+        """
+        Añade al contexto la información del pie de página
+        """
+        # Obtiene la información de contexto base.
+        context = super(TvVisorCuerposDetailView, self).get_context_data(**kwargs)
+        # Añade la información del pie de página
+        context['texto_pie_pagina'] = self.object.texto_pie_pagina
+        # Retorna el contexto modificado.
+        return context
 
 
 class TvCuerposListView(ListView):
@@ -106,5 +118,10 @@ class TvCuerposListView(ListView):
         # de que se haya especificado y sea número.
         if nivel and nivel.isdigit():
             context['nivel_solicitado'] = int(nivel)
+        novedades = []
+        for visor in VisorTv.objects.all():
+            if visor.texto_pie_pagina:
+                novedades.append(visor.get_novedad())
         # Retorna el contexto modificado.
+        context['texto_pie_pagina'] = ' | '.join(map(str, novedades))
         return context

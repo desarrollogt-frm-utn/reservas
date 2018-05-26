@@ -1,0 +1,54 @@
+{% extends 'app_reservas/base_carrusel.html' %}
+{% load static %}
+
+{% block head_meta %}
+    <!--
+    Refresca la página cada 5 minutos. Esto permite la visualizacion de nuevos
+    eventos y el cálculo de los tiempos de inicio y fin de los calendarios.
+    -->
+    <meta http-equiv="refresh" content="300">
+{% endblock head_meta %}
+
+{% block header %}
+{% endblock header %}
+{% block title %}
+    Novedades
+{% endblock title %}
+
+
+{% block contenido %}
+    {% if novedad.carrusel %}
+        <div class="carrusel-contenedor" style="max-width: {{ carrusel.ancho_maximo }}px;">
+            <div class="carrusel">
+                {% for imagen in carrusel_imagenes %}
+                    <div>
+                        <img src="{{ imagen.get_url }}" alt="Imagen {{ forloop.counter }}"
+                             class="img-rounded" width="100%">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        {{  novedad.texto_principal | safe}}
+    {% endif %}
+{% endblock contenido %}
+
+{% block footer_center %}
+<div id="footer-center-content">
+    <p><marquee behavior="scroll" direction="left">{{novedad.texto_pie_pagina}}</marquee></p>
+    </div>
+
+{% endblock footer_center %}
+
+{% block footer_left %}
+    <div id="footer-left-image" class="footer-image">
+        <img src='{% static 'apps/reservas/images/qrcode.png'%}'></img>
+    </div>
+    <div id="footer-left-content">
+        <p>
+            Visitá nuestro sitio web:
+            <br />
+            <a href="http://gt.frm.utn.edu.ar/reservas/">http://gt.frm.utn.edu.ar/reservas/</a>
+        </p>
+    </div>
+{% endblock footer_left %}
