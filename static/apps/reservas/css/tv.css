@@ -79,3 +79,22 @@ div.fc-view-container {
     /* Grosor de la línea */
     border-left-width: 3px !important;
 }
+
+#footer-left-fix-margin{
+    position: absolute;
+    margin-left: 70px;
+    margin-top: 20px;
+}
+
+#footer-center-content {
+    /* Márgenes */
+    margin: 10px;
+    /* Alineación horizontal: Derecha */
+    text-align: right;
+    width: 110%;
+}
+.footer-image img {
+    /* Dimensiones */
+    width: auto;
+    height: 50px;
+}

@@ -20,12 +20,18 @@
 {% block header %}
 {% endblock header %}
 
+{% block footer_right %}
+    <div id="footer-right-image" class="footer-image">
+        <img src='{% static 'apps/reservas/images/aulas.png'%}'></img>
+    </div>
+{% endblock footer_right %}
+
 
 {% block footer_left %}
     <div id="footer-left-image" class="footer-image">
         <img src='{% static 'apps/reservas/images/qrcode.png'%}'></img>
     </div>
-    <div id="footer-left-content">
+    <div id="footer-left-fix-margin">
         <p>
             Visitá nuestro sitio web:
             <br />
@@ -35,10 +41,9 @@
 {% endblock footer_left %}
 
 {% block footer_center %}
-<div id="footer-center-content">
-    <h3><marquee behavior="scroll" direction="left">{{ texto_pie_pagina }}</marquee></h3>
+    <div id="footer-center-content">
+        <h3><marquee behavior="scroll" direction="left">{{ texto_pie_pagina }}</marquee></h3>
     </div>
-
 {% endblock footer_center %}
 
 {% block fullcalendar_header %}
