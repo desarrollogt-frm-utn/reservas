@@ -15,15 +15,22 @@
     Novedades
 {% endblock title %}
 
+{% block static_css %}
+    {{ block.super }}
 
-{% block contenido %}
+    <link rel="stylesheet" href='{% static 'apps/reservas/css/novedades.css' %}'>
+{% endblock static_css %}
+
+
+{% block contenido_total %}
+    <div style="background: {{novedad.color_fondo}};">
     {% if novedad.carrusel %}
-        <div class="carrusel-contenedor" style="max-width: {{ carrusel.ancho_maximo }}px;">
+        <div class="image-container" {%if novedad.ancho_maximo%} style="max-width: {{ novedad.ancho_maximo }}px;" {% endif %}>
             <div class="carrusel">
                 {% for imagen in carrusel_imagenes %}
                     <div>
                         <img src="{{ imagen.get_url }}" alt="Imagen {{ forloop.counter }}"
-                             class="img-rounded" width="100%">
+                             class="center-fit">
                     </div>
                 {% endfor %}
             </div>
@@ -31,7 +38,8 @@
     {% else %}
         {{  novedad.texto_principal | safe}}
     {% endif %}
-{% endblock contenido %}
+    </div>
+{% endblock contenido_total %}
 
 {% block footer_center %}
 <div id="footer-center-content">

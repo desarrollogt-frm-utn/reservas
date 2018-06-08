@@ -25,6 +25,23 @@ class Novedad(models.Model):
         help_text='Etiqueta corta que identifica a la novedad carrusel, y sólo puede contener letras, '
                   'números, guiones bajos y guiones medios.'
     )
+
+    ancho_maximo = models.PositiveSmallIntegerField(
+        verbose_name='Ancho máximo',
+        blank=True,
+        null=True,
+        help_text='Ancho máximo del carrusel, medido en píxeles (px).'
+    )
+
+    color_fondo = models.CharField(
+        default='white',
+        max_length=50,
+        verbose_name='Color de Fondo',
+        help_text='Color de fondo que tendra la novedad.'
+                  'Debe estar en formato hexadecimal. Por ejemplo, un valor válido es: .'
+                  '"#ff8c0a"'
+                  'Por defecto es blanco',
+    )
     # Relaciones
     carrusel = models.ForeignKey(
         'CarruselImagenes',

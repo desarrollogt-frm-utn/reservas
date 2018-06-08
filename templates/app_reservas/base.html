@@ -42,12 +42,15 @@
     {% obtener_informacion_navbar %}
 {% endblock header %}
 
+{% block contenido_total %}
+
 <div class="container-fluid">
 
     {% block contenido %}{% endblock %}
 
 </div> <!-- /container-fluid -->
 
+{%  endblock contenido_total %}
 {% block footer %}
     <nav class="navbar navbar-default navbar-fixed-bottom">
         <div class="container-fluid">
