@@ -42,26 +42,32 @@
     {% obtener_informacion_navbar %}
 {% endblock header %}
 
+{% block contenido_total %}
+
 <div class="container-fluid">
 
     {% block contenido %}{% endblock %}
 
 </div> <!-- /container-fluid -->
 
+{%  endblock contenido_total %}
 {% block footer %}
     <nav class="navbar navbar-default navbar-fixed-bottom">
         <div class="container-fluid">
-            <div id="footer-left-column" class="hidden-xs col-sm-6 col-md-6 col-lg-6">
+            <div id="footer-left-column" class="hidden-xs hidden-xs col-md-3 col-lg-3">
                 {% block footer_left %}{% endblock footer_left %}
             </div>
-            <div id="footer-right-column" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <div id="footer-center-column" class="hidden-xs col-sm-7 col-md-6 col-lg-6">
+                {% block footer_center %}{% endblock footer_center %}
+            </div>
+            <div id="footer-right-column" class="col-xs-12 col-sm-5 col-md-3 col-lg-3">
                 {% block footer_right %}
                     <div id="footer-right-image" class="footer-image">
                         <img src='{% static 'apps/reservas/images/gtlogo-50px.png'%}'></img>
                     </div>
                     <div id="footer-right-content">
                         <p>
-                            Gestión Tecnológica, SeTIC
+                            Gestión Tecnológica - SeTIC
                             <br />
                             FRM &#8212; UTN
                         </p>

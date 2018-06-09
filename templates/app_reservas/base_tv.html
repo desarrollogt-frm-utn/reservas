@@ -17,23 +17,50 @@
 {% endblock static_css %}
 
 
+{% block contenido_total %}
+    {% if imagen_contingencia %}
+        <div class="image-container">
+                <div class="carrusel">
+                        <div>
+                            <img src="{{ imagen_contingencia.get_url }}"
+                                 class="center-fit">
+                        </div>
+                </div>
+        </div>
+    {% else %}
+        {{ block.super }}
+
+    {% endif %}
+{% endblock contenido_total %}
+
 {% block header %}
 {% endblock header %}
+
+{% block footer_right %}
+    <div id="footer-right-image" class="footer-image">
+        <img src='{% static 'apps/reservas/images/aulas.png'%}'></img>
+    </div>
+{% endblock footer_right %}
 
 
 {% block footer_left %}
     <div id="footer-left-image" class="footer-image">
         <img src='{% static 'apps/reservas/images/qrcode.png'%}'></img>
     </div>
-    <div id="footer-left-content">
+    <div id="footer-left-fix-margin">
         <p>
             Visitá nuestro sitio web:
             <br />
-            <a href="http://gt.frm.utn.edu.ar/reservas/">http://gt.frm.utn.edu.ar/reservas/</a>
+            <a href="http://gt.frm.utn.edu.ar/reservas/">gt.frm.utn.edu.ar/reservas/</a>
         </p>
     </div>
 {% endblock footer_left %}
 
+{% block footer_center %}
+    <div id="footer-center-content">
+        <h3><marquee behavior="scroll" direction="left">{{ texto_pie_pagina }}</marquee></h3>
+    </div>
+{% endblock footer_center %}
 
 {% block fullcalendar_header %}
     left: '',
