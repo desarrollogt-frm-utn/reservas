@@ -3,6 +3,7 @@ from .aula import Aula
 from .carruselImagenes import CarruselImagenes
 from .cuerpo import Cuerpo
 from .imagenCarrusel import ImagenCarrusel
+from .imagenContingencia import ImagenContingencia
 from .laboratorio import Laboratorio
 from .laboratorioInformatico import LaboratorioInformatico
 from .nivel import Nivel
@@ -17,9 +18,10 @@ from .visorTv import VisorTv
 __all__ = [
     'Area',
     'Aula',
-    'CarruselImagenes'
+    'CarruselImagenes',
     'Cuerpo',
     'ImagenCarrusel',
+    'ImagenContingencia',
     'Laboratorio',
     'LaboratorioInformatico',
     'Nivel',

@@ -6,6 +6,7 @@ from django.views.generic.list import ListView
 
 from ..models import (
     Cuerpo,
+    ImagenContingencia,
     VisorTv,
 )
 
@@ -43,6 +44,10 @@ class TvVisorDetailView(DetailView):
         if nivel and nivel.isdigit():
             context['nivel_solicitado'] = int(nivel)
         context['texto_pie_pagina'] = self.object.texto_pie_pagina
+        # Busca si existe imagenes de contingencia activas
+        imagen_contingencia = ImagenContingencia.objects.filter(activo=True)
+        if imagen_contingencia:
+            context['imagen_contingencia'] = imagen_contingencia[0]
         # Retorna el contexto modificado.
         return context
 
@@ -71,6 +76,10 @@ class TvVisorCuerposDetailView(DetailView):
         context = super(TvVisorCuerposDetailView, self).get_context_data(**kwargs)
         # Añade la información del pie de página
         context['texto_pie_pagina'] = self.object.texto_pie_pagina
+        # Busca si existe imagenes de contingencia activas
+        imagen_contingencia = ImagenContingencia.objects.filter(activo=True)
+        if imagen_contingencia:
+            context['imagen_contingencia'] = imagen_contingencia[0]
         # Retorna el contexto modificado.
         return context
 
@@ -124,4 +133,8 @@ class TvCuerposListView(ListView):
                 novedades.append(visor.get_novedad())
         # Retorna el contexto modificado.
         context['texto_pie_pagina'] = ' | '.join(map(str, novedades))
+        # Busca si existe imagenes de contingencia activas
+        imagen_contingencia = ImagenContingencia.objects.filter(activo=True)
+        if imagen_contingencia:
+            context['imagen_contingencia'] = imagen_contingencia[0]
         return context

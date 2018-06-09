@@ -98,3 +98,28 @@ div.fc-view-container {
     width: auto;
     height: 50px;
 }
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.carrusel {
+    /* Alineación: Centrado */
+    margin: 0 auto;
+    display: grid;
+    height: 100%;
+}
+
+.center-fit {
+   max-width: 100%;
+   max-height: 90vh;
+   margin: auto;
+   border-radius: 5px;
+  }
+
+.image-container{
+    /* Alineación: Centrado */
+    margin: 0 auto;
+    text-align: center;
+}

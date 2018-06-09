@@ -17,6 +17,22 @@
 {% endblock static_css %}
 
 
+{% block contenido_total %}
+    {% if imagen_contingencia %}
+        <div class="image-container">
+                <div class="carrusel">
+                        <div>
+                            <img src="{{ imagen_contingencia.get_url }}"
+                                 class="center-fit">
+                        </div>
+                </div>
+        </div>
+    {% else %}
+        {{ block.super }}
+
+    {% endif %}
+{% endblock contenido_total %}
+
 {% block header %}
 {% endblock header %}
 

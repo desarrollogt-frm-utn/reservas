@@ -42,6 +42,13 @@ class Novedad(models.Model):
                   '"#ff8c0a"'
                   'Por defecto es blanco',
     )
+
+    tiempo_actualizacion = models.PositiveSmallIntegerField(
+        verbose_name='Tiempo de Actualización',
+        default=300,
+        help_text='Periodo que determina cada cuanto tiempo se actualizará la página medido en segundo.'
+                  'Por defecto es 300 segundos.'
+    )
     # Relaciones
     carrusel = models.ForeignKey(
         'CarruselImagenes',
