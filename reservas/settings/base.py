@@ -148,15 +148,15 @@ MEDIA_URL = '/' + DJANGO_URL_PREFIX + 'media/'
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
-    'bootstrap-datepicker',
-    'bootswatch-dist#flatly',
-    'font-awesome',
+    'bootstrap-datepicker#1.6.0',
+    'bootswatch-dist#3.3.6-flatly',
+    'font-awesome#4.7.0',
     'fullcalendar-scheduler',
-    'handsontable',
+    'handsontable#0.31.2',
     'jquery#1.9.1',
-    'pace',
-    'qtip2',
-    'slick-carousel',
+    'pace#1.0.2',
+    'qtip2#2.2.1',
+    'slick-carousel#1.6.0'
 )
 
 # Token de Google Calendar, utilizado para consultar la información de eventos
