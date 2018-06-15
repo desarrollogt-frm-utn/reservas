@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('app_usuarios', '0002_auto_20180217_1504'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('app_reservas', '0027_fields_verbose_names'),
+        ('app_reservas', '0030_auto_20180609_1429'),
     ]
 
     operations = [
