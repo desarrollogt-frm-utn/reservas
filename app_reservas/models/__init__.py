@@ -15,10 +15,12 @@ from .horarioSolicitud import HorarioSolicitud
 from .horarioReserva import HorarioReserva
 from .comision import Comision
 from .imagenCarrusel import ImagenCarrusel
+from .imagenContingencia import ImagenContingencia
 from .laboratorio import Laboratorio
 from .laboratorioInformatico import LaboratorioInformatico
 from .materia import Materia
 from .nivel import Nivel
+from .novedad import Novedad
 from .plan import Plan
 from .prestamo import Prestamo
 from .recurso import Recurso
@@ -49,10 +51,12 @@ __all__ = [
     'HorarioReserva',
     'Comision',
     'ImagenCarrusel',
+    'ImagenContingencia',
     'Laboratorio',
     'LaboratorioInformatico',
     'Materia',
     'Nivel',
+    'Novedad',
     'Plan',
     'Prestamo',
     'Recurso',

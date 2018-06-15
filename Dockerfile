@@ -15,7 +15,7 @@ RUN pip install -r requirements.txt
 ADD . /code/
 
 # Instala NodeJS.
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
 
 # Instala Bower.

@@ -23,6 +23,13 @@ class VisorTv(models.Model):
                   '"Departamento de Sistemas", un slug posible sería "sistemas" o '
                   '"departamento_sistemas".',
     )
+    texto_pie_pagina = models.CharField(
+        verbose_name='Texto del pie',
+        blank=True,
+        null=True,
+        max_length=255,
+        help_text='Texto que aparecerá en el pie de la página. Puede contener hasta 255 caracteres',
+    )
     # Relaciones
     area = models.ForeignKey(
         'Area',
@@ -105,3 +112,9 @@ class VisorTv(models.Model):
             relacionada.
         """
         return get_recursos_asociados_por_cuerpo(self)
+
+    def get_novedad(self):
+        """
+        Retorna la novedad que será mostrada en el pie de página.
+        """
+        return '{0!s}: {1!s}'.format(self.slug.title(), self.texto_pie_pagina)

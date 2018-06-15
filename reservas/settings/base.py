@@ -179,7 +179,7 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 BOWER_INSTALLED_APPS = (
     'bootstrap-datepicker#1.6.0',
     'bootswatch-dist#3.3.6-flatly',
-    'font-awesome',
+    'font-awesome#4.7.0',
     'fullcalendar-scheduler',
     'handsontable#0.31.2',
     'jquery#1.9.1',

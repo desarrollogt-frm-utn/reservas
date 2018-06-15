@@ -17,6 +17,7 @@ from .views import (
     LaboratorioInformaticoListView,
     LoginIndexView,
     NivelDetailView,
+    NovedadView,
     PrestamoCreate,
     PrestamoConfirm,
     PrestamoDetail,
@@ -216,7 +217,11 @@ urlpatterns = [
         r'^reservas/listar/$',
         login_required(ReservaList.as_view()),
         name='reserva_listar'),
-
+    url(
+        r'^tv/novedad/(?P<slug>[-\w]+)/$',
+        NovedadView.as_view(),
+        name='tv_visor'
+    ),
     # TODO: Eliminar. Vistas obsoletas debido a las vistas de VisorTv. Sólo se
     # mantienen para compatibilidad con los visores que funcionan actualmente.
     url(

@@ -9,10 +9,12 @@ from .docenteComision import DocenteComision
 from .especialidad import EspecialidadAdmin
 from .comision import ComisionAdmin
 from .imagenCarrusel import ImagenCarrusel
+from .imagenContingencia import ImagenContingenciaAdmin
 from .laboratorio import LaboratorioAdmin
 from .laboratorioInformatico import LaboratorioInformaticoAdmin
 from .materia import MateriaAdmin
 from .nivel import NivelAdmin
+from .novedad import NovedadAdmin
 from .plan import Plan
 from .recursoAli import RecursoAliAdmin
 from .tipoAccesorio import TipoAccesorio
