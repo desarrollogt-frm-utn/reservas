@@ -28,17 +28,26 @@ class GlpiLogin(object):
                 # Se comprueba el usuario con el metodo glpi.connect().
                 try:
                     django_user = User.objects.get(username=username)
-                    user = Usuario(django_user)
+                    user = Usuario(user_ptr_id=django_user.pk)
+                    user.__dict__.update(django_user.__dict__)
                 except User.DoesNotExist:
                     user = Usuario(username=username, password=obtener_pass_aleatoria())
-                    user.is_staff = True
+                    user.is_staff = False
                     user.is_superuser = False
                     user.first_name = perfil['firstname']
                     user.last_name = perfil['realname']
                     user.email = perfil['email']
 
+                legajo = None
                 if perfil['registration_number']:
-                    user.legajo = perfil['registration_number']
+                    try:
+                        legajo = int(perfil['registration_number'])
+                    except ValueError as e:
+                        legajo = None
+                    user.legajo = legajo
+                if not legajo:
+                    return None
+
                 if perfil['phone']:
                     user.telefono = perfil['phone']
                 if perfil['mobile']:
