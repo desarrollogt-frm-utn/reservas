@@ -38,7 +38,7 @@ Listado de usuarios
 		{% if users %}
 		{% for user in users %}
 		<tr>
-      {% if user.is_docente %}
+      {% if user.is_model_user %}
       <td><a href="{% url 'docente_detalle' user.id %}">{{ user.username }}</a></td>
       {% else %}
       <td>{{ user.username }}</td>

@@ -107,12 +107,12 @@ class DocenteDetail(HasRoleMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(DocenteDetail, self).get_context_data(**kwargs)
         context['edit_docente_estado'] = has_permission(self.request.user, 'edit_docente_estado')
-        docente_obj = context['docente']
-        context['tecnico'] = has_role(docente_obj, 'tecnico')
-        context['soporte'] = has_role(docente_obj, 'soporte')
-        context['administrador'] = has_role(docente_obj, 'administrador')
-        context['bedel'] = has_role(docente_obj, 'bedel')
-        context['aliano'] = has_role(docente_obj, 'aliano')
+        model_user_obj = context['object']
+        context['tecnico'] = has_role(model_user_obj, 'tecnico')
+        context['soporte'] = has_role(model_user_obj, 'soporte')
+        context['administrador'] = has_role(model_user_obj, 'administrador')
+        context['bedel'] = has_role(model_user_obj, 'bedel')
+        context['aliano'] = has_role(model_user_obj, 'aliano')
         return context
 
 

@@ -31,10 +31,10 @@ def UserList(request):
         elif filter_val == '2':
             users = users.filter(is_active=False)
     for user in users:
-        users_list = Usuario.objects.filter(id=user.id)[:1]
-        is_docente = False
-        if users_list:
-            is_docente = True
+        model_users_list = Usuario.objects.filter(id=user.id)[:1]
+        is_model_user = False
+        if model_users_list:
+            is_model_user = True
         usr = {
             'id': user.id,
             'username': user.username,
@@ -46,7 +46,7 @@ def UserList(request):
             'administrador': has_role(user, 'administrador'),
             'bedel': has_role(user, 'bedel'),
             'aliano': has_role(user, 'aliano'),
-            'is_docente': is_docente
+            'is_model_user': is_model_user
         }
         users_list.append(usr)
     # Busco el recurso activo y le asgino el estado con el nombre "Activo"
