@@ -15,6 +15,7 @@ celerybeat*.bak
 celerybeat*.dat
 celerybeat*.dir
 celerybeat*.db
+celerybeat-schedule
 
 ##########
 # Python #
@@ -46,6 +47,10 @@ venv/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea/
+
+#Google secret key
+Reservas-FRM-UTN.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
