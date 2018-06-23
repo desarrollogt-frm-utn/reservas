@@ -145,6 +145,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/' + DJANGO_URL_PREFIX + 'media/'
 
+EVENTOS_URL = 'media/app_reservas/eventos_recursos/'
+
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
