@@ -6,12 +6,13 @@ from celery import (
     shared_task,
 )
 import json
+from django.conf import settings
 
 
 @shared_task(name='obtener_eventos_recursos')
 def obtener_eventos_recursos():
     # Indica la ruta donde se almacenarán los archivos.
-    ruta_archivos = 'media/app_reservas/eventos_recursos/'
+    ruta_archivos = settings.EVENTOS_URL
 
     # Crea el directorio, en caso de que no exista.
     os.makedirs(ruta_archivos, exist_ok=True)
@@ -31,7 +32,7 @@ def obtener_eventos_recursos():
 @shared_task(name='obtener_eventos_recurso_especifico')
 def obtener_eventos_recurso_especifico(
     recurso,
-    ruta_archivos='media/app_reservas/eventos_recursos/'
+    ruta_archivos=settings.EVENTOS_URL
 ):
     # Arma el nombre del archivo.
     nombre_archivo = str(recurso.id) + '.json'

@@ -3,6 +3,7 @@
 import json
 from dateutil.parser import parse
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
@@ -19,7 +20,7 @@ def recurso_eventos_json(request, pk):
     el período especificado.
     """
     # Indica la ruta donde se almacenan los archivos JSON de eventos de recursos.
-    ruta_archivos = 'media/app_reservas/eventos_recursos/'
+    ruta_archivos = settings.EVENTOS_URL
 
     # Obtiene el recurso especificado.
     recurso = get_object_or_404(Recurso, pk=pk)

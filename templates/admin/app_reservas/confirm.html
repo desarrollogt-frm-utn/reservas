@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n admin_urls admin_static %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a>
+        &rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">
+        {{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+        &rsaquo; {% trans 'Materias' %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="post"
+        {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+        {% csrf_token %}
+        <div>
+            {% for fieldset in adminform %}
+                {% include "admin/includes/fieldset.html" %}
+            {% endfor %}
+        </div>
+        <div>¿Esta Seguro que desea actualizar el recurso? <br>
+            Esto puede demorar varios minutos</div>
+        <div class="submit-row">
+            <input type="submit" value="Confirmar" class="default"/>
+
+
+            <a style="float: right; margin-right: 8px;" href="../"><input type="button" name="Cancel" value="Cancelar"></a>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}
