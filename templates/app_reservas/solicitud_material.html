@@ -17,14 +17,30 @@
 
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'seiyria-bootstrap-slider/dist/bootstrap-slider.js' %}"></script>
     <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
 {% endblock static_js_body %}
 
 
 {% block contenido %}
+{{form.errors}}
 
       {% if form.errors %}
+         {% for field in form %}
+             {% for error in field.errors %}
+                 <div class="alert alert-danger">
+                     <strong>{{ error|escape }}</strong>
+                     {{error}}
+                 </div>
+             {% endfor %}
+         {% endfor %}
+         {% for error in form.non_field_errors %}
+             <div class="alert alert-danger">
+                 <strong>{{ error|escape }}</strong>
+             </div>
+         {% endfor %}
+      {% endif %}
+
+{% if formset.errors %}
          {% for field in form %}
              {% for error in field.errors %}
                  <div class="alert alert-danger">

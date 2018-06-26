@@ -1,6 +1,7 @@
 from django.db import models
 
 from app_usuarios.models import Usuario as UsuarioModel
+from app_academica.models import Docente, Comision
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -40,12 +41,12 @@ class Solicitud(models.Model):
     # relaciones
 
     docente = models.ForeignKey(
-        'Docente',
+        Docente,
         verbose_name='Docente',
     )
 
     comision = models.ForeignKey(
-        'Comision',
+        Comision,
         verbose_name='Comision',
         blank=True,
         null=True,

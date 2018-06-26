@@ -71,7 +71,7 @@ class RecursoAliAdmin(admin.ModelAdmin):
             self.actualizar_recursos()
             return redirect(reverse_lazy("admin:%s_%s_changelist" %(self.model._meta.app_label, self.model._meta.model_name)))
 
-        return render(request, 'admin/app_reservas/confirm.html', context)
+        return render(request, 'admin/confirm.html', context)
 
 
     def actualizar_recursos(self):

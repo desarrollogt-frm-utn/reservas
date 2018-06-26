@@ -2,6 +2,7 @@ import django
 from django.db import models
 from django.contrib.auth.models import User
 from app_usuarios.models import Usuario
+from app_academica.models import Comision
 
 
 class Reserva(models.Model):
@@ -47,7 +48,7 @@ class Reserva(models.Model):
     )
 
     comision = models.ForeignKey(
-        'Comision',
+        Comision,
         verbose_name='Comision',
         blank=True,
         null=True,

@@ -17,6 +17,9 @@ celerybeat*.dir
 celerybeat*.db
 celerybeat-schedule
 
+# Mocks de app_academica
+app_academica/mock_response
+
 ##########
 # Python #
 ##########

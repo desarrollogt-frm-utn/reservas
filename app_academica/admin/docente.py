@@ -2,41 +2,30 @@
 
 from django.contrib import admin
 from django.conf.urls import url
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import render, redirect
-from app_reservas.tasks import obtener_materias
+from app_academica.tasks import obtener_docentes
+from ..models import Docente
 
-from ..models import Materia
 
-
-@admin.register(Materia)
-class MateriaAdmin(admin.ModelAdmin):
+@admin.register(Docente)
+class DocenteAdmin(admin.ModelAdmin):
     """
-    Especificación de la representación de Materia en la interfaz de administración.
+    Especificación de la representación de Docente en la interfaz de administración.
     """
     list_display = (
+        'legajo',
         'nombre',
-        'codigo',
-    )
-
-    list_filter = (
-        'especialidad',
-        'plan',
-    )
-
-    search_fields = (
-        'nombre',
-        'especialidad__nombre',
-        'codigo',
-
+        'correo',
     )
 
     def get_urls(self):
-        urls = super(MateriaAdmin, self).get_urls()
+        urls = super(DocenteAdmin, self).get_urls()
         add_urls = [
             url(
                 r'^actualizar/$',
                 self.admin_site.admin_view(self.actulizar),
-                name='app_reservas_materia_actulizar',
+                name='app_academica_docente_actulizar',
             )
         ]
 
@@ -46,14 +35,15 @@ class MateriaAdmin(admin.ModelAdmin):
         context = {
             'site_title': 'Administración de Django',
             'site_header': 'Administración de Django',
-            'title': 'Actualizar Materias',
+            'title': 'Actualizar Docentes',
             'app_label': self.model._meta.app_label,
             'opts': self.model._meta,
             'has_change_permission': self.has_change_permission(request)
         }
 
         if request.method == "POST":
-            obtener_materias()
-            return redirect('/admin/app_reservas/materia/')
+            obtener_docentes()
+            return redirect(
+                reverse_lazy("admin:%s_%s_changelist" % (self.model._meta.app_label, self.model._meta.model_name)))
 
-        return render(request, 'admin/app_reservas/confirm.html', context)
+        return render(request, 'admin/confirm.html', context)

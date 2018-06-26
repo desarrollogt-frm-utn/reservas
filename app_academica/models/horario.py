@@ -43,7 +43,7 @@ class Horario(models.Model):
         """
         Información de la clase.
         """
-        app_label = 'app_reservas'
+        app_label = 'app_academica'
         verbose_name = 'Horario de cursado'
         verbose_name_plural = 'Horarios de cursado'
 

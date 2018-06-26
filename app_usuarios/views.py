@@ -9,7 +9,7 @@ from .models import Usuario
 from .utils import obtenerUsername
 from .forms import CreateDocenteForm, CreateDocenteConfirmForm
 from .tasks import enviarMailRegistro
-from app_reservas.models import Docente as DocenteReserva
+from app_academica.models import Docente as DocenteReserva
 from app_reservas.errors import not_found_error
 from rolepermissions.decorators import has_role_decorator
 from rolepermissions.checkers import has_permission, has_role

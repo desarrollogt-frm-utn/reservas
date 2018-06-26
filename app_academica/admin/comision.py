@@ -2,9 +2,10 @@
 
 from django.contrib import admin
 from django.conf.urls import url
+from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import render, redirect
 
-from app_reservas.tasks import obtener_comisiones
+from app_academica.tasks import obtener_comisiones
 
 from ..models import Comision, Horario, DocenteComision
 
@@ -48,7 +49,7 @@ class ComisionAdmin(admin.ModelAdmin):
             url(
                 r'^actualizar/$',
                 self.admin_site.admin_view(self.actulizar),
-                name='app_reservas_comision_actulizar',
+                name='app_academica_comision_actulizar',
             )
         ]
 
@@ -66,6 +67,7 @@ class ComisionAdmin(admin.ModelAdmin):
 
         if request.method == "POST":
             obtener_comisiones()
-            return redirect('/admin/app_reservas/comision/')
+            return redirect(
+                reverse_lazy("admin:%s_%s_changelist" % (self.model._meta.app_label, self.model._meta.model_name)))
 
-        return render(request, 'admin/app_reservas/confirm.html', context)
+        return render(request, 'admin/confirm.html', context)

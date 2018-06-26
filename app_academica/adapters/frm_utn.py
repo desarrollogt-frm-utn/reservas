@@ -5,7 +5,7 @@ import random
 from django.core.cache import cache
 
 
-from app_reservas.mock_response import (
+from app_academica.mock_response import (
     get_alumnos as mock_alumnos,
     get_comisiones_docentes as mock_docentes,
     get_especialidades as mock_especialidades,
@@ -104,10 +104,9 @@ def get_horarios_comision(anio, especialidad, plan, materia, comision):
     if settings.TEST:
         lista_horarios = cache.get('lista_horarios')
         if not lista_horarios:
-            from app_reservas.adapters.frm_utn import get_horarios
             lista_horarios = get_horarios()
             cache.add('lista_horarios', lista_horarios)
-        from app_reservas.utils import filter_by_comision_materia_especialidad
+        from app_academica.utils import filter_by_comision_materia_especialidad
         return filter_by_comision_materia_especialidad(lista_horarios, comision, materia, especialidad)
     url = settings.WSDL_URL
     client = Client(url)

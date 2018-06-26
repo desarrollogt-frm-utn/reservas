@@ -4,16 +4,18 @@ from django.forms import inlineformset_factory
 from app_reservas.models import (
     Solicitud,
     HorarioSolicitud,
-    Comision,
-    DocenteComision,
 )
+
+from app_academica.models import Comision, DocenteComision
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
 )
 
+from app_academica.adapters.frm_utn import get_comisiones_docentes
 from app_usuarios.models import Usuario as UsuarioModel
 from app_reservas.models.historicoEstadoSolicitud import ESTADO_SOLICITUD
+from app_academica.utils import filter_by_legajo, obtener_anio_academico
 
 
 class SolicitudForm(forms.ModelForm):
@@ -27,9 +29,8 @@ class SolicitudForm(forms.ModelForm):
 
         docente_comisiones_qs = []
         if user:
-            docente_comisiones_qs = DocenteComision.objects.filter(
-                docente__legajo=user.legajo
-            )
+            comisiones_list = get_comisiones_docentes(obtener_anio_academico())
+            docente_comisiones_qs = filter_by_legajo(comisiones_list, user.legajo)
         comision_choices = [('', '---------')]
         for docente_comision in docente_comisiones_qs:
             comision_choices += [(

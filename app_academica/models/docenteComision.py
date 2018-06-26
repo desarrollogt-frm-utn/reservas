@@ -26,7 +26,7 @@ class DocenteComision(models.Model):
         """
         Información de la clase.
         """
-        app_label = 'app_reservas'
+        app_label = 'app_academica'
         ordering = ['grado']
         verbose_name = 'Docente de la comisión'
         verbose_name_plural = 'Docentes de la comisión'

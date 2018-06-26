@@ -23,7 +23,6 @@ from app_reservas.errors import not_found_error
 
 from app_reservas.models import (
     Aula,
-    Docente,
     HistoricoEstadoSolicitud,
     HistoricoEstadoReserva,
     HorarioSolicitud,
@@ -37,6 +36,7 @@ from app_reservas.models import (
 from app_reservas.models.horarioSolicitud import DIAS_SEMANA, TIPO_RECURSO
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 from app_reservas.form import FilterSolicitudForm, ReservaAssignForm, SolicitudInlineFormset, SolicitudForm
+from app_academica.models import Docente
 
 from app_usuarios.models import Usuario as UsuarioModel
 

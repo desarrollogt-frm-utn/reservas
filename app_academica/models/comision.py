@@ -47,7 +47,7 @@ class Comision(models.Model):
         """
         Información de la clase.
         """
-        app_label = 'app_reservas'
+        app_label = 'app_academica'
         ordering = ['comision']
         verbose_name = 'Comision'
         verbose_name_plural = 'Comisiones'
@@ -83,7 +83,7 @@ class Comision(models.Model):
         return s
 
     def get_horarios_comision_academico(self):
-        from app_reservas.adapters.frm_utn import get_horarios_comision
+        from app_academica.adapters.frm_utn import get_horarios_comision
         return get_horarios_comision(
             self.anioacademico,
             self.materia.especialidad.codigo,
@@ -93,7 +93,7 @@ class Comision(models.Model):
         )
 
     def get_cantidad_inscriptos(self):
-        from app_reservas.adapters.frm_utn import get_cantidad_inscriptos
+        from app_academica.adapters.frm_utn import get_cantidad_inscriptos
         return get_cantidad_inscriptos(
             self.anioacademico,
             self.materia.especialidad.codigo,

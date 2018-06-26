@@ -1,7 +1,7 @@
 from django import forms
 
-from app_reservas.models.comision import CUATRIMESTRE
-from app_reservas.models import Especialidad
+from app_academica.models.comision import CUATRIMESTRE
+from app_academica.models import Especialidad
 
 
 class FilterComisionForm(forms.Form):

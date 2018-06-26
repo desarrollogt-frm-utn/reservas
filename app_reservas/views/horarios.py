@@ -3,11 +3,11 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
 
-from app_reservas.adapters.frm_utn import get_horarios
-from app_reservas.form import FilterComisionForm
-from app_reservas.models import Especialidad, Materia, Comision
-from app_reservas.models.comision import CUATRIMESTRE
-from app_reservas.models.horario import DIAS_SEMANA
+from app_academica.adapters.frm_utn import get_horarios
+from app_academica.form import FilterComisionForm
+from app_academica.models import Especialidad, Materia, Comision
+from app_academica.models.comision import CUATRIMESTRE
+from app_academica.models.horario import DIAS_SEMANA
 from app_reservas.utils import parse_time, add_minutes_to_time
 from django.db.models import Q
 

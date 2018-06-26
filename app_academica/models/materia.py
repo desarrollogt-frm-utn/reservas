@@ -31,7 +31,7 @@ class Materia(models.Model):
         """
         Información de la clase.
         """
-        app_label = 'app_reservas'
+        app_label = 'app_academica'
         ordering = ['nombre']
         verbose_name = 'Materia'
         verbose_name_plural = 'Materias'

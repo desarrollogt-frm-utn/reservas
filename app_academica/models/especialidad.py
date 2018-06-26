@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Plan(models.Model):
+class Especialidad(models.Model):
     # Atributos
     nombre = models.CharField(
         max_length=255,
@@ -12,16 +12,26 @@ class Plan(models.Model):
         blank=True,
         verbose_name='Descripción',
     )
+    codigo = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Codigo',
+    )
+
+    visible = models.BooleanField(
+        default=False,
+        verbose_name='Visible en administración de aulas'
+    )
 
 
     class Meta:
         """
         Información de la clase.
         """
-        app_label = 'app_reservas'
+        app_label = 'app_academica'
         ordering = ['nombre']
-        verbose_name = 'Plan'
-        verbose_name_plural = 'Planes'
+        verbose_name = 'Especialidad'
+        verbose_name_plural = 'Especialidades'
 
 
     def __str__(self):

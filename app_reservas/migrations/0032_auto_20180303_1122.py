@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
 
 
     dependencies = [
-        ('app_reservas', '0031_auto_20180303_1110'),
+        ('app_reservas', '0031_auto_20180625_2212'),
     ]
 
     operations = [

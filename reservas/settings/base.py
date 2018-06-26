@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'app_parque_tecnologico',
     'app_reservas.apps.ReservasConfig',
     'app_usuarios',
+    'app_academica',
     'rolepermissions',
     'constance',
     'constance.backends.database',
@@ -179,16 +180,24 @@ EVENTOS_URL = 'media/app_reservas/eventos_recursos/'
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
-    'bootstrap-datepicker#1.6.0',
-    'bootswatch-dist#3.3.6-flatly',
-    'font-awesome#4.7.0',
-    'fullcalendar-scheduler',
     'handsontable#0.31.2',
-    'jquery#1.9.1',
-    'pace#1.0.2',
-    'qtip2#2.2.1',
-    'slick-carousel#1.6.0',
-    'bootstrap'
+     'pikaday#1.6.1',
+     'bootstrap#4.1.1',
+     'moment#2.22.2',
+     'bootswatch-dist#3.3.6-flatly',
+     'fullcalendar-scheduler#1.9.4',
+     'fullcalendar#3.9.0',
+     'ev-emitter#1.1.1',
+     'qtip2#2.2.1',
+     'pace#1.0.2',
+     'imagesloaded#4.1.4',
+     'font-awesome#4.7.0',
+     'slick-carousel#1.6.0',
+     'zeroclipboard#2.3.0',
+     'bootstrap-datepicker#1.6.0',
+     'numbro#1.11.1',
+     'eonasdan-bootstrap-datetimepicker#4.17.47',
+     'jquery#1.9.1'
 )
 
 # Token de Google Calendar, utilizado para consultar la información de eventos

@@ -1,6 +1,5 @@
 from django import forms
-from django.forms import inlineformset_factory
-from app_reservas.models import AccesorioPrestamo, Prestamo, Recurso, RecursoPrestamo, Accesorio
+from app_reservas.models import AccesorioPrestamo, Recurso, RecursoPrestamo, Accesorio
 
 
 class AliRecursoForm(forms.Form):

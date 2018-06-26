@@ -3,13 +3,14 @@ from django.forms import inlineformset_factory
 from django.utils import timezone
 
 from app_reservas.models import (
-    Comision,
     HorarioSolicitud,
     Recurso,
     Solicitud,
 )
 
 from app_usuarios.models import Usuario
+
+from app_academica.models import Comision
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,

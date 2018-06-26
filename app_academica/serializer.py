@@ -1,10 +1,10 @@
 import json
 import datetime
-from app_reservas.models import Comision, Docente
+from app_academica.models import Comision, Docente
 
 from django.http import HttpResponse
 
-from app_reservas.models.horario import DIAS_SEMANA
+from app_academica.models.horario import DIAS_SEMANA
 
 from .errors import not_found_error
 
