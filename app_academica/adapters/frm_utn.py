@@ -106,8 +106,8 @@ def get_horarios_comision(anio, especialidad, plan, materia, comision):
         if not lista_horarios:
             lista_horarios = get_horarios()
             cache.add('lista_horarios', lista_horarios)
-        from app_academica.utils import filter_by_comision_materia_especialidad
-        return filter_by_comision_materia_especialidad(lista_horarios, comision, materia, especialidad)
+        from app_academica.utils import filter_by_comision_materia_especialidad_plan
+        return filter_by_comision_materia_especialidad_plan(lista_horarios, comision, materia, especialidad, plan)
     url = settings.WSDL_URL
     client = Client(url)
 

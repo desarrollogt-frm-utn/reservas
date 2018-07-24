@@ -3,6 +3,7 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
+from app_reservas.views.reserva import ReservaFinalize, ReservaDetail, reserva_eventos_json
 from .views import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
@@ -206,6 +207,19 @@ urlpatterns = [
         login_required(ReservaList.as_view()),
         name='reserva_listar'),
     url(
+        r'^reservas/finalizar/(?P<pk>\d+)/$',
+        login_required(ReservaFinalize),
+        name='reserva_finalizar'),
+    url(
+        r'^reservas/detalle/(?P<pk>\d+)/$',
+        login_required(ReservaDetail.as_view()),
+        name='reserva_detalle'),
+    url(
+        r'^reservas/(?P<pk>\d+)/eventos/$',
+        login_required(reserva_eventos_json),
+        name='reserva_eventos_json'
+    ),
+    url(
         r'^tv/novedad/(?P<slug>[-\w]+)/$',
         NovedadView.as_view(),
         name='tv_visor'
@@ -282,9 +296,6 @@ urlpatterns = [
         login_required(RemoveRole),
         name='user_remove_role'
     ),
-    url(r'^administracion_aulas/listas_comisiones/$',
-        HorariosWeekView,
-        name='comisiones_listar'),
 
     url(r'^administracion_aulas/horario_comisiones/$',
         HorariosComisionListView.as_view(),

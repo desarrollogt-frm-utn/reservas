@@ -49,6 +49,10 @@ urlpatterns = [
             include('app_reservas.urls')
         ),
         url(
+            r'^academico/',
+            include('app_academica.urls')
+        ),
+        url(
             r'^cuentas/login/$',
             login,
             {'template_name':'app_reservas/login.html'},

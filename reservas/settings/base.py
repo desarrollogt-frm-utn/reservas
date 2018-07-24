@@ -144,7 +144,7 @@ if DJANGO_URL_PREFIX:
     DJANGO_URL_PREFIX += '/'
 
 
-SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8080/' + DJANGO_URL_PREFIX)
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000/' + DJANGO_URL_PREFIX)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

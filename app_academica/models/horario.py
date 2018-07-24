@@ -1,14 +1,13 @@
 from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
 
 DIAS_SEMANA = {
-    '1': _(u'Lunes'),
-    '2': _(u'Martes'),
-    '3': _(u'Miercoles'),
-    '4': _(u'Jueves'),
-    '5': _(u'Viernes'),
-    '6': _(u'Sabado'),
+    '1': 'Lunes',
+    '2': 'Martes',
+    '3': 'Miercoles',
+    '4': 'Jueves',
+    '5': 'Viernes',
+    '6': 'Sabado',
 }
 
 

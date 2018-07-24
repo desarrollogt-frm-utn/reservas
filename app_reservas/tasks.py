@@ -52,14 +52,18 @@ def obtener_eventos_recurso_especifico(
             archivo.write(eventos)
 
 @shared_task(name='crear_evento_recurso_especifico')
-def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta):
-    crear_evento(
+def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta, reserva_horario_obj=None):
+    evento = crear_evento(
         calendar_id=calendar_id,
         titulo=titulo,
         inicio=inicio,
         fin=fin,
         hasta=hasta
     )
+
+    if reserva_horario_obj:
+        reserva_horario_obj.id_evento_calendar = evento.get('id')
+        reserva_horario_obj.save()
 
     from .models import Recurso
     recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)

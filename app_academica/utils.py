@@ -1,12 +1,16 @@
 from django.utils import timezone
 
 
-def filter_by_comision_materia_especialidad(list_json, comision, materia, especialidad):
-    return [i for i in list_json if i['comision'] == comision and i['materia'] == materia and i['especialid'] == especialidad]
+def filter_by_comision_materia_especialidad_plan(list_json, comision, materia, especialidad, plan):
+    return [i for i in list_json if str(i['comision']) == str(comision)
+            and str(i['materia']) == str(materia)
+            and str(i['especialid']) == str(especialidad)
+            and str(i['plan']) == str(plan)
+            ]
 
 
 def filter_by_legajo(list_json, legajo):
-    return [i for i in list_json if i['legajo'] == legajo]
+    return [i for i in list_json if str(i['legajo']) == str(legajo)]
 
 
 def obtener_anio_academico():

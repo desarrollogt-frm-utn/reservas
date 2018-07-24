@@ -1,12 +1,13 @@
 import json
 import datetime
-from app_academica.models import Comision, Docente
+from app_academica.models import Comision
 
 from django.http import HttpResponse
 
 from app_academica.models.horario import DIAS_SEMANA
+from app_academica.services.serializerService import get_comisiones_by_legajo
 
-from .errors import not_found_error
+from app_reservas.errors import not_found_error
 
 from reservas.settings.base import WSDL_URL
 from suds.client import Client
@@ -14,17 +15,17 @@ from suds.client import Client
 
 def get_materia_json(request, legajo):
     if request.is_ajax():
+
         json_string = []
-        docente_obj = Docente.objects.get(id=legajo)
-        docente_comision_qs = docente_obj.docentecomision_set.all()
-        for docente_comision in docente_comision_qs:
+        comision_qs = get_comisiones_by_legajo(legajo)
+        for comision in comision_qs:
             json_string.append(
                 {
-                    'id_materia': docente_comision.comision.materia.id,
-                    'id_comision': docente_comision.comision.id,
-                    'nombre_materia': docente_comision.comision.materia.nombre,
-                    'nombre_comision': docente_comision.comision.comision,
-                    'nombre_plan': docente_comision.comision.materia.plan.nombre,
+                    'id_materia': comision.materia.id,
+                    'id_comision': comision.id,
+                    'nombre_materia': comision.materia.nombre,
+                    'nombre_comision': comision.comision,
+                    'nombre_plan': comision.materia.plan.nombre,
                 }
             )
         return HttpResponse(json.dumps(json_string), content_type='application/json')
@@ -37,6 +38,7 @@ def get_horarios_json(request, comision):
         json_string = []
         comision_obj = Comision.objects.get(id=comision)
         horarios_qs = comision_obj.horario_set.all()
+        cantidad_alumnos = comision_obj.get_cantidad_inscriptos()
         for horario in horarios_qs:
             hora_fin = (datetime.datetime.combine(datetime.date(1, 1, 1), horario.horaInicio) + datetime.timedelta(minutes=horario.duracion)).time()
             json_string.append(
@@ -46,7 +48,7 @@ def get_horarios_json(request, comision):
                     'hora_inicio': str(horario.horaInicio),
                     'hora_fin': str(hora_fin),
                     'cuatrimestre': horario.comision.cuatrimestre,
-                    'cantidad_alumnos': len(horario.comision.alumnocomision_set.all()),
+                    'cantidad_alumnos': cantidad_alumnos,
                 }
             )
 

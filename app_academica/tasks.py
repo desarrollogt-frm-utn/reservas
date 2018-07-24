@@ -6,7 +6,7 @@ from celery import (
 )
 
 from app_academica.adapters.frm_utn import get_especialidades, get_materias, get_comisiones_docentes, get_horarios
-from app_academica.utils import filter_by_comision_materia_especialidad, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, obtener_materia_by_esp_mat_plan
+from app_academica.utils import filter_by_comision_materia_especialidad_plan, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, obtener_materia_by_esp_mat_plan
 
 from app_reservas.utils import parse_time
 
@@ -82,7 +82,13 @@ def obtener_comisiones():
                 if not comision_obj:
                     comision_str = comision.get('curso').replace(' ', '')
 
-                    horario_list = filter_by_comision_materia_especialidad(json_horarios, comision.get('comision'), comision.get('materia'), comision.get('especialid'))
+                    horario_list = filter_by_comision_materia_especialidad_plan(
+                        json_horarios,
+                        comision.get('comision'),
+                        comision.get('materia'),
+                        comision.get('especialid'),
+                        comision.get('plan')
+                    )
                     if horario_list:
                         materia_obj = obtener_materia_by_esp_mat_plan(
                             comision.get('especialid'),
