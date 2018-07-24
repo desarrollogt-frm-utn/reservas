@@ -12,6 +12,7 @@ from rolepermissions.decorators import has_role_decorator
 
 from app_reservas.form import ElementoForm
 from app_reservas.errors import not_found_error, custom_error
+from app_reservas.services.reservas import finalizar_reserva
 from app_reservas.tasks import crear_evento_recurso_especifico
 from app_reservas.utils import obtener_siguiente_dia_vigente
 
@@ -33,7 +34,6 @@ from ..models import (
 from app_reservas.form import (
     AliRecursoForm,
     PrestamoReservaForm,
-    ReservaCreateForm,
     ReservaWithoutSolicitudCreateForm
 )
 
@@ -287,6 +287,8 @@ def PrestamoFinalize(request, pk):
         prestamo_obj.fin = timezone.now()
         prestamo_obj.recibido_por = request.user
         prestamo_obj.save()
+        for prestamo_reserva in prestamo_obj.recursos_all.all():
+            finalizar_reserva(prestamo_reserva.reserva)
         return redirect(reverse_lazy('prestamo_detalle', kwargs={'pk': pk}))
     return render(request, 'app_reservas/prestamo_finalize.html', {'prestamo_obj':prestamo_obj})
 

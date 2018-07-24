@@ -15,7 +15,7 @@ from app_reservas.utils import (
 from app_academica.adapters.frm_utn import get_comisiones_docentes
 from app_usuarios.models import Usuario as UsuarioModel
 from app_reservas.models.historicoEstadoSolicitud import ESTADO_SOLICITUD
-from app_academica.utils import filter_by_legajo, obtener_anio_academico
+from app_academica.utils import filter_by_legajo, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan
 
 
 class SolicitudForm(forms.ModelForm):
@@ -30,12 +30,22 @@ class SolicitudForm(forms.ModelForm):
         docente_comisiones_qs = []
         if user:
             comisiones_list = get_comisiones_docentes(obtener_anio_academico())
-            docente_comisiones_qs = filter_by_legajo(comisiones_list, user.legajo)
+            docente_comisiones_list = filter_by_legajo(comisiones_list, user.legajo)
+            for comision_json in docente_comisiones_list:
+                comision_obj = obtener_comision_by_esp_mat_com_plan(
+                    comision_json.get('especialid'),
+                    comision_json.get('materia'),
+                    comision_json.get('comision'),
+                    comision_json.get('plan')
+                )
+                if comision_obj:
+                    docente_comisiones_qs += [comision_obj]
+
         comision_choices = [('', '---------')]
         for docente_comision in docente_comisiones_qs:
             comision_choices += [(
-                docente_comision.comision.id,
-                docente_comision.comision
+                docente_comision.id,
+                docente_comision
             )]
         self.fields['comision'].widget = forms.Select(
             choices=comision_choices,

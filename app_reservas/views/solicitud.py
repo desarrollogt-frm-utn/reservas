@@ -13,11 +13,6 @@ from django.conf import settings
 from rolepermissions.decorators import has_role_decorator
 from rolepermissions.checkers import has_permission
 
-from app_reservas.utils import (
-    obtener_siguiente_dia_vigente,
-    obtener_fecha_finalizacion_reserva_cursado,
-    obtener_fecha_finalizacion_reserva_fuera_cursado
-)
 
 from app_reservas.errors import not_found_error
 
@@ -29,6 +24,7 @@ from app_reservas.models import (
     HorarioReserva,
     Laboratorio,
     LaboratorioInformatico,
+    Recurso,
     RecursoAli,
     Reserva,
     Solicitud,
@@ -36,11 +32,10 @@ from app_reservas.models import (
 from app_reservas.models.horarioSolicitud import DIAS_SEMANA, TIPO_RECURSO
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 from app_reservas.form import FilterSolicitudForm, ReservaAssignForm, SolicitudInlineFormset, SolicitudForm
+from app_reservas.services.reservas import crear_evento, get_nombre_evento
 from app_academica.models import Docente
 
 from app_usuarios.models import Usuario as UsuarioModel
-
-from app_reservas.tasks import crear_evento_recurso_especifico
 
 class SolicitudAliReclamosSugerencias(TemplateView):
     """
@@ -152,7 +147,7 @@ class SolicitudList(ListView):
 
 
 class SolicitudDetail(DetailView):
-    template_name = 'app_reservas/reservas_detail.html'
+    template_name = 'app_reservas/solicitud_detail.html'
     model = Solicitud
 
     def get_context_data(self, **kwargs):
@@ -184,6 +179,8 @@ def RecursoAssign(request, solicitud, horario):
         model = Laboratorio
     elif horario_obj.tipoRecurso == '4':
         model = RecursoAli
+    else:
+        model = Recurso
 
     form = ReservaAssignForm(request, model)
     if request.method == "POST":
@@ -198,23 +195,9 @@ def RecursoAssign(request, solicitud, horario):
                     estadoSolicitud=2,
                     solicitud=solicitud_obj,
                     fechaInicio=timezone.now(),
-
                 )
 
-            inicio = datetime.datetime.combine(solicitud_obj.fechaInicio, horario_obj.inicio).isoformat()
-            fin = datetime.datetime.combine(solicitud_obj.fechaInicio, horario_obj.fin).isoformat()
-            hasta = None
-            if solicitud_obj.tipoSolicitud == '1':
-                hasta = obtener_fecha_finalizacion_reserva_cursado(solicitud_obj.comision.cuatrimestre)
-                inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio)
-                fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin)
-            elif solicitud_obj.tipoSolicitud == '3':
-                hasta = obtener_fecha_finalizacion_reserva_fuera_cursado(solicitud_obj.fechaFin)
-
-            if solicitud_obj.comision is not None:
-                titulo = "{0!s} - {1!s} - {2!s}".format(solicitud_obj.comision.materia.nombre, solicitud_obj.comision.comision, solicitud_obj.docente.nombre)
-            else:
-                titulo = "Solicitud fuera de horario - {0!s}".format(solicitud_obj.docente.nombre)
+            titulo = get_nombre_evento(solicitud_obj.docente,solicitud_obj.comision)
 
             reserva_obj = Reserva.objects.create(
                 asignado_por=request.user,
@@ -240,13 +223,7 @@ def RecursoAssign(request, solicitud, horario):
                 reserva=reserva_obj,
             )
 
-            crear_evento_recurso_especifico.delay(
-                calendar_id=recurso_list[0].calendar_codigo,
-                titulo=titulo,
-                inicio=inicio,
-                fin=fin,
-                hasta=hasta,
-            )
+            crear_evento(reserva_obj)
 
             #
             # print(event)

@@ -1,8 +1,8 @@
 import datetime
+import json
+
 from constance import config
 from django.utils import timezone
-
-from app_reservas.models import Aula, Laboratorio, LaboratorioInformatico, RecursoAli
 
 def obtener_siguiente_dia_vigente(dia, horario):
     now = timezone.now()
@@ -68,6 +68,7 @@ def obtener_fecha_fin_reserva_cursado(cuatrimestre):
 
 
 def obtener_modelo_recurso(id):
+    from app_reservas.models import Aula, Laboratorio, LaboratorioInformatico, RecursoAli
     if Aula.objects.filter(id=id):
         return Aula
     elif LaboratorioInformatico.objects.filter(id=id):
@@ -100,3 +101,21 @@ def add_minutes_to_time(time, minutes):
     hora = (datetime.datetime.combine(datetime.date(1, 1, 1), time) + datetime.timedelta(
         minutes=minutes))
     return hora.time()
+
+def parse_eventos_response(eventos, resource_id):
+    eventos_json = '['
+    primera_iteracion = True
+    for evento in eventos:
+        if primera_iteracion:
+            primera_iteracion = False
+        else:
+            eventos_json += ',\n'
+        evento_str = json.dumps({
+            'title': evento['titulo'],
+            'start': evento['inicio_str'],
+            'end': evento['fin_str'],
+            'resourceId': resource_id
+        })
+        eventos_json += evento_str
+    eventos_json += ']'
+    return eventos_json

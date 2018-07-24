@@ -1,24 +1,33 @@
-from django.shortcuts import render
+import json
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.conf import settings
+from rolepermissions.decorators import has_role_decorator
+from dateutil.parser import parse
 
-
+from app_reservas.adapters.google_calendar import obtener_evento_especifico
+from app_reservas.errors import not_found_error, custom_error
 from app_reservas.models import (
     Solicitud,
-    HistoricoEstadoSolicitud,
+    HorarioReserva,
+    HistoricoEstadoReserva,
     Reserva,
 )
 from app_reservas.form import (
     ReservaCreateForm,
     FilterReservaForm
 )
-
+from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA, ESTADOS_FINALES
+from app_reservas.models.horarioReserva import DIAS_SEMANA
+from app_reservas.services.reservas import get_nombre_evento, crear_evento, dar_baja_evento
 from app_reservas.form.reserva import ReservaInlineFormset
 
 from app_usuarios.models import Usuario as UsarioModel
 
 
+@has_role_decorator('administrador')
 def ReservaCreate(request):
     solicitud = Solicitud()
     reserva_form = ReservaCreateForm()  # setup a form for the parent
@@ -41,30 +50,97 @@ def ReservaCreate(request):
                 comision_obj = None
                 if reserva_form.cleaned_data.get('comision'):
                     comision_obj = reserva_form.cleaned_data.get('comision')
-                solicitud_obj = Solicitud.objects.create(
-                    fechaCreacion=timezone.now(),
-                    tipoSolicitud=reserva_form.cleaned_data.get('tipoSolicitud'),
-                    docente=docente_obj,
-                    comision=comision_obj,
-                    fechaInicio=reserva_form.cleaned_data.get('fechaInicio'),
-                    fechaFin=reserva_form.cleaned_data.get('fechaFin'),
-                    solicitante=usuario_model,
-                )
-                HistoricoEstadoSolicitud.objects.create(
-                    fechaInicio=timezone.now(),
-                    fechaFin=None,
-                    estadoSolicitud=1,
-                    solicitud=solicitud_obj,
-                )
-                formset = ReservaInlineFormset(request.POST, request.FILES, instance=solicitud_obj)
-                for horario in formset.forms:
-                    horario.save()
-                return render(request, 'app_reservas/solicitud_created.html', {})
+                nombre_evento = get_nombre_evento(docente_obj, comision_obj)
+                fecha_inicio = reserva_form.cleaned_data.get('fecha_inicio')
+                fecha_fin = reserva_form.cleaned_data.get('fecha_fin')
+
+                created_reservas = []
+
+                for reserva in formset.forms:
+                    recurso_obj = reserva.cleaned_data.get('recurso')
+                    reserva_obj = None
+                    for created_reserva in created_reservas:
+                        if created_reserva.recurso == recurso_obj:
+                            reserva_obj = created_reserva
+
+                    if not reserva_obj:
+                        reserva_obj = Reserva.objects.create(
+                            fecha_creacion=timezone.now(),
+                            fecha_inicio=fecha_inicio,
+                            fecha_fin=fecha_fin,
+                            nombre_evento=nombre_evento,
+                            asignado_por=request.user,
+                            recurso=recurso_obj,
+                            docente=docente_obj,
+                            comision=comision_obj,
+                            usuario=usuario_model
+                        )
+                        HistoricoEstadoReserva.objects.create(
+                            fechaInicio=timezone.now(),
+                            estado='1',
+                            reserva=reserva_obj,
+                        )
+                        created_reservas.append(reserva_obj)
+
+                    HorarioReserva.objects.create(
+                        reserva=reserva_obj,
+                        dia=reserva.cleaned_data.get('dia'),
+                        inicio=reserva.cleaned_data.get('inicio'),
+                        fin=reserva.cleaned_data.get('fin'),
+                    )
+                for created_reserva in created_reservas:
+
+
+                    crear_evento(created_reserva)
+
+                return render(request, 'app_usuarios/success_message.html', {
+                    'title': 'Se registro tu reserva',
+                    'message': 'Tu reserva se ha registrado con éxito.'
+                })
     return render(request, 'app_reservas/reserva_create.html', {
         "form": reserva_form,
         "formset": formset,
+        "SITE_URL": settings.SITE_URL
     })
 
+@has_role_decorator('administrador')
+def ReservaFinalize(request, pk):
+    reserva_qs = Reserva.objects.filter(id=pk)[:1]
+    if not reserva_qs:
+        return not_found_error(request)
+    reserva_obj = reserva_qs[0]
+    estado_antiguo = reserva_obj.get_estado_reserva()
+    if estado_antiguo and estado_antiguo.estado in ESTADOS_FINALES:
+        return custom_error(request, 'La reserva ya se encuentra finalizado o dada de baja.')
+    if request.method == "POST":
+        dar_baja_evento(reserva_obj)
+
+        return render(request, 'app_usuarios/success_message.html', {
+            'title': 'La reserva fue finalizada',
+            'message': 'La reserva ha sido finalizada con éxito.'
+        })
+    return render(request, 'app_reservas/reserva_delete.html', {
+        "reserva_obj": reserva_obj,
+        "dias_semana": DIAS_SEMANA
+    })
+
+
+class ReservaDetail(DetailView):
+    """
+    Vista de detalle para una instancia específica de una Reserva.
+    """
+    model = Reserva
+    context_object_name = 'reserva'
+    template_name = 'app_reservas/reserva_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReservaDetail, self).get_context_data(**kwargs)
+        estado_reserva_context = context['reserva'].get_estado_reserva()
+        estado_reserva_context.estado_nombre = ESTADO_RESERVA.get(estado_reserva_context.estado)
+        estado_reserva_context.estado_final =  estado_reserva_context and estado_reserva_context.estado in ESTADOS_FINALES
+        context['estado_reserva'] = estado_reserva_context
+        context["dias_semana"] =  DIAS_SEMANA
+        return context
 
 class ReservaList(ListView):
     model = Reserva
@@ -73,20 +149,23 @@ class ReservaList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ReservaList, self).get_context_data(**kwargs)
-        estado = FilterReservaForm(self.request.GET)
-        context['estado'] = estado
+        estado_form = FilterReservaForm(self.request.GET)
+        context['estado_form'] = estado_form
+        context['estado_reserva'] = ESTADO_RESERVA
         return context
 
     def get_queryset(self):
-        filter_val = self.request.GET.get('estado', '')
+        estado = self.request.GET.get('estado', '')
         order = self.request.GET.get('orderby', '')
-        reservas_qs = Reserva.objects.all()
-        if filter_val:
-            reservas_qs = reservas_qs.filter(
-                historicoestadosolicitud__estadoSolicitud__id=filter_val,
-                historicoestadosolicitud__fechaFin__isnull=True,
-            )
+        reservas_qs = Reserva.objects.all().order_by('-id')
+        if not estado:
+            estado = '1'
+        reservas_qs = reservas_qs.filter(
+            historicoestadoreserva__estado=estado,
+            historicoestadoreserva__fechaFin__isnull=True,
+        )
         return reservas_qs
+
 
 class ReservaListDocente(ListView):
     model = Reserva
@@ -109,3 +188,27 @@ class ReservaListDocente(ListView):
                 historicoestadosolicitud__fechaFin__isnull=True,
             )
         return reservas_qs
+
+
+def reserva_eventos_json(request, pk):
+    """
+    Retorna en formato JSON una lista de los eventos para una instancia específica de Reserva (cuyo
+    ID está dado por el parámetro 'pk').
+
+    Si se especifican los parámetros GET 'start' y 'end' (ambos con formatos de fecha válidos), los
+    eventos a retornar quedan conformados sólo por aquellos cuya fecha de inicio está contenida en
+    el período especificado.
+    """
+    reserva = get_object_or_404(Reserva, pk=pk)
+    eventos = []
+    for horario_reserva in reserva.horarioreserva_set.all():
+        eventos += obtener_evento_especifico(
+                reserva.recurso.calendar_codigo,
+                horario_reserva.id_evento_calendar
+            )
+
+    from app_reservas.utils import parse_eventos_response
+
+    parsed_events = parse_eventos_response(eventos, pk)
+
+    return JsonResponse(json.loads(parsed_events), safe=False)

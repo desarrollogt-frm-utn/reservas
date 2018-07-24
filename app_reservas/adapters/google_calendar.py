@@ -51,10 +51,23 @@ def generar_lista_eventos(calendar_id, limite_anio_siguiente=True):
     list of dicts
         Lista de eventos, organizados como diccionarios.
     """
-    lista_eventos = []
 
     # Obtiene de Google Calendar los eventos del calendario.
     eventos = obtener_eventos(calendar_id, limite_anio_siguiente)
+    lista_eventos = parse_events(eventos)
+
+    return lista_eventos
+
+def parse_events(eventos):
+    """
+
+    Returns
+    -------
+    list of dicts
+        Lista de eventos, organizados como diccionarios.
+    """
+    lista_eventos = []
+
 
     for evento in eventos:
         inicio = parser.parse(
@@ -83,7 +96,7 @@ def generar_lista_eventos(calendar_id, limite_anio_siguiente=True):
     return lista_eventos
 
 
-def obtener_eventos(calendar_id, limite_anio_siguiente=True):
+def obtener_eventos(calendar_id, limite_anio_siguiente=True, desde_hoy = False, event_id=None):
     """Obtiene de Google Calendar los eventos de un calendario específico.
 
     Retorna los eventos de un calendario específico, solicitados a la API de Google Calendar. En
@@ -106,15 +119,21 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True):
     """
     service = crear_servicio()
 
-    primer_dia_anio_actual = None
+    inicio = None
     primer_dia_anio_subsiguiente = None
     if limite_anio_siguiente:
         # Obtiene únicamente los eventos del año actual y el siguiente.
-        primer_dia_anio_actual = datetime(
-            datetime.today().year,
-            1,
-            1,
-        ).isoformat('T') + 'Z'
+
+        if desde_hoy:
+            # Obtine solo los eventos porteriores
+            inicio = datetime.now().isoformat('T') + 'Z'
+        else:
+            inicio = datetime(
+                datetime.today().year,
+                1,
+                1,
+            ).isoformat('T') + 'Z'
+
         primer_dia_anio_subsiguiente = datetime(
             datetime.today().year + 2,
             1,
@@ -123,6 +142,10 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True):
 
     eventos = []
     page_token = None
+    i_cal_UID = None
+    if event_id:
+        i_cal_UID = event_id + '@google.com'
+
 
     while True:
         try:
@@ -131,10 +154,11 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True):
                 calendarId=calendar_id,
                 maxResults=2500,
                 singleEvents=True,
-                timeMin=primer_dia_anio_actual,
+                timeMin=inicio,
                 timeMax=primer_dia_anio_subsiguiente,
                 pageToken=page_token,
-                orderBy='startTime'
+                orderBy='startTime',
+                iCalUID=i_cal_UID,
             ).execute()
         except ServerNotFoundError:
             # En caso de problemas de conexión a Google Calendar, no se retorna ningún evento.
@@ -182,7 +206,6 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
         'timeZone': 'America/Mendoza',
       },
       'attendees': [
-        {'email': 'martin.94.mza@gmail.com'},
       ],
       'reminders': {
         'useDefault': False,
@@ -196,5 +219,28 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
         event['recurrence'] = ['RRULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta), ]
 
     created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
+    print(created_event)
 
     return created_event
+
+
+def borrar_evento(calendar_id, event_id):
+    service = build_service()
+
+
+    eventos = obtener_eventos(calendar_id, True, True, event_id)
+
+    for evento in eventos:
+        service.events().delete(calendarId=calendar_id, eventId=evento.get('id')).execute()
+
+
+    return None
+
+
+def obtener_evento_especifico(calendar_id, event_id):
+
+    eventos = obtener_eventos(calendar_id, True, False, event_id)
+
+    lista_eventos = parse_events(eventos)
+
+    return lista_eventos

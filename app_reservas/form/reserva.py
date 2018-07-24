@@ -4,18 +4,24 @@ from django.utils import timezone
 
 from app_reservas.models import (
     HorarioSolicitud,
+    HorarioReserva,
     Recurso,
+    Reserva,
     Solicitud,
+
 )
+
+from app_reservas.models.solicitud import TIPO_SOLICITUD
 
 from app_usuarios.models import Usuario
 
-from app_academica.models import Comision
+from app_academica.models import Comision, Docente
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
     obtener_modelo_recurso,
+    obtener_recurso
 )
 
 from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA
@@ -24,7 +30,7 @@ class ReservaAssignForm(forms.Form):
     def __init__(self, request=None, model=None, *args, **kwargs):
         super(ReservaAssignForm, self).__init__(*args, **kwargs)
         if model is not None and request.method == 'GET':
-            self.fields['recurso'].choices = [(recurso.id, recurso) for recurso in model.objects.all()]
+            self.fields['recurso'].choices = [(recurso.id, obtener_recurso(recurso.id)) for recurso in model.objects.all()]
 
     recurso = forms.ChoiceField(
                 choices=[(recurso.id, recurso) for recurso in Recurso.objects.all()],
@@ -47,7 +53,7 @@ class ReservaAssignForm(forms.Form):
 class HorarioReservaForm(forms.ModelForm):
 
     recurso = forms.ChoiceField(
-                choices=[(recurso.id, recurso) for recurso in Recurso.objects.all()],
+                choices=[(recurso.id, obtener_recurso(recurso.id)) for recurso in Recurso.objects.all()],
                 required=True,
                 label='Recurso',
                 widget=forms.Select(attrs={'class': 'form-control'})
@@ -64,8 +70,8 @@ class HorarioReservaForm(forms.ModelForm):
         return recurso
 
     class Meta:
-        model = HorarioSolicitud
-        fields = ['dia', 'inicio', 'fin', 'cantidad_alumnos', 'recurso']
+        model = HorarioReserva
+        fields = ['dia', 'inicio', 'fin', 'recurso']
         widgets = {
             'dia': forms.Select(attrs={'class': 'form-control', }),
             'inicio': forms.TimeInput(
@@ -101,13 +107,22 @@ class HorarioReservaForm(forms.ModelForm):
             )
         return inicio
 
+    def clean_recurso(self):
+        reserva_id = self.cleaned_data.get('recurso')
+        recurso_list = Recurso.objects.filter(pk=reserva_id)
+        if not recurso_list:
+            raise forms.ValidationError(
+                "El recurso ingresado no es válido"
+            )
+        return recurso_list[0]
+
 
 class ReservaCreateForm(forms.ModelForm):
 
     def __init__(self, request=None, changeOptions=False, *args, **kwargs):
-        super(ReservaCreateForm, self).__init__(*args, **kwargs)
+        super(ReservaCreateForm, self).__init__(request, *args, **kwargs)
         if changeOptions and request.method == 'GET':
-            self.fields['tipoSolicitud'].choices = [('', '---------'),('2','Cursado'),('4','Fuera de Horario')]
+            self.fields['tipo_solicitud'].choices = [('', '---------'),('2','Cursado'),('4','Fuera de Horario')]
 
     comision = forms.CharField(
         required=False,
@@ -115,23 +130,32 @@ class ReservaCreateForm(forms.ModelForm):
         widget=forms.Select(attrs={'id': 'mat_select', 'class': 'form-control', 'disabled': 'true'}),
     )
 
-    fechaInicio = forms.DateField(
+    fecha_inicio = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'})
     )
 
+    docente = forms.ModelChoiceField(
+        queryset=Docente.objects.all(),
+        to_field_name='legajo',
+        widget=forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
+    )
+
+    tipo_solicitud = forms.ChoiceField(
+        choices=[('','---------')] +list(sorted(TIPO_SOLICITUD.items())),
+        widget=forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
+    )
+
     class Meta:
-        model = Solicitud
-        fields = ['fechaInicio', 'fechaFin', 'docente', 'tipoSolicitud', 'comision']
+        model = Reserva
+        fields = ['fecha_inicio', 'fecha_fin', 'docente', 'tipo_solicitud', 'comision']
         widgets = {
-            'docente': forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
-            'tipoSolicitud': forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
-            'fechaFin': forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'}),
+            'fecha_fin': forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'}),
         }
 
     def clean_comision(self):
         comision = self.cleaned_data['comision']
-        tipo_solicitud = self.data['tipoSolicitud']
+        tipo_solicitud = self.data['tipo_solicitud']
         if tipo_solicitud == '1' or tipo_solicitud == '2':
             if not comision:
                 raise forms.ValidationError("La comision no puede estar vacia")
@@ -140,13 +164,13 @@ class ReservaCreateForm(forms.ModelForm):
         comision_obj = Comision.objects.get(id=comision)
         return comision_obj
 
-    def clean_fechaFin(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        fin = self.cleaned_data.get('fechaFin')
-        tipo_solicitud = self.cleaned_data.get('tipoSolicitud')
+    def clean_fecha_fin(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        fin = self.cleaned_data.get('fecha_fin')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not fin:
             if tipo_solicitud == '1':
-                comision_obj = Comision.objects.get(id=self.cleaned_data['comision'])
+                comision_obj = Comision.objects.get(id=self.data['comision'])
                 fin = obtener_fecha_fin_reserva_cursado(comision_obj.cuatrimestre)
             elif tipo_solicitud == '3':
                 raise forms.ValidationError(
@@ -160,9 +184,9 @@ class ReservaCreateForm(forms.ModelForm):
             )
         return fin
 
-    def clean_fechaInicio(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        tipo_solicitud = self.data.get('tipoSolicitud')
+    def clean_fecha_inicio(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not inicio:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
@@ -174,7 +198,7 @@ class ReservaCreateForm(forms.ModelForm):
         return inicio
 
 
-ReservaInlineFormset = inlineformset_factory(Solicitud, HorarioSolicitud, form=HorarioReservaForm, extra=3)
+ReservaInlineFormset = inlineformset_factory(Reserva, HorarioReserva, form=HorarioReservaForm, extra=3)
 
 
 class FilterReservaForm(forms.Form):
@@ -192,11 +216,11 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         widget=forms.Select(attrs={'id': 'mat_select', 'class': 'form-control', 'disabled': 'true'}),
     )
 
-    fechaInicio = forms.DateField(
+    fecha_inicio = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'})
     )
-    tipoSolicitud = forms.ChoiceField(
+    tipo_solicitud = forms.ChoiceField(
         label='Comisión y Materia:',
         choices=[('', '---------'),('2','Cursado'),('4','Fuera de Horario')],
         widget=forms.Select(
@@ -207,7 +231,7 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         choices=[('', '---------')] + [(user.id, user) for user in Usuario.objects.all()],
         widget=forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
     )
-    nombreEvento = forms.CharField(
+    nombre_evento = forms.CharField(
         label='Nombre del Evento:',
         widget=forms.TextInput(attrs={'class': 'form-control', 'disabled': 'true'}),
         required=False,
@@ -215,7 +239,7 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
 
     def clean_comision(self):
         comision = self.cleaned_data['comision']
-        tipo_solicitud = self.data['tipoSolicitud']
+        tipo_solicitud = self.data['tipo_solicitud']
         if tipo_solicitud == '1' or tipo_solicitud == '2':
             if not comision:
                 raise forms.ValidationError("La comision no puede estar vacia")
@@ -229,10 +253,10 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         usuario_obj = Usuario.objects.get(id=usuario)
         return usuario_obj
 
-    def clean_fechaFin(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        fin = self.cleaned_data.get('fechaFin')
-        tipo_solicitud = self.cleaned_data.get('tipoSolicitud')
+    def clean_fecha_fin(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        fin = self.cleaned_data.get('fecha_fin')
+        tipo_solicitud = self.cleaned_data.get('tipo_solicitud')
         if not fin:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.cleaned_data['comision'])
@@ -249,9 +273,9 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
             )
         return fin
 
-    def clean_fechaInicio(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        tipo_solicitud = self.data.get('tipoSolicitud')
+    def clean_fecha_inicio(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not inicio:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
@@ -264,9 +288,9 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
                 )
         return inicio
 
-    def clean_nombreEvento(self):
-        nombre_evento = self.cleaned_data.get('nombreEvento')
-        tipo_solicitud = self.data.get('tipoSolicitud')
+    def clean_nombre_evento(self):
+        nombre_evento = self.cleaned_data.get('nombre_evento')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not nombre_evento or nombre_evento == '':
             if tipo_solicitud == '1' or tipo_solicitud == '2':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
