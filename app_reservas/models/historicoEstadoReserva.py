@@ -9,6 +9,8 @@ ESTADO_RESERVA = {
     '4': _(u'Dada de baja por bedel'),
 }
 
+ESTADOS_FINALES = ['2', '3', '4']
+
 
 class EstadoReservaField(models.CharField):
     def __init__(self, *args, **kwargs):

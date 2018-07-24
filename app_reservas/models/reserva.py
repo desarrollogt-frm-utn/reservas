@@ -2,7 +2,7 @@ import django
 from django.db import models
 from django.contrib.auth.models import User
 from app_usuarios.models import Usuario
-from app_academica.models import Comision
+from app_academica.models import Comision, Docente
 
 
 class Reserva(models.Model):
@@ -13,17 +13,17 @@ class Reserva(models.Model):
         default=django.utils.timezone.now
     )
 
-    fechaInicio = models.DateField(
+    fecha_inicio = models.DateField(
         verbose_name='Fecha de inicio de reserva'
     )
 
-    fechaFin = models.DateField(
+    fecha_fin = models.DateField(
         verbose_name='Fecha de fin de reserva',
         blank=True,
         null=True,
     )
 
-    nombreEvento = models.CharField(
+    nombre_evento = models.CharField(
         max_length=150,
         verbose_name='Nombre del evento',
     )
@@ -54,6 +54,11 @@ class Reserva(models.Model):
         null=True,
     )
 
+    docente = models.ForeignKey(
+        Docente,
+        verbose_name='Docente',
+    )
+
     class Meta:
         """
         Información de la clase.
@@ -73,10 +78,9 @@ class Reserva(models.Model):
         Retorna el nombre corto de la instancia.
         """
         if self.docente:
-            nombre_corto = '{0!s} - {1!s} {2!s} - {3!s}'.format(
+            nombre_corto = '{0!s} - {1!s} - {2!s}'.format(
                 self.recurso,
-                self.docente.first_name,
-                self.docente.last_name,
+                self.docente.nombre,
                 self.fecha_creacion
             )
         else:

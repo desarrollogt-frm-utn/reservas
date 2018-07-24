@@ -6,6 +6,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from ..adapters.google_calendar import generar_lista_eventos
+from app_reservas.utils import parse_eventos_response
 
 
 def obtener_codigo_aleatorio():
@@ -71,21 +72,8 @@ class Recurso(models.Model):
 
     def get_eventos_json(self):
         eventos = self.get_eventos()
-        eventos_json = '['
-        primera_iteracion = True
-        for evento in eventos:
-            if primera_iteracion:
-                primera_iteracion = False
-            else:
-                eventos_json += ',\n'
-            evento_str = json.dumps({
-                'title': evento['titulo'],
-                'start': evento['inicio_str'],
-                'end': evento['fin_str'],
-                'resourceId': str(self.id)
-            })
-            eventos_json += evento_str
-        eventos_json += ']'
+
+        eventos_json = parse_eventos_response(eventos, self.id)
         return eventos_json
 
     def get_nearby_reservations(self):

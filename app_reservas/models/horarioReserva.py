@@ -33,6 +33,13 @@ class HorarioReserva(models.Model):
         verbose_name='Hora de Inicio'
     )
 
+    id_evento_calendar = models.CharField(
+        max_length=255,
+        verbose_name='Id del evento',
+        blank=True,
+        null=True
+    )
+
     # Relaciones
 
     reserva = models.ForeignKey(
