@@ -56,7 +56,7 @@
             <div class="row">
               <div class="col-md-6 col-md-offset-3">
                 <div class="form-group">
-                    <label for="tipoSolicitud">Docente:</label>
+                    <label for="docente">Docente:</label>
                     {{ form.docente }}
                  </div>
                 </div>
@@ -64,15 +64,15 @@
               <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                   <div class="form-group">
-                      <label for="tipoSolicitud">Tipo de Solicitud:</label>
-                      {{ form.tipoSolicitud }}
+                      <label for="tipo_solicitud">Tipo de Reserva:</label>
+                      {{ form.tipo_solicitud }}
                    </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-6 col-md-offset-3">
                     <div class="form-group">
-                        <label for="tipoSolicitud">Comision:</label>
+                        <label for="comision">Comision:</label>
                         {{ form.comision }}
                     </div>
                   </div>
@@ -80,19 +80,19 @@
                   <div class="row">
                     <div class="col-md-3 col-md-offset-3">
                   		<div class="form-group">
-                      		<label for="fechaIncio">Fecha Inicio:</label>
-                      		{{ form.fechaInicio }}
+                      		<label for="fecha_inicio">Fecha Inicio:</label>
+                      		{{ form.fecha_inicio }}
                   	   </div>
                       </div>
                       <div class="col-md-3 col-md-offset-0">
                     		<div class="form-group">
                         		<label for="last_name">Fecha Fin:</label>
-                        		{{ form.fechaFin }}
+                        		{{ form.fecha_fin }}
                     	   </div>
                         </div>
                     </div>
 
-
+            <div class="col-md-8 col-md-offset-2">
             <table border="0" cellpadding="0" cellspacing="0">
                 <tbody>
                     {% for form in formset.forms %}
@@ -136,10 +136,13 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
             {{ formset.management_form }}
-            <div style="width:100px; float:right">
-                    <input class="btn btn-primary" type="submit" value="Solicitar" />
+            <div class="col-md-8 col-md-offset-2">
+                <div class="text-right">
+                    <input class="btn btn-primary" type="submit" value="Cargar Reserva" />
                 </div>
+            </div>
         </form>
 
 {% endblock contenido %}
@@ -160,12 +163,12 @@
           minDate: moment({h:8}),
       });
 
-      $('#id_fechaInicio').datetimepicker({
+      $('#id_fecha_inicio').datetimepicker({
           format: 'DD/MM/YYYY',
           minDate: moment(),
           maxDate: moment().endOf('year'),
       });
-      $('#id_fechaFin').datetimepicker({
+      $('#id_fecha_fin').datetimepicker({
           format: 'DD/MM/YYYY',
           minDate: moment(),
           maxDate: moment().endOf('year'),
@@ -192,25 +195,25 @@
       $('#com_select').html('<option value="" selected="selected">---------</option>');
       $select = $('#mat_select');
       $('#mat_select').attr("disabled", true);
-      $('#id_fechaInicio').attr("disabled", true);
-      $('#id_fechaFin').attr("disabled", true);
+      $('#id_fecha_inicio').attr("disabled", true);
+      $('#id_fecha_fin').attr("disabled", true);
       if ($(this).val()== 1) {
           $('#mat_select').attr("disabled", false);
          }
        else if ($(this).val()== 2) {
          $('#mat_select').attr("disabled", false);
-         $('#id_fechaInicio').attr("disabled", false);
+         $('#id_fecha_inicio').attr("disabled", false);
        }
        else if ($(this).val()== 3) {
-         $('#id_fechaInicio').attr("disabled", false);
-         $('#id_fechaFin').attr("disabled", false);
+         $('#id_fecha_inicio').attr("disabled", false);
+         $('#id_fecha_fin').attr("disabled", false);
        }
         else {
-          $('#id_fechaInicio').attr("disabled", false);
+          $('#id_fecha_inicio').attr("disabled", false);
         };
       if ($(this).val()== 1 || $(this).val()== 2) {
         $.ajax({
-            url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+            url: "{{SITE_URL}}" + "academico/api/materia/" + $("#docente_select").val(),
             dataType:'JSON',
             success:function(data){
                 // Vacio las opciones de local en caso que se haya seleccionado
@@ -226,7 +229,7 @@
         };
 
       $.ajax({
-          url: "http://localhost:8080/reservas/api/materia/" + $("#docente_select").val(),
+          url: "{{SITE_URL}}" + "academico/api/materia/" + $("#docente_select").val(),
           dataType:'JSON',
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado
@@ -242,18 +245,18 @@
 
     $('#mat_select').change(function(){
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      console.log("entre: " +  $('#mat_select').val());
       $select = $('#com_select');
       $.ajax({
-          url: "http://localhost:8080/reservas/api/horarios/" + $('#mat_select').val(),
+          url: "{{SITE_URL}}" + "academico/api/horarios/" + $('#mat_select').val(),
           dataType:'JSON',
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado
               $.each(data, function(key, val){
-
-                $('[id$=id_horariosolicitud_set-' + key  + '-dia]').val(val.dia_numero);
-                $('[id$=id_horariosolicitud_set-' + key  + '-inicio]').val(val.hora_inicio);
-                $('[id$=id_horariosolicitud_set-' + key  + '-fin]').val(val.hora_fin);
-                $('[id$=id_horariosolicitud_set-' + key  + '-cantidad_alumnos]').val(val.cantidad_alumnos);
+                $('[id$=id_horarioreserva_set-' + key  + '-dia]').val(val.dia_numero);
+                $('[id$=id_horarioreserva_set-' + key  + '-inicio]').val(val.hora_inicio);
+                $('[id$=id_horarioreserva_set-' + key  + '-fin]').val(val.hora_fin);
+                $('[id$=id_horarioreserva_set-' + key  + '-cantidad_alumnos]').val(val.cantidad_alumnos);
 
               })
               $('#com_select').attr("disabled", false);

@@ -1,0 +1,39 @@
+{% extends 'app_reservas/base.html' %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Finlizar Reserva
+{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+	<h1>Finalizar Reserva #{{reserva_obj.id}}</h1>
+</div>
+<form method="post">
+	{% csrf_token %}
+	<div class="col-md-6 col-md-offset-3">
+		<div class="text-center">
+			<h4>¿Esta seguro que desea finalizar esta reserva? Esta acción no se podrá deshacer.</h4>
+		</div>
+		<div class="text-left">
+
+			<p>Nombre del evento: {{ reserva_obj.nombre_evento }}</p>
+            <p>Recurso: {{reserva_obj.recurso.id|get_nombre_recurso }}</p>
+            <p>Fecha de creacíon: {{ reserva_obj.fecha_creacion }}</p>
+
+            <p>Horario:</p>
+            {% for horario in reserva_obj.horarioreserva_set.all %}
+            <li>{{ dias_semana|get_item:horario.dia }} - {{horario.inicio}} a {{horario.fin}}</li>
+            {% endfor %}
+
+		<div class="text-center">
+			<button class="btn btn-danger" type="submit">Sí, estoy seguro</button>
+			<a class= "btn btn-default" href="{% url 'reserva_listar'%}">Cancelar</a>
+		</div>
+	</div>
+</form>
+
+{% endblock %}

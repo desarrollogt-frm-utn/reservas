@@ -18,10 +18,35 @@ Finlizar Prestamo
 		<div class="text-center">
 			<h4>¿Esta seguro que desea dar marcar este prestamo como devuelto? Esta acción no se podrá deshacer.</h4>
 		</div>
-		<div class="text-left">
 
-			<p>Inicio del prestamo: {{ prestamo_obj.inicio }}</p>
-      <p>Prestado por: {{ prestamo_obj.asignado_por}}
+
+		<div class="col-sm-offset-0 col-sm-12">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						Información
+					</h3>
+				</div>
+				<table class="table table-bordered">
+					<tr>
+                    	<th scope="row">Solicitante</th>
+                    	<td class="text-center">{{ prestamo_obj.recursos_all.first.reserva.docente }}</td>
+                	</tr>
+					<tr>
+						<th scope="row">Inicio del Prestamo</th>
+						<td class="text-center">{{ prestamo_obj.inicio }}</td>
+					</tr>
+					 <tr>
+						<th scope="row">Prestado por</th>
+						<td class="text-center">
+							{{ prestamo_obj.asignado_por}}
+						</td>
+					</tr>
+				</table>
+
+			</div>
+    	</div>
+
 		<div class="text-center">
 			<button class="btn btn-danger" type="submit">Sí, estoy seguro</button>
 			<a class= "btn btn-default" href="{% url 'prestamo_detalle' prestamo_obj.id %}">Cancelar</a>

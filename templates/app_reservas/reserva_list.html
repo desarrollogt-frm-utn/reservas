@@ -10,16 +10,30 @@ Listado de Reservas
 {% endblock %}
 
 {% block contenido %}
+<div class="col-sm-offset-0 col-sm-8">
+	<div class="text-center">
+	 	<h1>Listado de Reservas</h1>
+	</div>
+ </div>
 
+ <div class="col-sm-offset-1 col-sm-3">
+	 <label for="estado">Estado:</label>
+	 <form method="get" action="{% url 'reserva_listar' %}">
 
-<form method="get" action="{% url 'solicitud_listar' %}">
-<p> Estado: {{ estado.estado }} </p>
-<p><input type="submit" value="Filtrar"/></p>
-</form>
+		 <div class="col-sm-offset-0 col-sm-9">
+
+			{{ estado_form.estado }}
+		 </div>
+		 <div class="col-sm-offset-0 col-sm-2">
+			<input class="btn btn-primary" type="submit" value="Filtrar"/>
+		 </div>
+	 </form>
+ </div>
 
 <table class="table table-bordered">
 	<thead>
 		<tr>
+			<td>Id</td>
 			<td>Recurso</td>
 			<td>Usuario</td>
 			<td>Fecha de Reserva</td>
@@ -33,13 +47,55 @@ Listado de Reservas
 		{% if object_list %}
 		{% for reserva in object_list %}
 		<tr>
+			<td>{{reserva.id}}</td>
 			<td>{{reserva.recurso.id|get_nombre_recurso}}</td>
-			<td>{{ reserva.docente.get_full_name }}</td>
-			<td>{{ reserva.fechaInicio }} {% if reserva.fechaFin %} a {{reserva.fechaFin}} {% endif %}</td>
+			<td>{{ reserva.docente.nombre }}</td>
+			<td>{{ reserva.fecha_inicio }} {% if reserva.fecha_fin %} a {{reserva.fecha_fin}} {% endif %}</td>
 			<td>
 				{% for historico in reserva.historicoestadoreserva_set.all %}
 				{% if historico.fechaFin == None  %}
-					{{ historico.estado }}
+
+				{% with reserva_estado=estado_reserva|get_item:historico.estado %}
+				{% if reserva_estado == "Activa" %}
+
+				<div class="text-center">
+                        {% if not estado_reserva.estado_final %}
+                             <div class="btn btn-xs btn-success">
+                                <span aria-hidden="true">
+                                </span>
+                                {{ reserva_estado }}
+                            </div>
+                        {% else %}
+                           ---
+                        {% endif %}
+                    </div>
+				{% elif reserva_estado == "Finalizada" %}
+
+				<div class="text-center">
+                        {% if not estado_reserva.estado_final %}
+                             <div class="btn btn-xs btn-default">
+                                <span aria-hidden="true">
+                                </span>
+                                {{ reserva_estado }}
+                            </div>
+                        {% else %}
+                           ---
+                        {% endif %}
+                    </div>
+				{% else %}
+				<div class="text-center">
+                        {% if not estado_reserva.estado_final %}
+                             <div class="btn btn-xs btn-danger">
+                                <span aria-hidden="true">
+                                </span>
+                                {{ reserva_estado }}
+                            </div>
+                        {% else %}
+                           ---
+                        {% endif %}
+                    </div>
+				{% endif %}
+				{% endwith %}
 				{% endif %}
 				{% endfor %}
 			</td>
@@ -54,8 +110,7 @@ Listado de Reservas
 			{% endif %}
 			</td>
 			<td>
-				<a class="btn btn-primary" href="">Visualizar</a>
-				<a class="btn btn-danger" href="">Dar baja</a>
+				<a class="btn btn-primary" href="{% url 'reserva_detalle' reserva.id %}">Visualizar</a>
 			</td>
 		</tr>
 		{% endfor %}
@@ -68,12 +123,12 @@ Listado de Reservas
 <ul class="pager">
 	<li>
 		{% if page_obj.has_previous %}
-       	 <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+       	 <a href="?page={{ page_obj.previous_page_number }}&estado={{ estado_form.estado.value }}">Anterior</a>
 		{% endif %}
         </li>
 	<li>
 		{% if page_obj.has_next %}
-     	 <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+     	 <a href="?page={{ page_obj.next_page_number }}&estado={{ estado_form.estado.value }}">Siguiente</a>
     	{% endif %}
     </li>
 </ul>

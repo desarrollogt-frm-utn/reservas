@@ -17,8 +17,8 @@ Listado de Prestamos
 		<tr>
 			<td>ID</td>
       <td>Solicitante</td>
-			<td>Prestado a las</td>
-			<td>Devuelto a las</td>
+			<td>Prestado</td>
+			<td>Devuelto</td>
 			<td>Estado</td>
 			<td>Acciones</td>
 		</tr>
@@ -29,7 +29,7 @@ Listado de Prestamos
 		{% for prestamo in object_list %}
 		<tr>
 			<td>{{ prestamo.id }}</td>
-      <td>{{prestamo.recursos_all.first.reserva.docente.first_name}} {{prestamo.recursos_all.first.reserva.docente.last_name}}</td>
+      		<td>{{prestamo.recursos_all.first.reserva.docente.nombre}}</td>
 			<td>{{ prestamo.inicio }}</td>
 			<td>
         {% if prestamo.fin == None  %}
@@ -40,9 +40,17 @@ Listado de Prestamos
     </td>
 			<td>
         {% if prestamo.fin == None  %}
-          En curso
+			<div class="btn btn-xs btn-success">
+				<span aria-hidden="true">
+				</span>
+				En curso
+			</div>
         {% else %}
-          Finalizado
+			<div class="btn btn-xs btn-default">
+				<span aria-hidden="true">
+				</span>
+				Finalizado
+			</div>
         {% endif %}
 			</td>
 			<td>

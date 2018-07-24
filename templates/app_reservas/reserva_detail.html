@@ -1,0 +1,129 @@
+{% extends 'app_reservas/base_calendario.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block title %}
+    Detalle de reserva: {{ reserva }}
+{% endblock title %}
+
+
+{% block contenido %}
+    <div class="page-header">
+        <h1>Reserva #{{ reserva.id }}</h1>
+    </div>
+
+    <div class="col-sm-offset-0 col-sm-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Información
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th scope="row">Nombre</th>
+                    <td class="text-center">{{ reserva.nombre_evento }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Recurso</th>
+                    <td class="text-center">{{ reserva.recurso.id|get_nombre_recurso }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Docente</th>
+                    <td class="text-center">{{ reserva.docente.nombre}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Fecha de Reserva</th>
+                    <td class="text-center">{{ reserva.fecha_inicio }} {% if reserva.fecha_fin %} a {{reserva.fecha_fin}} {% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Horario</th>
+                    <td class="text-center">
+                        {% for horario in reserva.horarioreserva_set.all %}
+                            <li>{{dias_semana|get_item:horario.dia}} de {{horario.inicio}} a {{horario.fin}}</li>
+                        {% endfor %}
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">Estado</th>
+                    <td class="text-center">
+                        {{ estado_reserva.estado_nombre }}
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+
+<div class="col-sm-offset-0 col-sm-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Detalle de Creación
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th scope="row">Fecha de Creación</th>
+                    <td class="text-center">{{ reserva.fecha_creacion }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Fecha de Finalización</th>
+
+                    <td class="text-center">
+                        {% if estado_reserva.estado_final %}
+                            {{ estado_reserva.fechaInicio }}
+                        {% else %}
+                           ---
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Asignada por</th>
+                    <td class="text-center">{{ reserva.asignado_por }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Acciones</th>
+                    <td class="text-center">
+                        {% if not estado_reserva.estado_final %}
+                             <a role="button"
+                               class="btn btn-xs btn-danger"
+                               href="{% url 'reserva_finalizar' reserva.id %}">
+                                <span aria-hidden="true">
+                                </span>
+                                &nbsp;Dar de baja
+                            </a>
+                        {% else %}
+                           ---
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+    <div id="calendar" class="calendar col-sm-12"></div>
+{% endblock contenido %}
+
+
+{% block fullcalendar_defaultView %}
+    defaultView: 'agendaWeek',
+{% endblock fullcalendar_defaultView %}
+
+
+{% block fullcalendar_eventSources %}
+    {
+        url: '{% url "reserva_eventos_json" reserva.id %}',
+        {% if reserva.recurso.calendar_color %}
+            color: '{{ reserva.recurso.calendar_color }}',
+        {% endif %}
+    },
+
+{% endblock fullcalendar_eventSources %}
+
+{% block fullcalendar_start_day %}
+new Date({{reserva.fecha_inicio.year}});
+{% endblock %}

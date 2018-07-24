@@ -105,7 +105,8 @@
                         return;
                     }
                     // Obtiene las fechas establecidas, en el calendario y en el datepicker.
-                    var fechaFullcalendar = new Date(view.intervalStart);
+
+                    var fechaFullcalendar = {% block fullcalendar_start_day %} new Date(view.intervalStart); {% endblock fullcalendar_start_day %}
                     var fechaDatepicker = new Date(datepicker.datepicker('getDate'));
                     // Crea momentos en base a las fechas, especificadas en UTC.
                     var momentoFullcalendar = moment(fechaFullcalendar).utc();

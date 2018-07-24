@@ -57,6 +57,15 @@
                                 </a>
                             </li>
                         {% endfor %}
+
+                        {% if user|can:'edit_reserva_estado' %}
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="{% url 'comisiones_listar' %}">
+                                Listado de Comisiones
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -141,17 +150,21 @@
                         <li><a href="{% url 'solicitud_instalacion_software' %}">Instalación de software</a></li>
                         <li><a href="{% url 'solicitud_laboratorio_informatico' %}">Laboratorio informático</a></li>
                         <li><a href="{% url 'solicitud_material_multimedia' %}">Material multimedia</a></li>
+                        <!--
                         {% if user.is_authenticated %}
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'solicitud_nueva' %}">Realizar solicitud</a></li>
                         <li><a href="{% url 'solicitud_listar' %}">Mis solicitudes</a></li>
                         <li><a href="{% url 'mis_reservas' %}">Mis reservas</a></li>
                         {% endif %}
+                        -->
 
 
                         {% if user|can:'edit_reserva_estado' %}
                           <li role="separator" class="divider"></li>
+                        <!--
                           <li><a href="{% url 'solicitud_listar' %}">Gestionar Solicitudes</a></li>
+                          -->
 
                           <li><a href="{% url 'reserva_crear' %}">Crear Reserva</a></li>
                           <li><a href="{% url 'reserva_listar' %}">Ver Reservas</a></li>

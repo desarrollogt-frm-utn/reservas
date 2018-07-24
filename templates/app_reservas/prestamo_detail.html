@@ -12,93 +12,139 @@ Detalle de Prestamo
 
 {% block contenido %}
 
-<a href="{{request.META.HTTP_REFERER}}">Atrás</a>
+<div class="text-center">
+        <h1>Prestamo #{{ object.id }}</h1>
+    </div>
 
-<h1>Prestamo #{{ object.id }}</h1>
-<div style="height: 180px">
-  <div style="width: 70%; float:left">
-    {% if object.recursos_all.first.reserva.comision != None %}
-    <p>Comision: {{object.recursos_all.first.reserva.comision}}</p>
-    {% else%}
-    <p>Solicitante: {{object.recursos_all.first.reserva.docente.first_name}} {{object.recursos_all.first.reserva.docente.last_name}}
-    {% endif %}
-<p>Estado:
-  {% if object.fin == None  %}
-    En curso
-  {% else %}
-    Finalizado
-  {% endif %}
-</p>
-<p>Inicio del Prestamo: {{ object.inicio }}</p>
-<p>Prestado Por: {{ object.asignado_por}} </p>
-<p>Devolución:
-  {% if object.fin != None  %}
-    {{ object.fin }}
-    {% else%}
-    ---
-  {% endif%}
-</p>
-<p>Recibido Por:
-  {% if object.recibido_por != None  %}
-    {{ object.recibido_por}}
-  {% else%}
-    ---
-{% endif%} </p>
-</div>
-<div style="width: 30%; float:right; text-align:center;">
-  {% if object.fin == None %}
-  <h3>Marcar como devuelto</h3>
+    <div class="col-sm-offset-3 col-sm-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Información
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th scope="row">Solicitante</th>
+                    <td class="text-center">{{ object.recursos_all.first.reserva.docente }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Estado</th>
+                    <td class="text-center">
+                        {% if object.fin == None  %}
+                            <div class="btn btn-xs btn-success">
+                                <span aria-hidden="true">
+                                </span>
+                                En curso
+                            </div>
+                        {% else %}
+                            <div class="btn btn-xs btn-default">
+                                <span aria-hidden="true">
+                                </span>
+                                Finalizado
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Inicio del Prestamo</th>
+                    <td class="text-center">{{ object.inicio }}</td>
+                </tr>
+                 <tr>
+                    <th scope="row">Prestado por</th>
+                    <td class="text-center">
+                        {{ object.asignado_por}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Fin del Prestamo</th>
+                    <td class="text-center">
+                        {% if object.fin != None  %}
+                            {{ object.fin }}
+                        {% else%}
+                            ---
+                        {% endif%}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Recibido por</th>
+                    <td class="text-center">
+                        {% if object.recibido_por != None  %}
+                            {{ object.recibido_por}}
+                        {% else%}
+                            ---
+                        {% endif%}
+                    </td>
+                </tr>
+                {% if object.fin == None  %}
+                <tr>
+                    <th scope="row"><h4>Marcar como devuelto</h4></th>
+                    <td class="text-center">
+                        <a class="btn btn-danger" href="{% url 'prestamo_finalizar' object.id %}">Finalizar Prestamo</a>
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
 
-  <a class="btn btn-danger" href="{% url 'prestamo_finalizar' object.id %}">Finalizar Prestamo</a>
+        </div>
+    </div>
+<div class="col-sm-offset-1 col-sm-10">
+        <h3>Detalle del prestamo</h3>
 
-  {% endif %}
-</div>
-</div>
-<div style="width: 100%; float:center">
-  <div>
-  <h3>Recursos:</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<td>Recurso</td>
-			<td>Reserva</td>
-			<td>Acciones</td>
-		</tr>
 
-	</thead>
-	<tbody>
-		{% for prestamo_recurso in object.recursos_all.all %}
-		<tr>
-			<td>{{ prestamo_recurso.recurso }}</td>
-			<td>{{ prestamo_recurso.reserva }}</td>
-			<td>
-        <a class="btn btn-primary" href="">Ver Reserva</a>
-      </td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-</div>
-<div>
-  <h3>Accesorios:</h3>
-<table class="table table-bordered">
-	<thead>
-		<tr>
-			<td>Accesorio</td>
-			<td>Tipo de accesorio</td>
-		</tr>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+                <h3 class="panel-title">
+                    Recursos
+                </h3>
+            </div>
 
-	</thead>
-	<tbody>
-		{% for accesorio_recurso in object.prestamosAccesorios_all.all %}
-		<tr>
-			<td>{{ accesorio_recurso.accesorio }}</td>
-			<td>{{ accesorio_recurso.accesorio.tipo }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-</div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td><h4>Recurso</h4></td>
+                <td><h4>Reserva</h4></td>
+                <td><h4>Acciones</h4></td>
+            </tr>
+
+        </thead>
+        <tbody>
+            {% for prestamo_recurso in object.recursos_all.all %}
+            <tr>
+                <td>{{ prestamo_recurso.recurso.id|get_nombre_recurso }}</td>
+                <td>{{ prestamo_recurso.reserva.nombre_evento }}</td>
+                <td>
+            <a class="btn btn-primary" href="{% url 'reserva_detalle' prestamo_recurso.reserva.id %}">Ver Reserva</a>
+          </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        {% if object.prestamosAccesorios_all.all %}
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Accesorios
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td><h4>Accesorio</h4></td>
+                        <td><h4>Tipo de accesorio</h4></td>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    {% for accesorio_recurso in object.prestamosAccesorios_all.all %}
+                    <tr>
+                        <td>{{ accesorio_recurso.accesorio }}</td>
+                        <td>{{ accesorio_recurso.accesorio.tipo }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}
