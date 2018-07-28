@@ -2,6 +2,7 @@
 
 import json
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -78,20 +79,24 @@ class Recurso(models.Model):
 
     def get_nearby_reservations(self):
         from app_reservas.models import Reserva
+        dia_reserva = timezone.now().weekday() + 1
         reserva_qs = Reserva.objects.filter(
                  recurso__id=self.id,
                  historicoestadoreserva__estado='1',
                  historicoestadoreserva__fechaFin__isnull=True,
-                 # horarioreserva__dia=timezone.now().weekday()
+                 horarioreserva__dia=dia_reserva
              )
         inicio = timezone.localtime(timezone.now()) - timezone.timedelta(minutes=10)
         fin = timezone.localtime(timezone.now()) + timezone.timedelta(minutes=100)
         neaby_reservation = []
-        #for reserva in reserva_qs:
-        #    horario_obj = reserva.horarioreserva_set.get(dia=timezone.now().weekday())
-        #    if horario_obj.inicio > inicio.time() or horario_obj.inicio < fin.time():
-        #        neaby_reservation.append(reserva)
-        return reserva_qs
+        if settings.TEST:
+            neaby_reservation = reserva_qs
+        else:
+            for reserva in reserva_qs:
+                horario_obj = reserva.horarioreserva_set.get(dia=dia_reserva)
+                if horario_obj.inicio > inicio.time() or horario_obj.inicio < fin.time():
+                    neaby_reservation.append(reserva)
+        return neaby_reservation
 
     def get_active_reservations(self):
         from app_reservas.models import Reserva

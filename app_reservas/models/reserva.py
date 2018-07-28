@@ -71,23 +71,16 @@ class Reserva(models.Model):
         """
         Representación de la instancia.
         """
-        return str(self.id)
+        return str(self.get_nombre_corto())
 
     def get_nombre_corto(self):
         """
         Retorna el nombre corto de la instancia.
         """
-        if self.docente:
-            nombre_corto = '{0!s} - {1!s} - {2!s}'.format(
-                self.recurso,
-                self.docente.nombre,
-                self.fecha_creacion
-            )
-        else:
-            nombre_corto = '{0!s} - {1!s}'.format(
-                self.recurso,
-                self.fecha_creacion
-            )
+        nombre_corto = 'Reserva #{0!s} - {1!s}'.format(
+            self.id,
+            self.nombre_evento
+        )
         return nombre_corto
 
     def get_estado_reserva(self):

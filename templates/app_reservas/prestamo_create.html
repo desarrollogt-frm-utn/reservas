@@ -1,5 +1,6 @@
 {% extends 'app_reservas/base.html' %}
 {% load static %}
+{% load navbar_tags %}
 
 {% block static_css %}
     {{ block.super }}
@@ -73,7 +74,7 @@
         {% for recurso in recursos %}
         <tr>
            <td>
-             {{ recurso.object}}
+             {{ recurso.object.id|get_nombre_recurso }}
            </td>
            <td> {{ recurso.form.reserva }}</td>
         </tr>

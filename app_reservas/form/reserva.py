@@ -216,9 +216,9 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         widget=forms.Select(attrs={'id': 'mat_select', 'class': 'form-control', 'disabled': 'true'}),
     )
 
-    fecha_inicio = forms.DateField(
+    fin = forms.TimeField(
         required=False,
-        widget=forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'})
+        widget=forms.TimeInput(attrs={'class': 'form-control', 'disabled': 'true'})
     )
     tipo_solicitud = forms.ChoiceField(
         label='Comisión y Materia:',
@@ -226,9 +226,9 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         widget=forms.Select(
             attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
     )
-    docente = forms.ChoiceField(
-        label='Usuario:',
-        choices=[('', '---------')] + [(user.id, user) for user in Usuario.objects.all()],
+    docente = forms.ModelChoiceField(
+        queryset=Docente.objects.all(),
+        to_field_name='legajo',
         widget=forms.Select(attrs={'id': 'docente_select', 'class': 'form-control'}),
     )
     nombre_evento = forms.CharField(
@@ -249,44 +249,11 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         return comision_obj
 
     def clean_docente(self):
-        usuario = self.data['usuario']
-        usuario_obj = Usuario.objects.get(id=usuario)
-        return usuario_obj
-
-    def clean_fecha_fin(self):
-        inicio = self.cleaned_data.get('fecha_inicio')
-        fin = self.cleaned_data.get('fecha_fin')
-        tipo_solicitud = self.cleaned_data.get('tipo_solicitud')
-        if not fin:
-            if tipo_solicitud == '1':
-                comision_obj = Comision.objects.get(id=self.cleaned_data['comision'])
-                fin = obtener_fecha_fin_reserva_cursado(comision_obj.cuatrimestre)
-            elif tipo_solicitud == '3':
-                raise forms.ValidationError(
-                    "La fecha de fin no puede ser nula"
-                )
-            else:
-                return None
-        if inicio > fin:
-            raise forms.ValidationError(
-                "La fecha de fin de la solicitud no puede ser menor a la fecha de inicio"
-            )
-        return fin
-
-    def clean_fecha_inicio(self):
-        inicio = self.cleaned_data.get('fecha_inicio')
-        tipo_solicitud = self.data.get('tipo_solicitud')
-        if not inicio:
-            if tipo_solicitud == '1':
-                comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                inicio = obtener_fecha_inicio_reserva_cursado(comision_obj.cuatrimestre)
-            elif tipo_solicitud == '2' or tipo_solicitud == '4':
-                inicio = timezone.localtime(timezone.now()).date()
-            else:
-                raise forms.ValidationError(
-                    "La fecha de inicio no puede ser nula"
-                )
-        return inicio
+        legajo = self.data['docente']
+        docente_list = Docente.objects.filter(legajo=legajo)
+        if not docente_list:
+            raise forms.ValidationError("Docente no valido")
+        return docente_list[0]
 
     def clean_nombre_evento(self):
         nombre_evento = self.cleaned_data.get('nombre_evento')
@@ -301,3 +268,16 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
                     "El nombre del evento no puede ser nulo"
                 )
         return nombre_evento
+
+    def clean_fin(self):
+        fin = self.cleaned_data['fin']
+        if not fin:
+            raise forms.ValidationError(
+                "La hora de fin no puede ser nula"
+            )
+        import datetime
+        if fin < datetime.datetime.now().time():
+            raise forms.ValidationError(
+                "La hora de fin de la solicitud no puede ser menor a la hora de inicio"
+            )
+        return fin

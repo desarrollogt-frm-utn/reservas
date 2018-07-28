@@ -12,6 +12,7 @@ from rolepermissions.decorators import has_role_decorator
 
 from app_reservas.form import ElementoForm
 from app_reservas.errors import not_found_error, custom_error
+from app_reservas.models import HistoricoEstadoReserva
 from app_reservas.services.reservas import finalizar_reserva
 from app_reservas.tasks import crear_evento_recurso_especifico
 from app_reservas.utils import obtener_siguiente_dia_vigente
@@ -218,28 +219,41 @@ def PrestamoConfirm(request):
                 form = ReservaWithoutSolicitudCreateForm(request.POST)
                 if form.is_valid():
                     reserva_form = form.cleaned_data
-                    reserva_form.pop('tipoSolicitud')
                     docente_obj = reserva_form.pop('docente')
                     try:
                         user_model_obj = UsuarioModel.objects.get(legajo=docente_obj.legajo)
                     except UsuarioModel.DoesNotExist:
                         user_model_obj = None
-                    reserva_obj = Reserva(usuario=user_model_obj, **reserva_form)
-                    reserva_obj.asignado_por = request.user
-                    reserva_obj.recurso = recurso.get('object')
-                    reserva_obj.save()
+                    reserva_obj = Reserva.objects.create(
+                        fecha_inicio=timezone.now(),
+                        nombre_evento=reserva_form.get('nombre_evento'),
+                        asignado_por=request.user,
+                        recurso=recurso.get('object'),
+                        docente=docente_obj,
+                        comision=reserva_form.get('comision'),
+                        usuario=user_model_obj
+                    )
+
+                    HistoricoEstadoReserva.objects.create(
+                        fechaInicio=timezone.now(),
+                        estado='1',
+                        reserva=reserva_obj,
+                    )
+                    import datetime
+
                     HorarioReserva.objects.create(
-                        inicio=timezone.now(),
-                        fin=timezone.now(),
+                        inicio=datetime.datetime.now().time(),
+                        fin=reserva_form.get('fin'),
                         reserva=reserva_obj,
                         dia=timezone.localtime(timezone.now()).weekday()+1
                     )
-                    fin = timezone.now() + timezone.timedelta(hours=3)
+
+                    fin = datetime.datetime.combine(timezone.now().date(), reserva_form.get('fin')).isoformat()
                     crear_evento_recurso_especifico.delay(
                         calendar_id=recurso.get('object').calendar_codigo,
-                        titulo=reserva_obj.nombreEvento,
+                        titulo=reserva_obj.nombre_evento,
                         inicio=timezone.now().isoformat(),
-                        fin=fin.isoformat(),
+                        fin=fin,
                         hasta=None,
                     )
                 else:
@@ -288,7 +302,8 @@ def PrestamoFinalize(request, pk):
         prestamo_obj.recibido_por = request.user
         prestamo_obj.save()
         for prestamo_reserva in prestamo_obj.recursos_all.all():
-            finalizar_reserva(prestamo_reserva.reserva)
+            if prestamo_reserva.reserva:
+                finalizar_reserva(prestamo_reserva.reserva)
         return redirect(reverse_lazy('prestamo_detalle', kwargs={'pk': pk}))
     return render(request, 'app_reservas/prestamo_finalize.html', {'prestamo_obj':prestamo_obj})
 
@@ -302,3 +317,4 @@ class PrestamoList(ListView):
     model = Prestamo
     template_name = 'app_reservas/prestamo_list.html'
     paginate_by = 10
+    ordering = ['-id']

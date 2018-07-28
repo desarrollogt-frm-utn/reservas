@@ -71,8 +71,8 @@ def dar_baja_evento(reserva_obj):
     for horario_reserva in reserva_obj.horarioreserva_set.all():
         borrar_evento(reserva_obj.recurso.calendar_codigo, horario_reserva.id_evento_calendar)
     from app_reservas.models import Recurso
-    recurso_obj = Recurso.objects.get(calendar_codigo=reserva_obj.recurso.calendar_codig)
-    obtener_eventos_recurso_especifico(recurso_obj).delay()
+    recurso_obj = Recurso.objects.get(calendar_codigo=reserva_obj.recurso.calendar_codigo)
+    obtener_eventos_recurso_especifico(recurso_obj)
 
 
 def finalizar_reserva(reserva_obj):

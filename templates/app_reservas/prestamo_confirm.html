@@ -1,5 +1,6 @@
 {% extends 'app_reservas/base.html' %}
 {% load static %}
+{% load navbar_tags %}
 
 {% block title %}
     Registo de Prestamo
@@ -48,9 +49,9 @@
             </div>
 
             <div class="col-md-6 col-md-offset-3">
-              <p class="text-center">
-                  Por favor confirme los siguientes datos para registrar el prestamo
-              </p>
+              <div class="text-center">
+                  <h5> Por favor confirme los siguientes datos para registrar el prestamo </h5>
+              </div>
             </div>
             {% if form %}
 
@@ -65,8 +66,8 @@
               <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                   <div class="form-group">
-                      <label for="tipoSolicitud">Tipo de Solicitud:</label>
-                      {{ form.tipoSolicitud }}
+                      <label for="tipo_solicitud">Tipo de Reserva:</label>
+                      {{ form.tipo_solicitud }}
                    </div>
                   </div>
                 </div>
@@ -81,12 +82,21 @@
                 <div class="row">
                   <div class="col-md-6 col-md-offset-3">
                     <div class="form-group">
-                        <label for="nombreEvento">Nombre del Evento:</label>
-                        {{ form.nombreEvento }}
+                        <label for="nombre_evento">Nombre del Evento:</label>
+                        {{ form.nombre_evento }}
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <div class="form-group">
+                            <label for="fin">Hora de devolución:</label>
+                            {{ form.fin }}
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
+            <div class="col-md-10 col-md-offset-1">
 
                     <div>
                       <h3>Recursos:</h3>
@@ -102,7 +112,7 @@
                         {% for recurso in recursos %}
                         <tr>
                            <td>
-                             {{ recurso.object}}
+                             {{ recurso.object.id|get_nombre_recurso }}
                            </td>
                            {% if recurso.reserva %}
                            <td> {{ recurso.reserva }}</td>
@@ -138,10 +148,13 @@
                     </table>
                     </div>
 
+                </div>
 
-            <div style="width:100px; float:right">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="text-right">
                     <input class="btn btn-primary" type="submit" value="Confirmar" />
                 </div>
+        </div>
         </form>
 
 {% endblock contenido %}
@@ -154,7 +167,7 @@
           format: 'HH:mm',
           minDate: moment({h:8}),
       });
-      $('[id$=-fin]').datetimepicker({
+      $('[id$=fin').datetimepicker({
           format: 'HH:mm',
           minDate: moment({h:8}),
       });
@@ -168,12 +181,12 @@
     $("#docente_select").change(function() {
       $('#tipo_select').attr("disabled", false);
       $('#tipo_select').val("");
-      $('#id_nombreEvento').val("");
+      $('#id_nombre_evento').val("");
       $('#mat_select').attr("disabled", true);
-      $('#id_nombreEvento').attr("disabled", true);
+      $('#id_nombre_evento').attr("disabled", true);
       $select = $('#mat_select');
       $.ajax({
-          url: "{{SITE_URL}}" + "api/materia/" + $("#docente_select").val(),
+          url: "{{SITE_URL}}" + "academico/api/materia/" + $("#docente_select").val(),
           dataType:'JSON',
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado
@@ -196,24 +209,21 @@
       $('#com_select').html('<option value="" selected="selected">---------</option>');
       $select = $('#mat_select');
       $('#mat_select').attr("disabled", true);
-      $('#id_fechaInicio').attr("disabled", true);
-      $('#id_fechaFin').attr("disabled", true);
-      $('#id_nombreEvento').val("");
+      $('#id_fecha_inicio').attr("disabled", true);
+      $('#id_fecha_fin').attr("disabled", true);
+      $('#id_nombre_evento').val("");
       if ($(this).val()== 1) {
           $('#mat_select').attr("disabled", false);
          }
        else if ($(this).val()== 2) {
          $('#mat_select').attr("disabled", false);
-         $('#id_fechaInicio').attr("disabled", false);
-         $('#id_nombreEvento').attr("disabled", true);
-       }
-       else if ($(this).val()== 3) {
-         $('#id_fechaInicio').attr("disabled", false);
-         $('#id_fechaFin').attr("disabled", false);
+         $('#id_fecha_inicio').attr("disabled", false);
+         $('#id_nombre_evento').attr("disabled", true);
+         $('#id_fin').attr("disabled", true);
        }
         else {
-          $('#id_fechaInicio').attr("disabled", false);
-          $('#id_nombreEvento').attr("disabled", false);
+          $('#id_fin').attr("disabled", false);
+          $('#id_nombre_evento').attr("disabled", false);
         };
     });
 
