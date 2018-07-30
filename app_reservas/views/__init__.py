@@ -15,6 +15,7 @@ from .nivel import NivelDetailView
 from .novedad import NovedadView
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
+from .recurso_sae import RecursoSAEDetailView
 from .solicitud import (
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
@@ -24,6 +25,8 @@ from .solicitud import (
 )
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
+from .tipo_recurso_sae import TipoRecursoSAEDetailView
+
 from .tv import (
     TvCuerposListView,
     TvVisorCuerposDetailView,

@@ -26,6 +26,15 @@ class Recurso(models.Model):
                   '"#ff8c0a"',
     )
 
+    url_detalles = models.URLField(
+        max_length=400,
+        blank=True,
+        null=True,
+        verbose_name='URL de detalles',
+        help_text='URL a la que se va a redirigir para obtener más info.'
+                  'Puede ser nulo.',
+    )
+
     class Meta:
         """
         Información de la clase.

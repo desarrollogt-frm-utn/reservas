@@ -16,6 +16,7 @@ from .views import (
     NovedadView,
     recurso_eventos_json,
     RecursoAliDetailView,
+    RecursoSAEDetailView,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
     SolicitudInstalacionSoftwareView,
@@ -23,6 +24,7 @@ from .views import (
     SolicitudMaterialMultimediaView,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
+    TipoRecursoSAEDetailView,
     TvCuerposListView,
     TvVisorCuerposDetailView,
     TvVisorDetailView,
@@ -99,6 +101,16 @@ urlpatterns = [
         r'^ali/(?P<tipo>[-\w]+)/(?P<identificador>[A-Za-z0-9_-]+)/$',
         RecursoAliDetailView.as_view(),
         name='recurso_ali_detalle'
+    ),
+    url(
+        r'^sae/(?P<slug>[-\w]+)/$',
+        TipoRecursoSAEDetailView.as_view(),
+        name='tipo_recurso_sae_detalle'
+    ),
+    url(
+        r'^sae/(?P<tipo>[-\w]+)/(?P<slug>[A-Za-z0-9_-]+)/$',
+        RecursoSAEDetailView.as_view(),
+        name='recurso_sae_detalle'
     ),
     url(
         r'^solicitud/ali/reclamos_sugerencias/$',

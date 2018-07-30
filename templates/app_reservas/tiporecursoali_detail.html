@@ -55,6 +55,19 @@
                                                     &nbsp;Detalles
                                                 </span>
                                             </a>
+                                            {% if recurso.url_detalles %}
+                                                <a role="button"
+                                                   class="btn btn-xs btn-default"
+                                                   target='_blank'
+                                                   href="{{ recurso.url_detalles }}">
+                                                    <span class="glyphicon glyphicon-info-sign"
+                                                          aria-hidden="true">
+                                                    </span>
+                                                    <span class="hidden-xs">
+                                                        &nbsp;Más información
+                                                    </span>
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

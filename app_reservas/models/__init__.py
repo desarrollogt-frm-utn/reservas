@@ -10,8 +10,10 @@ from .nivel import Nivel
 from .novedad import Novedad
 from .recurso import Recurso
 from .recursoAli import RecursoAli
+from .recursoSAE import RecursoSAE
 from .tipoLaboratorio import TipoLaboratorio
 from .tipoRecursoAli import TipoRecursoAli
+from .tipoRecursoSAE import TipoRecursoSAE
 from .visorTv import VisorTv
 
 
@@ -28,7 +30,9 @@ __all__ = [
     'Novedad',
     'Recurso',
     'RecursoAli',
+    'RecursoSAE',
     'TipoLaboratorio',
     'TipoRecursoAli',
+    'TipoRecursoSAE',
     'VisorTv',
 ]

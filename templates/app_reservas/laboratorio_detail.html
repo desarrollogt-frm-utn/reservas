@@ -49,6 +49,23 @@
                         </td>
                     </tr>
                 {% endif %}
+
+                {% if laboratorio.url_detalles %}
+                 <tr>
+                        <th scope="row">Información</th>
+                        <td class="text-center">
+                            <a role="button"
+                               class="btn btn-xs btn-default"
+                               target="_blank"
+                               href="{{ laboratorio.url_detalles }}">
+                                <span class="glyphicon glyphicon-info-sign"
+                                      aria-hidden="true">
+                                </span>
+                                &nbsp;Más detalles
+                            </a>
+                        </td>
+                    </tr>
+                {% endif %}
             </table>
         </div>
     </div>

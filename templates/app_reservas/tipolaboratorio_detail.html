@@ -78,6 +78,19 @@
                                                     </span>
                                                 </a>
                                             {% endif %}
+                                            {% if laboratorio.url_detalles %}
+                                                <a role="button"
+                                                   class="btn btn-xs btn-default"
+                                                   target='_blank'
+                                                   href="{{ laboratorio.url_detalles }}">
+                                                    <span class="glyphicon glyphicon-info-sign"
+                                                          aria-hidden="true">
+                                                    </span>
+                                                    <span class="hidden-xs">
+                                                        &nbsp;Más información
+                                                    </span>
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

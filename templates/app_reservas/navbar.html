@@ -11,12 +11,6 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li>
-                    <a href="{% url 'index' %}">
-                        <i class="fa fa-home fa-lg fa-fw"></i>
-                        <span class="hidden-sm">&nbsp;Inicio</span>
-                    </a>
-                </li>
                 <li class="dropdown">
                     <a href="#"
                        class="dropdown-toggle"
@@ -126,6 +120,26 @@
                        role="button"
                        aria-haspopup="true"
                        aria-expanded="false">
+                        <span class="hidden-sm"><i class="fa fa-users fa-lg fa-fw"></i></span>
+                        &nbsp;SAE <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for tipo in lista_tipos_recurso_sae %}
+                            <li>
+                                <a href="{% url 'tipo_recurso_sae_detalle' tipo.slug %}">
+                                    {{ tipo.nombre_plural }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#"
+                       class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">
                         <span class="hidden-sm"><i class="fa fa- fa-pencil-square-o fa-lg fa-fw"></i></span>
                         &nbsp;Solicitudes <span class="caret"></span>
                     </a>
@@ -134,6 +148,8 @@
                         <li><a href="{% url 'solicitud_instalacion_software' %}">Instalación de software</a></li>
                         <li><a href="{% url 'solicitud_laboratorio_informatico' %}">Laboratorio informático</a></li>
                         <li><a href="{% url 'solicitud_material_multimedia' %}">Material multimedia</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'solicitud_material_multimedia' %}">SAE</a></li>
                     </ul>
                 </li>
             </ul>
