@@ -26,6 +26,7 @@ from .novedad import NovedadView
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
 from .rolesManager import UserList, AsingRole, RemoveRole
+from .recurso_sae import RecursoSAEDetailView
 from .solicitud import (
     RecursoAssign,
     SolicitudAliReclamosSugerencias,
@@ -41,6 +42,8 @@ from .solicitud import (
 from .reserva import ReservaCreate, ReservaList, ReservaListDocente
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
+from .tipo_recurso_sae import TipoRecursoSAEDetailView
+
 from .tv import (
     TvCuerposListView,
     TvVisorCuerposDetailView,

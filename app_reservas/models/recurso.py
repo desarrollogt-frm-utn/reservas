@@ -1,7 +1,5 @@
 # coding=utf-8
 
-import json
-
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -39,6 +37,15 @@ class Recurso(models.Model):
     activo = models.BooleanField(default=True)
 
     codigo = models.CharField(max_length=12, unique=True, default=obtener_codigo_aleatorio)
+
+    url_detalles = models.URLField(
+        max_length=400,
+        blank=True,
+        null=True,
+        verbose_name='URL de detalles',
+        help_text='URL a la que se va a redirigir para obtener más info.'
+                  'Puede ser nulo.',
+    )
 
     class Meta:
         """

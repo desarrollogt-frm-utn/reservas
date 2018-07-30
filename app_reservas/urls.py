@@ -34,6 +34,7 @@ from .views import (
     ReservaList,
     ReservaListDocente,
     RemoveRole,
+    RecursoSAEDetailView,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
     SolicitudCreate,
@@ -45,13 +46,14 @@ from .views import (
     SolicitudReject,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
+    TipoRecursoSAEDetailView,
     TvCuerposListView,
     TvVisorCuerposDetailView,
     TvVisorDetailView,
     UserList,
 )
 
-from .views.horarios import HorariosWeekView, HorariosComisionListView
+from .views.horarios import HorariosComisionListView
 
 urlpatterns = [
     url(
@@ -128,6 +130,16 @@ urlpatterns = [
         r'^ali/(?P<tipo>[-\w]+)/(?P<identificador>[A-Za-z0-9_-]+)/$',
         RecursoAliDetailView.as_view(),
         name='recurso_ali_detalle'
+    ),
+    url(
+        r'^sae/(?P<slug>[-\w]+)/$',
+        TipoRecursoSAEDetailView.as_view(),
+        name='tipo_recurso_sae_detalle'
+    ),
+    url(
+        r'^sae/(?P<tipo>[-\w]+)/(?P<slug>[A-Za-z0-9_-]+)/$',
+        RecursoSAEDetailView.as_view(),
+        name='recurso_sae_detalle'
     ),
     url(
         r'^solicitud/ali/reclamos_sugerencias/$',
