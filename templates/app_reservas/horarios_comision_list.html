@@ -14,17 +14,20 @@ Horarios de Comisiones
         </div>
 
 <form method="get" action="{% url 'comisiones_listar' %}">
-    <div style="margin-top: 25px; margin-bottom: 50 px; margin-right: 100px; margin-left: 25px;" align="center">
-        <div align="left">
-            <div style="width:47%; margin-right: 2%;display:inline-table;"> Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
-            <div style="width:47%; margin-left: 2%;display:inline-table;"> Comision: {{comision_form.especialidad}} </div>
-        </div>
-        <div align="left">
-            <div style="width:98%;margin-right: 2%;display:inline-table;"> Buscar: {{ comision_form.buscar }}</div>
+    <div class="col-md-10 col-md-offset-1">
+
+		<div class="col-md-6 col-md-offset-0">Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
+		<div class="col-md-6 col-md-offset-0">Especialidad: {{comision_form.especialidad}} </div>
+
+        <div class="col-md-12 col-md-offset-0">
+            Buscar: {{ comision_form.buscar }}
         </div>
 
-        <div style="align:right; margin-right: 2%">
-            <input class="btn" type="submit" value="Filtrar"/>
+        <div class="col-md-12 col-md-offset-0">
+			<div class="text-right">
+				<a class="btn btn-default" href="{% url 'comisiones_horarios_descargar' %}?cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Descargar</a>
+				<input class="btn btn-primary" type="submit" value="Filtrar"/>
+            </div>
         </div>
     </div>
 </form>
@@ -34,12 +37,9 @@ Horarios de Comisiones
 		<tr>
 			<td>Detalle</td>
 			<td>Cantidad de inscriptos</td>
-			<td>Lunes</td>
-			<td>Martes</td>
-			<td>Miercoles</td>
-			<td>Jueves</td>
-			<td>Viernes</td>
-            <td>Sábado</td>
+			{% for dia in dias_semana %}
+				<td>{{dia.dia_nombre}}</td>
+			{% endfor %}
 		</tr>
 	</thead>
 	<tbody>
@@ -56,7 +56,7 @@ Horarios de Comisiones
 
 			{% for dia in dias_semana %}
 				<td>
-					{% with horario_filtrado=comision.get_horarios_comision_academico|get_horario:dia %}
+					{% with horario_filtrado=comision.get_horarios_comision_academico|get_horario:dia.dia %}
 						{% if horario_filtrado %}
 							{{ horario_filtrado.hora_inicio }} a {{ horario_filtrado.hora_fin }}
 						{% endif %}
