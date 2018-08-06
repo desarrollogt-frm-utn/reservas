@@ -1,7 +1,6 @@
 from django.conf import settings
 from suds.client import Client
 import json
-import random
 from django.core.cache import cache
 
 
@@ -91,31 +90,29 @@ def get_cursado(anio, legajo):
 
 
 def get_cantidad_inscriptos(anio, especialidad, plan, materia, comision, from_cache=True):
-    if settings.TEST:
-        cantidad_inscriptos = random.randint(10, 30)
-    else:
-        if from_cache:
-            get_comisiones_docentes_cache = cache.get('get_cantidad_inscriptos_{0!s}_{1!s}_{2!s}_{3!s}_{4!s}'.format(
-                anio,
-                especialidad,
-                plan,
-                materia,
-                comision
-            ))
-            if get_comisiones_docentes_cache:
-                cantidad_inscriptos = get_comisiones_docentes_cache
+    cantidad_inscriptos = None
+    if from_cache:
+        get_comisiones_docentes_cache = cache.get('get_cantidad_inscriptos_{0!s}_{1!s}_{2!s}_{3!s}_{4!s}'.format(
+            anio,
+            especialidad,
+            plan,
+            materia,
+            comision
+        ))
+        if get_comisiones_docentes_cache:
+            cantidad_inscriptos = get_comisiones_docentes_cache
 
-            if not cantidad_inscriptos:
-                url = settings.WSDL_URL
-                client = Client(url)
-                cantidad_inscriptos = client.service.seticGetCantidadInscriptos(anio, especialidad, plan, materia, comision)
-                cache.add('get_cantidad_inscriptos_{0!s}_{1!s}_{2!s}_{3!s}_{4!s}'.format(
-                    anio,
-                    especialidad,
-                    plan,
-                    materia,
-                    comision
-                ), cantidad_inscriptos)
+    if not cantidad_inscriptos:
+        url = settings.WSDL_URL
+        client = Client(url)
+        cantidad_inscriptos = client.service.seticGetCantidadInscriptos(anio, especialidad, plan, materia, comision)
+        cache.add('get_cantidad_inscriptos_{0!s}_{1!s}_{2!s}_{3!s}_{4!s}'.format(
+            anio,
+            especialidad,
+            plan,
+            materia,
+            comision
+        ), cantidad_inscriptos)
 
     response = {
         'cantidad': cantidad_inscriptos
