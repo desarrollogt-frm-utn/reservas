@@ -45,7 +45,7 @@ Horarios de Comisiones
 	<tbody>
 		{% for comision in comisiones %}
 		<tr>
-			<td>{{comision.comision}} - {{comision.materia.nombre}} - {{comision.materia.especialidad.nombre}}</td>
+			<td><a href="{% url 'comision_detalle' comision.id%}">{{comision.comision}} - {{comision.materia.nombre}} - {{comision.materia.especialidad.nombre}}</a></td>
 			<td>
 				{% if comision.get_cantidad_inscriptos %}
 					{{ comision.get_cantidad_inscriptos }}

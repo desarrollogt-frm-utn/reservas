@@ -1,7 +1,9 @@
 # coding=utf-8
 import csv
+import codecs
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from app_academica.adapters.frm_utn import get_horarios
@@ -9,9 +11,11 @@ from app_academica.form import FilterComisionForm
 from app_academica.models import Especialidad, Materia, Comision
 from app_academica.models.comision import CUATRIMESTRE
 from app_academica.models.horario import DIAS_SEMANA_LIST
+from app_academica.services.serializerService import get_docentes_by_comision_materia_especialidad_plan
 from app_reservas.templatetags.navbar_tags import get_horario
 from app_reservas.utils import parse_time, add_minutes_to_time
 from django.db.models import Q
+
 
 def HorariosWeekView(request):
 
@@ -118,6 +122,7 @@ def horario_descargar(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="aulas.csv"'
 
+    response.write(codecs.BOM_UTF8)
     writer = csv.writer(response)
 
     fila = []
@@ -144,3 +149,33 @@ def horario_descargar(request):
 
         writer.writerow(fila)
     return response
+
+
+class ComisionDetailView(DetailView):
+    """
+    Vista de detalle para una instancia específica de Comision.
+    """
+    model = Comision
+    context_object_name = 'comision'
+    template_name = 'app_reservas/comision_detail.html'
+
+    def get_object(self, **kwargs):
+        """
+        Retorna la instancia de Comisión cuyo id concuerdan con
+        el parámetros de la URL, o una respuesta 404 en caso
+        de ser inválido.
+        """
+        return get_object_or_404(Comision, id=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ComisionDetailView, self).get_context_data(**kwargs)
+        docente_list = get_docentes_by_comision_materia_especialidad_plan(
+            self.object.codigo,
+            self.object.materia.codigo,
+            self.object.materia.especialidad.codigo,
+            self.object.materia.plan.nombre
+        )
+        context['cuatrimestre'] = CUATRIMESTRE
+        context['dias_semana'] = DIAS_SEMANA_LIST
+        context['docente_list'] = docente_list
+        return context

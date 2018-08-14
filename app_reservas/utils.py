@@ -3,6 +3,11 @@ import json
 
 from constance import config
 from django.utils import timezone
+from rolepermissions.checkers import has_permission, has_role
+
+from app_reservas.roles import ASSIGN_RECURSO_AULA, ASSIGN_RECURSO_ALI, ASSIGN_RECURSO_LABORATORIO, \
+    ASSIGN_RECURSO_LABORATORIO_INFORMATICO, ADMINISTRADOR_ROLE
+
 
 def obtener_siguiente_dia_vigente(dia, horario):
     now = timezone.now()
@@ -102,6 +107,7 @@ def add_minutes_to_time(time, minutes):
         minutes=minutes))
     return hora.time()
 
+
 def parse_eventos_response(eventos, resource_id):
     eventos_json = '['
     primera_iteracion = True
@@ -119,3 +125,28 @@ def parse_eventos_response(eventos, resource_id):
         eventos_json += evento_str
     eventos_json += ']'
     return eventos_json
+
+
+def obtener_recursos_asignables(user):
+    from app_reservas.models import Recurso, Aula, Laboratorio, LaboratorioInformatico, RecursoAli
+    recurso_list = []
+
+    if not user:
+        return recurso_list
+
+    if has_role(user, ADMINISTRADOR_ROLE):
+        return list(Recurso.objects.all())
+
+    if has_permission(user, ASSIGN_RECURSO_AULA):
+        recurso_list += list(Aula.objects.all())
+
+    if has_permission(user, ASSIGN_RECURSO_ALI):
+        recurso_list += list(RecursoAli.objects.all())
+
+    if has_permission(user, ASSIGN_RECURSO_LABORATORIO):
+        recurso_list += list(Laboratorio.objects.all())
+
+    if has_permission(user, ASSIGN_RECURSO_LABORATORIO_INFORMATICO):
+        recurso_list += list(LaboratorioInformatico.objects.all())
+
+    return recurso_list

@@ -1,0 +1,91 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+{% load navbar_tags %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Detalle de Comisión
+{% endblock %}
+
+{% block contenido %}
+
+<div class="text-center">
+        <h1>Detalle de Comision</h1>
+    </div>
+
+    <div class="col-sm-offset-3 col-sm-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Información
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th scope="row">Comision</th>
+                    <td class="text-center">{{ comision.comision }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Cuatrimestre</th>
+                    <td class="text-center">{{ cuatrimestre|get_item:comision.cuatrimestre }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Materia</th>
+                    <td class="text-center">{{ comision.materia.nombre }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Especialidad</th>
+                    <td class="text-center">{{ comision.materia.especialidad.nombre }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Plan</th>
+                    <td class="text-center">{{ comision.materia.plan.nombre }}</td>
+                </tr>
+                 <tr>
+                    <th scope="row">Horarios</th>
+                    <td class="text-center">
+                         <ul>
+                        {% for dia in dias_semana %}
+                            {% with horario_filtrado=comision.get_horarios_comision_academico|get_horario:dia.dia %}
+                                {% if horario_filtrado %}
+                                    <li>{{dia.dia_nombre}} {{ horario_filtrado.hora_inicio }} a {{ horario_filtrado.hora_fin }}</li>
+                                {% endif %}
+                            {% endwith %}
+
+                        {% endfor %}
+                         </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Cantidad de inscriptos</th>
+                    <td class="text-center">
+                        {% if comision.get_cantidad_inscriptos %}
+					        {{ comision.get_cantidad_inscriptos }}
+				        {% else %}
+				            ---
+				        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Docentes</th>
+                    <td class="text-center">
+                        <ul>
+                        {% for docente in docente_list %}
+
+                            <li>{{docente.legajo}} - {{ docente.nombre }}</li>
+
+
+                        {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

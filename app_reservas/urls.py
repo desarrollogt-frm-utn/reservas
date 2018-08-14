@@ -53,7 +53,7 @@ from .views import (
     UserList,
 )
 
-from .views.horarios import HorariosComisionListView, horario_descargar
+from .views.horarios import ComisionDetailView, HorariosComisionListView, horario_descargar
 
 urlpatterns = [
     url(
@@ -317,5 +317,10 @@ urlpatterns = [
     url(r'^administracion_aulas/horario_comisiones/descargar$',
         login_required(horario_descargar),
         name='comisiones_horarios_descargar'
+    ),
+
+url(r'^administracion_aulas/horario_comisiones/comision/(?P<pk>\d+)$',
+        ComisionDetailView.as_view(),
+        name='comision_detalle'
     ),
 ]
