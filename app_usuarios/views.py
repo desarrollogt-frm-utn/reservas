@@ -1,8 +1,13 @@
 import base64
+
+from django import forms
+from django.forms import modelform_factory
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import DetailView
 from django.views.generic.edit import UpdateView
+
+from app_reservas.roles import ADMINISTRADOR_ROLE
 from app_usuarios.utils import validateEmail
 from django.contrib.auth.models import User
 from .models import Usuario
@@ -116,7 +121,7 @@ class DocenteDetail(HasRoleMixin, DetailView):
         return context
 
 
-@has_role_decorator('administrador')
+@has_role_decorator(ADMINISTRADOR_ROLE)
 def DocenteApprove(request, pk):
     docente_obj = Usuario.objects.get(id=pk)
     docente_obj.is_active = True
@@ -124,7 +129,7 @@ def DocenteApprove(request, pk):
     return redirect(reverse_lazy('docente_detalle', kwargs={'pk': pk}))
 
 
-@has_role_decorator('administrador')
+@has_role_decorator(ADMINISTRADOR_ROLE)
 def DocenteReject(request, pk):
     docente_obj = Usuario.objects.get(id=pk)
     if request.method == 'POST':
@@ -148,10 +153,36 @@ class UserProfileDetail(DetailView):
 
 class UserProfileUpdate(UpdateView):
     model = Usuario
-    fields = ['celular', 'telefono', 'foto']
     template_name = 'app_usuarios/user_profile_edit.html'
+    form_class = modelform_factory(
+        Usuario,
+        fields=['celular', 'telefono', 'foto'],
+        widgets={
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+        }
+    )
 
     def get_object(self):
         user_obj = Usuario.objects.filter(id=self.request.user.id)
         if user_obj:
             return user_obj[0]
+
+
+class UserProfileUpdateAdminView(UpdateView):
+    model = Usuario
+    template_name = 'app_usuarios/user_profile_edit.html'
+    form_class = modelform_factory(
+        Usuario,
+        fields=['legajo','celular', 'telefono', 'foto', 'areas'],
+        widgets={
+            'legajo': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'areas': forms.SelectMultiple(attrs={'class': 'form-control'})
+        }
+    )
+
+    def get_success_url(self):
+
+        return reverse_lazy('docente_detalle', kwargs={'pk': self.object.id})

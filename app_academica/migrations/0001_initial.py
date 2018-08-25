@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import app_academica.models.comision
-import app_academica.models.horario
 
 
 class Migration(migrations.Migration):
@@ -19,7 +18,7 @@ class Migration(migrations.Migration):
                 ('comision', models.CharField(verbose_name='Comisión', max_length=10)),
                 ('anioacademico', models.PositiveSmallIntegerField(verbose_name='Año Académico')),
                 ('codigo', models.PositiveIntegerField(verbose_name='Código de comisión', blank=True, null=True)),
-                ('cuatrimestre', app_academica.models.comision.CuatrimestreField(max_length=1, choices=[('0', 'Anual'), ('1', 'Primer Semestre'), ('2', 'Segundo Semestre')])),
+                ('semestre', app_academica.models.comision.SemestreField(max_length=1, choices=[('0', 'Anual'), ('1', 'Primer Semestre'), ('2', 'Segundo Semestre')])),
             ],
             options={
                 'verbose_name': 'Comision',
@@ -68,20 +67,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Especialidad',
                 'verbose_name_plural': 'Especialidades',
                 'ordering': ['nombre'],
-            },
-        ),
-        migrations.CreateModel(
-            name='Horario',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('dia', app_academica.models.horario.DiasSemanaField(max_length=1, choices=[('1', 'Lunes'), ('2', 'Martes'), ('3', 'Miercoles'), ('4', 'Jueves'), ('5', 'Viernes'), ('6', 'Sabado')])),
-                ('duracion', models.PositiveSmallIntegerField(verbose_name='Duración')),
-                ('horaInicio', models.TimeField(verbose_name='Hora de Inicio')),
-                ('comision', models.ForeignKey(verbose_name='Horario', to='app_academica.Comision')),
-            ],
-            options={
-                'verbose_name': 'Horario de cursado',
-                'verbose_name_plural': 'Horarios de cursado',
             },
         ),
         migrations.CreateModel(

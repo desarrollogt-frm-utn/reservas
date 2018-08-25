@@ -1,14 +1,14 @@
 # coding=utf-8
 
 import sys
+import traceback
 from celery import (
     shared_task,
 )
 
 from app_academica.adapters.frm_utn import get_especialidades, get_materias, get_comisiones_docentes, get_horarios
-from app_academica.utils import filter_by_comision_materia_especialidad_plan, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, obtener_materia_by_esp_mat_plan
+from app_academica.utils import obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, obtener_materia_by_esp_mat_plan
 
-from app_reservas.utils import parse_time
 
 @shared_task(name='obtener_especialidades')
 def obtener_especialidades():
@@ -59,62 +59,47 @@ def obtener_materias():
                             especialidad=especialidad_obj
                         )
             except:
-                print("Error al guardar materia: ", sys.exc_info()[0])
+                print("Error al guardar materia: ", sys.exc_info()[0], traceback.print_exc())
     except:
-        print("Error al obtener materias: ", sys.exc_info()[0])
+        print("Error al obtener materias: ", sys.exc_info()[0], traceback.print_exc())
         raise
 
 
 @shared_task(name='obtener_comisiones')
 def obtener_comisiones():
-    from .models import Comision, Horario
+    from .models import Comision
     try:
-        json_comisiones = get_comisiones_docentes(obtener_anio_academico())
         json_horarios = get_horarios()
-        for comision in json_comisiones:
+        for horario in json_horarios:
             comision_obj = obtener_comision_by_esp_mat_com_plan(
-                comision.get('especialid'),
-                comision.get('materia'),
-                comision.get('comision'),
-                comision.get('plan')
+                horario.get('especialid'),
+                horario.get('materia'),
+                horario.get('comision'),
+                horario.get('plan')
             )
             try:
                 if not comision_obj:
-                    comision_str = comision.get('curso').replace(' ', '')
+                    comision_str = horario.get('curso').replace(' ', '')
 
-                    horario_list = filter_by_comision_materia_especialidad_plan(
-                        json_horarios,
-                        comision.get('comision'),
-                        comision.get('materia'),
-                        comision.get('especialid'),
-                        comision.get('plan')
+                    materia_obj = obtener_materia_by_esp_mat_plan(
+                        horario.get('especialid'),
+                        horario.get('materia'),
+                        horario.get('plan')
                     )
-                    if horario_list:
-                        materia_obj = obtener_materia_by_esp_mat_plan(
-                            comision.get('especialid'),
-                            comision.get('materia'),
-                            comision.get('plan')
-                        )
-                        created_comision_obj = Comision.objects.create(
+                    if materia_obj:
+                        Comision.objects.create(
                             comision=comision_str,
                             anioacademico=obtener_anio_academico(),
-                            codigo=comision.get('comision'),
-                            cuatrimestre=horario_list[0]['cuatrimest'],
+                            codigo=horario.get('comision'),
+                            semestre=horario.get('cuatrimest'),
                             materia=materia_obj
                         )
-                        for horario in horario_list:
-                            Horario.objects.create(
-                                dia=horario.get('dia'),
-                                duracion=horario.get('duracion'),
-                                horaInicio=parse_time(horario.get('horacomien')),
-                                comision=created_comision_obj
-                            )
 
 
             except:
-                print("Error al guardar la comision: ", sys.exc_info()[0])
+                print("Error al guardar la comision: ", sys.exc_info()[0], traceback.print_exc())
     except:
-        print("Error al obtener comisiones: ", sys.exc_info()[0])
+        print("Error al obtener comisiones: ", sys.exc_info()[0], traceback.print_exc())
         raise
 
 @shared_task(name='obtener_docentes')
@@ -133,6 +118,7 @@ def obtener_docentes():
                     )
             except:
                 print("Error al guardar docente: ", sys.exc_info()[0])
+                traceback.print_exc()
     except:
         print("Error al obtener docentes: ", sys.exc_info()[0])
         raise

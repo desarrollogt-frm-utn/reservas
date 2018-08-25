@@ -36,10 +36,7 @@ def get_item(dictionary, key):
 @register.filter
 def get_horario(horarios, dia):
     for horario in horarios:
-        if horario.get('dia') == int(dia):
-            hora_inicio = parse_time(horario.get('horacomien'))
-            horario['hora_inicio'] = hora_inicio
-            horario['hora_fin'] = add_minutes_to_time(hora_inicio, horario.get('duracion'))
+        if horario.get('dia_numero') == int(dia):
             return horario
     return None
 

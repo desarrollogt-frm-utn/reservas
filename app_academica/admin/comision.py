@@ -7,11 +7,7 @@ from django.shortcuts import render, redirect
 
 from app_academica.tasks import obtener_comisiones
 
-from ..models import Comision, Horario, DocenteComision
-
-
-class HorarioInline(admin.TabularInline):
-    model = Horario
+from ..models import Comision, DocenteComision
 
 
 class DocenteComisionInline(admin.TabularInline):
@@ -26,7 +22,7 @@ class ComisionAdmin(admin.ModelAdmin):
     list_display = (
         'comision',
         'anioacademico',
-        'cuatrimestre',
+        'semestre',
         'materia',
     )
 
@@ -38,9 +34,7 @@ class ComisionAdmin(admin.ModelAdmin):
 
 
     inlines = [
-        HorarioInline,
         DocenteComisionInline,
-
     ]
 
     def get_urls(self):

@@ -1,14 +1,10 @@
 from django import forms
-from django.forms import inlineformset_factory
-from django.utils import timezone
+from django.forms import inlineformset_factory, BaseInlineFormSet
 
 from app_reservas.models import (
-    HorarioSolicitud,
     HorarioReserva,
     Recurso,
     Reserva,
-    Solicitud,
-
 )
 
 from app_reservas.models.solicitud import TIPO_SOLICITUD
@@ -20,9 +16,8 @@ from app_academica.models import Comision, Docente
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
-    obtener_modelo_recurso,
-    obtener_recurso
-)
+    obtener_recurso,
+    obtener_recursos_asignables)
 
 from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA
 
@@ -122,7 +117,7 @@ class ReservaCreateForm(forms.ModelForm):
     def __init__(self, request=None, changeOptions=False, *args, **kwargs):
         super(ReservaCreateForm, self).__init__(request, *args, **kwargs)
         if changeOptions and request.method == 'GET':
-            self.fields['tipo_solicitud'].choices = [('', '---------'),('2','Cursado'),('4','Fuera de Horario')]
+            self.fields['tipo_solicitud'].choices = [('', '---------'),('2','Cursado'),('4','Fuera de Agenda')]
 
     comision = forms.CharField(
         required=False,
@@ -171,7 +166,7 @@ class ReservaCreateForm(forms.ModelForm):
         if not fin:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data['comision'])
-                fin = obtener_fecha_fin_reserva_cursado(comision_obj.cuatrimestre)
+                fin = obtener_fecha_fin_reserva_cursado(comision_obj.semestre)
             elif tipo_solicitud == '3':
                 raise forms.ValidationError(
                     "La fecha de fin no puede ser nula"
@@ -190,7 +185,7 @@ class ReservaCreateForm(forms.ModelForm):
         if not inicio:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                inicio = obtener_fecha_inicio_reserva_cursado(comision_obj.cuatrimestre)
+                inicio = obtener_fecha_inicio_reserva_cursado(comision_obj.semestre)
             else:
                 raise forms.ValidationError(
                     "La fecha de inicio no puede ser nula"
@@ -198,7 +193,22 @@ class ReservaCreateForm(forms.ModelForm):
         return inicio
 
 
-ReservaInlineFormset = inlineformset_factory(Reserva, HorarioReserva, form=HorarioReservaForm, extra=3)
+class BaseFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        request = None
+        if 'request' in kwargs:
+            request = kwargs.pop("request")
+        super(BaseFormSet, self).__init__(*args, **kwargs)
+        if request:
+            for form in self.forms:
+                choices = [(recurso.id, obtener_recurso(recurso.id)) for recurso in obtener_recursos_asignables(request.user)]
+                if not choices:
+                    choices = [('','--------')]
+                form.fields['recurso'].choices = choices
+
+
+
+ReservaInlineFormset = inlineformset_factory(Reserva, HorarioReserva, form=HorarioReservaForm, formset=BaseFormSet, extra=3)
 
 
 class FilterReservaForm(forms.Form):

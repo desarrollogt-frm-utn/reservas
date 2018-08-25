@@ -3,6 +3,8 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
+from app_reservas.models import Area
+
 from django.core.validators import RegexValidator
 from django.utils.text import slugify
 
@@ -60,6 +62,12 @@ class Usuario(User):
         null=True,
         blank=True,
         upload_to=establecer_destino_archivo_imagen
+    )
+
+    areas = models.ManyToManyField(
+        Area,
+        blank=True,
+        verbose_name='Áreas',
     )
 
     class Meta:

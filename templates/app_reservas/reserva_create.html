@@ -77,6 +77,14 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-3">
+                    <div class="form-group">
+                        <label for="alumnos">Cantidad de alumnos:</label>
+                        <input class="form-control" disabled="disabled" id="id_cantidad_alumnos" name="fecha_inicio" type="text">
+                    </div>
+                  </div>
+                </div>
                   <div class="row">
                     <div class="col-md-3 col-md-offset-3">
                   		<div class="form-group">
@@ -177,7 +185,7 @@
 </script>
 
 
-<script>
+<script type="text/javascript">
     // Función que detecta el cambio en el select de docente
 
     $("#docente_select").change(function() {
@@ -185,11 +193,15 @@
       $('#tipo_select').val("");
       $('#mat_select').attr("disabled", true);
       $('#mat_select').html('<option value="" selected="selected">---------</option>');
+      //$('[id$=id_cantidad_alumnos]').val("");
+      //$('[id^=id_horarioreserva_set-\d]]').val("");
 
     });
 
     $('#tipo_select').change(function(){
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
+      //$('[id$=id_cantidad_alumnos]').val("");
+      //$('[id^=id_horarioreserva_set-]').val("");
       $select = $('#mat_select');
       $('#mat_select').attr("disabled", false);
       $('#com_select').html('<option value="" selected="selected">---------</option>');
@@ -245,14 +257,16 @@
 
     $('#mat_select').change(function(){
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
-      console.log("entre: " +  $('#mat_select').val());
+      //$('[id$=id_cantidad_alumnos]').val("");
+      //$('[id^=id_horarioreserva_set-]').val("");
       $select = $('#com_select');
       $.ajax({
           url: "{{SITE_URL}}" + "academico/api/horarios/" + $('#mat_select').val(),
           dataType:'JSON',
           success:function(data){
               // Vacio las opciones de local en caso que se haya seleccionado
-              $.each(data, function(key, val){
+              $('[id$=id_cantidad_alumnos]').val(data.cantidad_alumnos);
+              $.each(data.horarios, function(key, val){
                 $('[id$=id_horarioreserva_set-' + key  + '-dia]').val(val.dia_numero);
                 $('[id$=id_horarioreserva_set-' + key  + '-inicio]').val(val.hora_inicio);
                 $('[id$=id_horarioreserva_set-' + key  + '-fin]').val(val.hora_fin);
@@ -262,19 +276,6 @@
               $('#com_select').attr("disabled", false);
           }
       });
-    });
-
-    $('[id$=-tipoRecurso]').change(function () {
-      console.log(event.target.name.slice(-13, -12));
-      if (event.target.value == 3) {
-        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", false);
-        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", true);
-      } else if (event.target.value == 4) {
-          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", false);
-          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", true);
-      } else {
-        $('[id$=id_' + event.target.name.slice(0, -12) + '_cantidadAlumnos]').attr("disabled", false);
-      }
     });
 
 </script>

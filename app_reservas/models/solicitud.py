@@ -8,8 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 TIPO_SOLICITUD = {
     '1': _(u'Cursado Completo'),
     '2': _(u'Cursado - Un solo día'),
-    '3': _(u'Fuera de Horario - Periodo'),
-    '4': _(u'Fuera de Horario - Un solo día'),
+    '3': _(u'Fuera de Agenda - Periodo'),
+    '4': _(u'Fuera de Agenda - Un solo día'),
 }
 
 

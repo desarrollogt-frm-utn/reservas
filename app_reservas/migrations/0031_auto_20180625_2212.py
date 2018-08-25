@@ -152,7 +152,7 @@ class Migration(migrations.Migration):
                 ('fechaCreacion', models.DateTimeField(verbose_name='Fecha de Creación')),
                 ('fechaInicio', models.DateField(verbose_name='Fecha de inicio de solicitud')),
                 ('fechaFin', models.DateField(verbose_name='Fecha de fin de solicitud', blank=True, null=True)),
-                ('tipoSolicitud', app_reservas.models.solicitud.TipoSolicitudField(max_length=1, choices=[('1', 'Cursado Completo'), ('2', 'Cursado - Un solo día'), ('3', 'Fuera de Horario - Periodo'), ('4', 'Fuera de Horario - Un solo día')])),
+                ('tipoSolicitud', app_reservas.models.solicitud.TipoSolicitudField(max_length=1, choices=[('1', 'Cursado Completo'), ('2', 'Cursado - Un solo día'), ('3', 'Fuera de Agenda - Periodo'), ('4', 'Fuera de Agenda - Un solo día')])),
                 ('solicitante', models.ForeignKey(blank=True, null=True, related_name='solicutudes', to='app_usuarios.Usuario')),
             ],
             options={

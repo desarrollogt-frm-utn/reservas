@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.conf import settings
-from rolepermissions.decorators import has_role_decorator
+from rolepermissions.decorators import has_role_decorator, has_permission_decorator
 from dateutil.parser import parse
 
 from app_reservas.adapters.google_calendar import obtener_evento_especifico
@@ -21,26 +21,25 @@ from app_reservas.form import (
 )
 from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA, ESTADOS_FINALES
 from app_reservas.models.horarioReserva import DIAS_SEMANA
+from app_reservas.roles import CREATE_RESERVA
 from app_reservas.services.reservas import get_nombre_evento, crear_evento, dar_baja_evento
 from app_reservas.form.reserva import ReservaInlineFormset
 
 from app_usuarios.models import Usuario as UsarioModel
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_RESERVA)
 def ReservaCreate(request):
     solicitud = Solicitud()
     reserva_form = ReservaCreateForm()  # setup a form for the parent
-    formset = ReservaInlineFormset(instance=solicitud)
+    formset = ReservaInlineFormset(instance=solicitud, request=request)
 
     if request.method == "POST":
         reserva_form = ReservaCreateForm(request.POST)
 
-        formset = ReservaInlineFormset(request.POST, request.FILES)
+        formset = ReservaInlineFormset(request.POST, request.FILES, request=request)
 
         if reserva_form.is_valid():
-            formset = ReservaInlineFormset(request.POST, request.FILES)
-
             if formset.is_valid():
                 docente_obj = reserva_form.cleaned_data.get('docente')
                 usuario_model_qs = UsarioModel.objects.filter(legajo=docente_obj.legajo)[:1]
@@ -103,7 +102,7 @@ def ReservaCreate(request):
         "SITE_URL": settings.SITE_URL
     })
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_RESERVA)
 def ReservaFinalize(request, pk):
     reserva_qs = Reserva.objects.filter(id=pk)[:1]
     if not reserva_qs:

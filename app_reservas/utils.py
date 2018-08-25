@@ -7,6 +7,7 @@ from rolepermissions.checkers import has_permission, has_role
 
 from app_reservas.roles import ASSIGN_RECURSO_AULA, ASSIGN_RECURSO_ALI, ASSIGN_RECURSO_LABORATORIO, \
     ASSIGN_RECURSO_LABORATORIO_INFORMATICO, ADMINISTRADOR_ROLE
+from app_usuarios.models import Usuario
 
 
 def obtener_siguiente_dia_vigente(dia, horario):
@@ -23,14 +24,14 @@ def obtener_siguiente_dia_vigente(dia, horario):
     return datetime.datetime.combine(dia, horario).isoformat()
 
 
-def obtener_fecha_finalizacion_reserva_cursado(cuatrimestre):
-    if cuatrimestre == '1':
+def obtener_fecha_finalizacion_reserva_cursado(semestre):
+    if semestre == '1':
         fecha_fin = config.FECHA_FIN_PRIMER_SEMESTRE
         if fecha_fin.year == timezone.now().year:
             return datetime.datetime.combine(fecha_fin, datetime.time(23, 00)).strftime("%Y%m%dT%H%M%SZ")
         else:
             return timezone.datetime(timezone.now().year, 6, 25, 23, 00).strftime("%Y%m%dT%H%M%SZ")
-    if cuatrimestre == '2' or cuatrimestre == '0':
+    if semestre == '2' or semestre == '0':
         fecha_fin = config.FECHA_FIN_SEGUNDO_SEMESTRE
         if fecha_fin.year == timezone.now().year:
             return datetime.datetime.combine(fecha_fin, datetime.time(23, 00)).strftime("%Y%m%dT%H%M%SZ")
@@ -42,14 +43,14 @@ def obtener_fecha_finalizacion_reserva_fuera_cursado(date):
     return datetime.datetime.combine(date, datetime.time(23, 00)).strftime("%Y%m%dT%H%M%SZ")
 
 
-def obtener_fecha_inicio_reserva_cursado(cuatrimestre):
-    if cuatrimestre == '1' or cuatrimestre == '0':
+def obtener_fecha_inicio_reserva_cursado(semestre):
+    if semestre == '1' or semestre == '0':
         fecha_inicio = config.FECHA_INICIO_PRIMER_SEMESTRE
         if fecha_inicio.year == timezone.now().year:
             return fecha_inicio
         else:
             return timezone.datetime(timezone.now().year, 3, 8,)
-    if cuatrimestre == '2':
+    if semestre == '2':
         fecha_inicio = config.FECHA_INICIO_SEGUNDO_SEMESTRE
         if fecha_inicio.year == timezone.now().year:
             return fecha_inicio
@@ -57,14 +58,14 @@ def obtener_fecha_inicio_reserva_cursado(cuatrimestre):
             return timezone.datetime(timezone.now().year, 8, 8,)
 
 
-def obtener_fecha_fin_reserva_cursado(cuatrimestre):
-    if cuatrimestre == '1':
+def obtener_fecha_fin_reserva_cursado(semestre):
+    if semestre == '1':
         fecha_fin = config.FECHA_FIN_PRIMER_SEMESTRE
         if fecha_fin.year == timezone.now().year:
             return fecha_fin
         else:
             return timezone.datetime(timezone.now().year, 6, 25,)
-    if cuatrimestre == '2' or cuatrimestre == '0':
+    if semestre == '2' or semestre == '0':
         fecha_fin = config.FECHA_FIN_SEGUNDO_SEMESTRE
         if fecha_fin.year == timezone.now().year:
             return fecha_fin
@@ -138,7 +139,12 @@ def obtener_recursos_asignables(user):
         return list(Recurso.objects.all())
 
     if has_permission(user, ASSIGN_RECURSO_AULA):
-        recurso_list += list(Aula.objects.all())
+        usuario_model_list = Usuario.objects.filter(pk=user.id)[:1]
+        if usuario_model_list:
+            usuario_model = usuario_model_list[0]
+            aulas_qs = Aula.objects.filter(areas__in=usuario_model.areas.all().values_list('id', flat=True)).distinct()
+
+            recurso_list += list(aulas_qs)
 
     if has_permission(user, ASSIGN_RECURSO_ALI):
         recurso_list += list(RecursoAli.objects.all())

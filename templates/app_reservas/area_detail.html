@@ -45,7 +45,7 @@
                                 {% for aula in area.get_aulas %}
                                     <tr>
                                         <td>
-                                            {{ aula }}
+                                            {{ aula.get_aula_nivel }}
                                         </td>
                                         <td class="text-center">
                                             {% if aula.capacidad > 0 %}
@@ -117,7 +117,7 @@
         {% for aula in area.get_aulas %}
             {
                 id: '{{ aula.id }}',
-                title: '{{ aula }}',
+                title: '{{ aula.get_aula_nivel }}',
             },
         {% endfor %}
     ],

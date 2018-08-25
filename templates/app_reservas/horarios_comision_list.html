@@ -16,7 +16,7 @@ Horarios de Comisiones
 <form method="get" action="{% url 'comisiones_listar' %}">
     <div class="col-md-10 col-md-offset-1">
 
-		<div class="col-md-6 col-md-offset-0">Cuatrimestre: {{ comision_form.cuatrimestre }}</div>
+		<div class="col-md-6 col-md-offset-0">Semestre: {{ comision_form.semestre }}</div>
 		<div class="col-md-6 col-md-offset-0">Especialidad: {{comision_form.especialidad}} </div>
 
         <div class="col-md-12 col-md-offset-0">
@@ -25,7 +25,7 @@ Horarios de Comisiones
 
         <div class="col-md-12 col-md-offset-0">
 			<div class="text-right">
-				<a class="btn btn-default" href="{% url 'comisiones_horarios_descargar' %}?cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Descargar</a>
+				<a class="btn btn-default" href="{% url 'comisiones_horarios_descargar' %}?semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Descargar</a>
 				<input class="btn btn-primary" type="submit" value="Filtrar"/>
             </div>
         </div>
@@ -74,12 +74,12 @@ Horarios de Comisiones
 <ul class="pager">
 	<li>
 		{% if page_obj.has_previous %}
-       	 <a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a>
+       	 <a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a>
 		{% endif %}
         </li>
 	<li>
 		{% if page_obj.has_next %}
-     	 <a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a>
+     	 <a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a>
     	{% endif %}
     </li>
 </ul>
@@ -90,7 +90,7 @@ Horarios de Comisiones
   <ul class="pager">
     {% if page_obj.has_previous %}
       {% if page_obj.has_previous %}
-       	 <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+       	 <li><a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
 		{% endif %}
     {% else %}
       <li class="disabled"><span>Anterior</span></li>
@@ -99,11 +99,11 @@ Horarios de Comisiones
       {% if page_obj.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+        <li><a href="?page={{ i }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-	  <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+	  <li><a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
     {% else %}
       <li class="disabled"><span>Siguiente</span></li>
     {% endif %}
@@ -113,7 +113,7 @@ Horarios de Comisiones
 {% if page_obj.has_other_pages %}
   <ul class="pager">
     {% if page_obj.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
+      <li><a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
     {% else %}
       <li class="disabled"><span>&laquo;</span></li>
     {% endif %}
@@ -121,11 +121,11 @@ Horarios de Comisiones
       {% if page_obj.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+        <li><a href="?page={{ i }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
+      <li><a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
     {% else %}
       <li class="disabled"><span>&raquo;</span></li>
     {% endif %}
@@ -137,7 +137,7 @@ Horarios de Comisiones
 {% if page_obj.has_other_pages %}
   <ul class="pagination">
     {% if page_obj.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
+      <li><a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">&laquo;</a></li>
     {% else %}
       <li class="disabled"><span>&laquo;</span></li>
     {% endif %}
@@ -145,11 +145,11 @@ Horarios de Comisiones
       {% if page_obj.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+        <li><a href="?page={{ i }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
+      <li><a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">&raquo;</a></li>
     {% else %}
       <li class="disabled"><span>&raquo;</span></li>
     {% endif %}
@@ -167,7 +167,7 @@ Horarios de Comisiones
 {% if page_obj.has_other_pages %}
   <ul class="pagination">
     {% if page_obj.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+      <li><a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
     {% else %}
       <li class="disabled"><span>Anterior</span></li>
     {% endif %}
@@ -175,11 +175,11 @@ Horarios de Comisiones
       {% if page_obj.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+        <li><a href="?page={{ i }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+      <li><a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
     {% else %}
       <li class="disabled"><span>Siguiente</span></li>
     {% endif %}
@@ -195,7 +195,7 @@ Horarios de Comisiones
 {% if page_obj.has_other_pages %}
   <ul class="pagination">
     {% if page_obj.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
+      <li><a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a></li>
     {% else %}
       <li class="disabled"><span>Anterior</span></li>
     {% endif %}
@@ -203,11 +203,11 @@ Horarios de Comisiones
       {% if page_obj.number == i %}
         <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ i }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
+        <li><a href="?page={{ i }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}&cuatrimestre={{ comision_form.cuatrimestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
+      <li><a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a></li>
     {% else %}
       <li class="disabled"><span>Siguiente</span></li>
     {% endif %}

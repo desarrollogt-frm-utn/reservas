@@ -2,18 +2,18 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-CUATRIMESTRE = {
+SEMESTRE = {
     '0': _(u'Anual'),
     '1': _(u'Primer Semestre'),
     '2': _(u'Segundo Semestre'),
 }
 
 
-class CuatrimestreField(models.CharField):
+class SemestreField(models.CharField):
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = tuple(sorted(CUATRIMESTRE.items()))
+        kwargs['choices'] = tuple(sorted(SEMESTRE.items()))
         kwargs['max_length'] = 1
-        super(CuatrimestreField, self).__init__(*args, **kwargs)
+        super(SemestreField, self).__init__(*args, **kwargs)
 
 
 class Comision(models.Model):
@@ -34,7 +34,7 @@ class Comision(models.Model):
         null=True
     )
 
-    cuatrimestre = CuatrimestreField()
+    semestre = SemestreField()
 
     #relaciones
     materia = models.ForeignKey(
@@ -83,14 +83,8 @@ class Comision(models.Model):
         return s
 
     def get_horarios_comision_academico(self):
-        from app_academica.adapters.frm_utn import get_horarios_comision
-        return get_horarios_comision(
-            self.anioacademico,
-            self.materia.especialidad.codigo,
-            self.materia.plan.nombre,
-            self.materia.codigo,
-            self.codigo
-        )
+        from app_academica.services.serializerService import get_horarios_comision_list
+        return get_horarios_comision_list(self)
 
     def get_cantidad_inscriptos(self):
         from app_academica.adapters.frm_utn import get_cantidad_inscriptos

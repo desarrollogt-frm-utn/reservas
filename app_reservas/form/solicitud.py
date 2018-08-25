@@ -6,7 +6,7 @@ from app_reservas.models import (
     HorarioSolicitud,
 )
 
-from app_academica.models import Comision, DocenteComision
+from app_academica.models import Comision
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
@@ -87,7 +87,7 @@ class SolicitudForm(forms.ModelForm):
         if not fin:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                fin = obtener_fecha_fin_reserva_cursado(comision_obj.cuatrimestre)
+                fin = obtener_fecha_fin_reserva_cursado(comision_obj.semestre)
             elif tipo_solicitud == '3':
                 raise forms.ValidationError(
                     "La fecha de fin no puede ser nula"
@@ -106,7 +106,7 @@ class SolicitudForm(forms.ModelForm):
         if not inicio:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                inicio = obtener_fecha_inicio_reserva_cursado(comision_obj.cuatrimestre)
+                inicio = obtener_fecha_inicio_reserva_cursado(comision_obj.semestre)
             else:
                 raise forms.ValidationError(
                     "La fecha de inicio no puede ser nula"

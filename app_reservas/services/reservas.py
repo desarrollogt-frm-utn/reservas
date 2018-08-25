@@ -19,7 +19,7 @@ def get_nombre_evento(docente_obj, comision_obj):
         titulo = "{0!s} - {1!s} - {2!s}".format(comision_obj.materia.nombre, comision_obj.comision,
                                                 docente_obj.nombre)
     else:
-        titulo = "Solicitud fuera de horario - {0!s}".format(docente_obj.nombre)
+        titulo = "Solicitud fuera de agenda - {0!s}".format(docente_obj.nombre)
     return titulo
 
 
@@ -30,7 +30,7 @@ def crear_evento(reserva_obj):
         hasta = None
 
         if reserva_obj.comision and reserva_obj.fecha_fin:
-            hasta = obtener_fecha_finalizacion_reserva_cursado(reserva_obj.comision.cuatrimestre)
+            hasta = obtener_fecha_finalizacion_reserva_cursado(reserva_obj.comision.semestre)
         elif not reserva_obj.comision and reserva_obj.fecha_fin:
             hasta = obtener_fecha_finalizacion_reserva_fuera_cursado(reserva_obj.fecha_fin)
 

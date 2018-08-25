@@ -20,19 +20,67 @@ Detalle de usuario {{ object.name }}
 	{% endif %}
 {% endif %}
 
+<div class="col-sm-offset-3 col-sm-6">
+	<div class="page-header">
+		<h1>Detalle de usuario</h1>
+	</div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {{ object.first_name }} {{ object.last_name }}
+                </h3>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th scope="row">Legajo</th>
+                    <td class="text-left">{{ object.legajo }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Email</th>
+                    <td class="text-left">{{ object.email }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Celular</th>
+                    <td class="text-left">{{ object.celular }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Teléfono Fijo</th>
+                    <td class="text-left">{{ object.telefono }}</td>
+                </tr>
+                <tr>
+
+                    <th scope="row">Estado</th>
+                    <td class="text-left">
+						{% if object.is_active  %}
+							Activo
+						{% else %}
+						  Inactivo
+						{% endif %}
+
+  					</td>
+                </tr>
+				{% if bedel %}
+  				<tr>
+                    <th scope="row">Áreas</th>
+                    <td class="text-left">
+  						<ul>
+                        {% for area in object.areas.all %}
+
+                            <li>{{area.nombre}}</li>
+
+
+                        {% endfor %}
+                        </ul>
+  					</td>
+                </tr>
+  				{% endif %}
+            </table>
+
+        </div>
+    </div>
+
+
 <div class="col-md-6 col-md-offset-3">
-  <h1>{{ object.first_name }} {{ object.last_name }}</h1>
-  <p>Legajo: {{ object.legajo }}</p>
-  <p>Email: {{ object.email }}</p>
-  <p>Celular: {{ object.celular }}</p>
-  <p>Teléfono Fijo: {{ object.telefono }}</p>
-  <p>Estado:
-  	{% if object.is_active  %}
-  		Activo
-    {% else %}
-      Inactivo
-  	{% endif %}
-  </p>
   <p>
     Permisos:
   </p>
@@ -42,8 +90,8 @@ Detalle de usuario {{ object.name }}
   			<td>Técnico</td>
   			<td>Soporte</td>
   			<td>Administrador</td>
-        <td>Bedel</td>
-        <td>Aliano</td>
+			<td>Bedel</td>
+			<td>Aliano</td>
   		</tr>
 
   	</thead>
@@ -92,6 +140,7 @@ Detalle de usuario {{ object.name }}
 
   {% if object.is_active  %}
   <div class="text-right">
+	  <a class="btn btn-primary" href="{% url 'usuario_editar' object.id %}">Editar Usuario</a>
     <a class="btn btn-danger" href="{% url 'docente_reject' object.id %}">Eliminar Usuario</a>
   </div>
   {% endif %}

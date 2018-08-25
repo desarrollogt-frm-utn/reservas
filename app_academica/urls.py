@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .serializer import get_materia_json, get_horarios_json, get_horarios, get_alumnos, get_comisiones_docentes, get_cursado, get_especialidades, get_materias
+from .serializer import get_materia_json, get_comision_json, get_horarios, get_alumnos, get_comisiones_docentes, get_cursado, get_especialidades, get_materias
 
 urlpatterns = [
     url(
@@ -40,7 +40,7 @@ urlpatterns = [
     ),
     url(
         r'^api/horarios/(?P<comision>\d+)$',
-        get_horarios_json,
+        get_comision_json,
         name='comision_json'
     )
 ]

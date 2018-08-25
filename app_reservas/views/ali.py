@@ -8,14 +8,14 @@ from django.views.generic import ListView, DetailView
 
 from django.conf import settings
 
-from rolepermissions.decorators import has_role_decorator
+from rolepermissions.decorators import has_role_decorator, has_permission_decorator
 
 from app_reservas.form import ElementoForm
 from app_reservas.errors import not_found_error, custom_error
 from app_reservas.models import HistoricoEstadoReserva
+from app_reservas.roles import FINALIZE_PRESTAMO, CREATE_PRESTAMO
 from app_reservas.services.reservas import finalizar_reserva
 from app_reservas.tasks import crear_evento_recurso_especifico
-from app_reservas.utils import obtener_siguiente_dia_vigente
 
 from app_usuarios.models import Usuario as UsuarioModel
 
@@ -87,7 +87,7 @@ class AliVideoconferenciasDetailView(DetailView):
         ).first()
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoRegister(request):
     form = AliRecursoForm()
     if request.method == "POST":
@@ -108,7 +108,7 @@ def PrestamoRegister(request):
     })
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoCreate(request):
     recurso_list = request.session.get('recurso_list', [])
     accesorio_list = request.session.get('accesorio_list', [])
@@ -148,7 +148,7 @@ def PrestamoCreate(request):
     })
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoElementAdd(request):
     form = ElementoForm(request)
     if request.method == "POST":
@@ -169,7 +169,7 @@ def PrestamoElementAdd(request):
     })
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoElementsRemove(request):
     request.session['recurso_list'] = []
     request.session['accesorio_list'] = []
@@ -177,7 +177,7 @@ def PrestamoElementsRemove(request):
     return redirect(reverse_lazy('prestamo_crear'))
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoConfirm(request):
     accesorio_list = request.session.get('accesorio_list', [])
     recursos_tuple = request.session.get('recursos_tuple', [])
@@ -289,7 +289,7 @@ def PrestamoConfirm(request):
     })
 
 
-@has_role_decorator('administrador')
+@has_permission_decorator(FINALIZE_PRESTAMO)
 def PrestamoFinalize(request, pk):
     prestamo_qs = Prestamo.objects.filter(id=pk)[:1]
     if not prestamo_qs:

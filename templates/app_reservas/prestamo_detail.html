@@ -78,8 +78,9 @@ Detalle de Prestamo
                 </tr>
                 {% if object.fin == None  %}
                 <tr>
-                    <th scope="row"><h4>Marcar como devuelto</h4></th>
+                    <th scope="row">Acciones</th>
                     <td class="text-center">
+                        <a class="btn btn-primary" href="">Agregar Elemento</a>
                         <a class="btn btn-danger" href="{% url 'prestamo_finalizar' object.id %}">Finalizar Prestamo</a>
                     </td>
                 </tr>

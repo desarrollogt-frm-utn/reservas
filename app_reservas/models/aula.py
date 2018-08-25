@@ -65,6 +65,15 @@ class Aula(Recurso):
         """
         Representación de la instancia.
         """
+        nombre = '{0!s} - {1!s}'.format(self.get_nombre_corto(), self.nivel)
+        if self.capacidad:
+            nombre += ' - Capacidad: {0!s}'.format(self.capacidad)
+        return nombre
+
+    def get_aula_nivel(self):
+        """
+        Retorna el nombre la instancia junto al nivel.
+        """
         return '{0!s} - {1!s}'.format(self.get_nombre_corto(), self.nivel)
 
     def get_nombre_corto(self):

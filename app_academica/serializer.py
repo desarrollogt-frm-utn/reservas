@@ -1,11 +1,8 @@
 import json
-import datetime
-from app_academica.models import Comision
 
 from django.http import HttpResponse
 
-from app_academica.models.horario import DIAS_SEMANA
-from app_academica.services.serializerService import get_comisiones_by_legajo
+from app_academica.services.serializerService import get_comisiones_by_legajo, get_comision_response
 
 from app_reservas.errors import not_found_error
 
@@ -33,28 +30,13 @@ def get_materia_json(request, legajo):
         return not_found_error(request)
 
 
-def get_horarios_json(request, comision):
-    if request.is_ajax():
-        json_string = []
-        comision_obj = Comision.objects.get(id=comision)
-        horarios_qs = comision_obj.horario_set.all()
-        cantidad_alumnos = comision_obj.get_cantidad_inscriptos()
-        for horario in horarios_qs:
-            hora_fin = (datetime.datetime.combine(datetime.date(1, 1, 1), horario.horaInicio) + datetime.timedelta(minutes=horario.duracion)).time()
-            json_string.append(
-                {
-                    'dia_numero': horario.dia,
-                    'dia_nombre': DIAS_SEMANA[str(horario.dia)],
-                    'hora_inicio': str(horario.horaInicio),
-                    'hora_fin': str(hora_fin),
-                    'cuatrimestre': horario.comision.cuatrimestre,
-                    'cantidad_alumnos': cantidad_alumnos,
-                }
-            )
+def get_comision_json(request, comision):
+    #if request.is_ajax():
+        comision_json = get_comision_response(comision)
 
-        return HttpResponse(json.dumps(json_string), content_type='application/json')
-    else:
-        return not_found_error(request)
+        return HttpResponse(json.dumps(comision_json), content_type='application/json')
+    #else:
+    #    return not_found_error(request)
 
 
 def get_horarios(request):

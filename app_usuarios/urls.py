@@ -12,8 +12,8 @@ from .views import (
     DocenteDetail,
     DocenteReject,
     UserProfileDetail,
-    UserProfileUpdate
-)
+    UserProfileUpdate,
+    UserProfileUpdateAdminView)
 
 
 urlpatterns = [
@@ -70,4 +70,15 @@ urlpatterns = [
         r'^mi_perfil/editar$',
         login_required(UserProfileUpdate.as_view(success_url=reverse_lazy('my_profile'))),
         name='my_profile_edit'),
+
+    url(
+        r'^mi_perfil/editar$',
+        login_required(UserProfileUpdate.as_view(success_url=reverse_lazy('my_profile'))),
+        name='my_profile_edit'),
+
+    url(
+        r'^administracion_usuarios/editar/(?P<pk>\d+)$',
+        login_required(UserProfileUpdateAdminView.as_view()),
+        name='usuario_editar'
+    ),
 ]

@@ -9,8 +9,8 @@ from django.views.generic.list import ListView
 from app_academica.adapters.frm_utn import get_horarios
 from app_academica.form import FilterComisionForm
 from app_academica.models import Especialidad, Materia, Comision
-from app_academica.models.comision import CUATRIMESTRE
-from app_academica.models.horario import DIAS_SEMANA_LIST
+from app_academica.models.comision import SEMESTRE
+from app_academica.constants import DIAS_SEMANA_LIST
 from app_academica.services.serializerService import get_docentes_by_comision_materia_especialidad_plan
 from app_reservas.templatetags.navbar_tags import get_horario
 from app_reservas.utils import parse_time, add_minutes_to_time
@@ -36,7 +36,7 @@ def HorariosWeekView(request):
             'duracion': horario['duracion'],
             'especialidad': especialidad_obj.nombre,
             'materia': materia_obj.nombre,
-            'cuatrimestre': horario['cuatrimest']
+            'semestre': horario['cuatrimest']
             }
         horario_list.append(horario_json)
 
@@ -57,23 +57,23 @@ class HorariosComisionListView(ListView):
         context = super(HorariosComisionListView, self).get_context_data(**kwargs)
         comision_form = FilterComisionForm(self.request.GET)
         context['comision_form'] = comision_form
-        context['cuatrimestre'] = CUATRIMESTRE
+        context['semestre'] = SEMESTRE
         context['dias_semana'] = DIAS_SEMANA_LIST
         context['horarios'] = get_horarios()
         return context
 
     def get_queryset(self):
         especialidad = self.request.GET.get('especialidad', '')
-        cuatrimestre = self.request.GET.get('cuatrimestre', '')
+        semestre = self.request.GET.get('semestre', '')
         buscar = self.request.GET.get('buscar','')
         comisiones_qs = Comision.objects.filter(materia__especialidad__visible=True)
-        if cuatrimestre == '0':
+        if semestre == '0':
           comisiones_qs = comisiones_qs.filter(
-                cuatrimestre=cuatrimestre,
+                semestre=semestre,
             )
-        elif cuatrimestre == '1' or cuatrimestre == '2':
+        elif semestre == '1' or semestre == '2':
             comisiones_qs = comisiones_qs.filter(
-                Q(cuatrimestre=0) | Q(cuatrimestre=cuatrimestre)
+                Q(semestre=0) | Q(semestre=semestre)
             )
         if especialidad:
             try:
@@ -93,16 +93,16 @@ class HorariosComisionListView(ListView):
 
 def horario_descargar(request):
     especialidad = request.GET.get('especialidad', '')
-    cuatrimestre = request.GET.get('cuatrimestre', '')
+    semestre = request.GET.get('semestre', '')
     buscar = request.GET.get('buscar', '')
     comisiones_qs = Comision.objects.filter(materia__especialidad__visible=True)
-    if cuatrimestre == '0':
+    if semestre == '0':
         comisiones_qs = comisiones_qs.filter(
-            cuatrimestre=cuatrimestre,
+            semestre=semestre,
         )
-    elif cuatrimestre == '1' or cuatrimestre == '2':
+    elif semestre == '1' or semestre == '2':
         comisiones_qs = comisiones_qs.filter(
-            Q(cuatrimestre=0) | Q(cuatrimestre=cuatrimestre)
+            Q(semestre=0) | Q(semestre=semestre)
         )
     if especialidad:
         try:
@@ -175,7 +175,7 @@ class ComisionDetailView(DetailView):
             self.object.materia.especialidad.codigo,
             self.object.materia.plan.nombre
         )
-        context['cuatrimestre'] = CUATRIMESTRE
+        context['semestre'] = SEMESTRE
         context['dias_semana'] = DIAS_SEMANA_LIST
         context['docente_list'] = docente_list
         return context

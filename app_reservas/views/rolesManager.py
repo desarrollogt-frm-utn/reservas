@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
+from app_reservas.roles import ADMINISTRADOR_ROLE
 from app_usuarios.models import Usuario
 from app_usuarios.forms import FilterUsuariosForm
 
@@ -12,7 +13,7 @@ from rolepermissions.checkers import has_role
 from rolepermissions.decorators import has_role_decorator
 
 
-@has_role_decorator('administrador')
+@has_role_decorator(ADMINISTRADOR_ROLE)
 def UserList(request):
     estado = FilterUsuariosForm()
     search = request.GET.get('search', '')
@@ -53,14 +54,14 @@ def UserList(request):
     return render(request, 'app_reservas/user_roles_list.html', {'users': users_list, 'estado': estado})
 
 
-@has_role_decorator('administrador')
+@has_role_decorator(ADMINISTRADOR_ROLE)
 def AsingRole(request, pk, role):
     user = User.objects.get(id=pk)
     assign_role(user, role)
     return redirect(request.META.get('HTTP_REFERER'))
 
 
-@has_role_decorator('administrador')
+@has_role_decorator(ADMINISTRADOR_ROLE)
 def RemoveRole(request, pk, role):
     user = User.objects.get(id=pk)
     remove_role(user, role)
