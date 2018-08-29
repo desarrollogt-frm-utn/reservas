@@ -123,7 +123,7 @@ def horario_descargar(request):
     response['Content-Disposition'] = 'attachment; filename="aulas.csv"'
 
     response.write(codecs.BOM_UTF8)
-    writer = csv.writer(response)
+    writer = csv.writer(response, delimiter=';')
 
     fila = []
 

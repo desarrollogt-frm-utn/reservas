@@ -74,12 +74,13 @@ Horarios de Comisiones
 <ul class="pager">
 	<li>
 		{% if page_obj.has_previous %}
-       	 <a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Anterior</a>
+       	 <a href="?page={{ page_obj.previous_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Anterior</a>
 		{% endif %}
-        </li>
+	</li>
+	<li> Página {{page_obj.number}} de {{page_obj.paginator.num_pages}}</li>
 	<li>
 		{% if page_obj.has_next %}
-     	 <a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}">Siguiente</a>
+     	 <a href="?page={{ page_obj.next_page_number }}&semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Siguiente</a>
     	{% endif %}
     </li>
 </ul>
