@@ -68,6 +68,17 @@ class CreateDocenteConfirmForm(forms.ModelForm):
                 "Las contraseñas ingresadas no coinciden"
             )
 
+
+class CreateUsuarioModelForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['foto', 'legajo', 'celular', 'telefono']
+        widgets = {
+            'legajo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'celular': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
 class FilterUsuariosForm(forms.Form):
     estado = forms.ChoiceField(
                 choices=sorted(ESTADO_USUARIO.items()),

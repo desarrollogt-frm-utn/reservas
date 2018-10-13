@@ -13,7 +13,7 @@ from .views import (
     DocenteReject,
     UserProfileDetail,
     UserProfileUpdate,
-    UserProfileUpdateAdminView)
+    UserProfileUpdateAdminView, FirstAccess)
 
 
 urlpatterns = [
@@ -80,5 +80,11 @@ urlpatterns = [
         r'^administracion_usuarios/editar/(?P<pk>\d+)$',
         login_required(UserProfileUpdateAdminView.as_view()),
         name='usuario_editar'
+    ),
+
+    url(
+        r'^primer_ingreso$',
+        login_required(FirstAccess),
+        name='first_access'
     ),
 ]

@@ -1,24 +1,87 @@
 import base64
 
 from django import forms
+from django.conf import settings
+from django.contrib.auth import (
+    REDIRECT_FIELD_NAME, login as auth_login,
+)
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.sites.shortcuts import get_current_site
 from django.forms import modelform_factory
-from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, resolve_url, get_object_or_404
 from django.core.urlresolvers import reverse_lazy
+from django.template.response import TemplateResponse
+from django.utils.http import is_safe_url
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, CreateView
 
 from app_reservas.roles import ADMINISTRADOR_ROLE
 from app_usuarios.utils import validateEmail
 from django.contrib.auth.models import User
 from .models import Usuario
 from .utils import obtenerUsername
-from .forms import CreateDocenteForm, CreateDocenteConfirmForm
+from .forms import CreateDocenteForm, CreateDocenteConfirmForm, CreateUsuarioModelForm
 from .tasks import enviarMailRegistro
 from app_academica.models import Docente as DocenteReserva
 from app_reservas.errors import not_found_error
 from rolepermissions.decorators import has_role_decorator
 from rolepermissions.checkers import has_permission, has_role
 from rolepermissions.mixins import HasRoleMixin
+
+
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def login(request, template_name='app_reservas/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.POST.get(redirect_field_name,
+                                   request.GET.get(redirect_field_name, ''))
+
+    if request.method == "POST":
+        form = authentication_form(request, data=request.POST)
+        if form.is_valid():
+
+            # Ensure the user-originating redirection url is safe.
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+
+            # Okay, security check complete. Log the user in.
+            user = form.get_user()
+            auth_login(request, user)
+
+            try:
+                # Search Docente model user
+                user_model = Usuario.objects.get(pk=user.pk)
+            except Usuario.DoesNotExist:
+                redirect_to = resolve_url("first_access")
+            return HttpResponseRedirect(redirect_to)
+    else:
+        form = authentication_form(request)
+
+    current_site = get_current_site(request)
+
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    if current_app is not None:
+        request.current_app = current_app
+
+    return TemplateResponse(request, template_name, context)
 
 
 def CreateDocente(request):
@@ -96,12 +159,12 @@ def CreateDocenteConfirm(request, code):
         })
 
 def _getUserIsActive(email, form):
-    isActive = True
-    docenteObj = DocenteReserva.objects.filter(legajo = form.cleaned_data.get('legajo'))[:1]
+    is_active = True
+    docente_obj = DocenteReserva.objects.filter(legajo=form.cleaned_data.get('legajo'))[:1]
     # Si no existe el legajo o el apellido que ingreso no se encuentra en el mail el usuario no se crea como activo
-    if not form.cleaned_data.get('last_name').lower() in email or not docenteObj:
-        isActive = False
-    return isActive
+    if (form.cleaned_data.get('last_name') and not form.cleaned_data.get('last_name').lower() in email) or not docente_obj:
+        is_active = False
+    return is_active
 
 
 class DocenteDetail(HasRoleMixin, DetailView):
@@ -133,9 +196,7 @@ def DocenteApprove(request, pk):
 def DocenteReject(request, pk):
     docente_obj = Usuario.objects.get(id=pk)
     if request.method == 'POST':
-        docente_obj.email = 'None'
-        docente_obj.is_active = False
-        docente_obj.save()
+        docente_obj.delete()
         return redirect(reverse_lazy('user_roles'))
     return render(request, 'app_usuarios/docente_reject_confirm.html', {'docente': docente_obj, })
 
@@ -186,3 +247,50 @@ class UserProfileUpdateAdminView(UpdateView):
     def get_success_url(self):
 
         return reverse_lazy('docente_detalle', kwargs={'pk': self.object.id})
+
+
+class UserProfileCreateView(CreateView):
+    model = Usuario
+    template_name = 'app_usuarios/user_profile_edit.html'
+    form_class = modelform_factory(
+        Usuario,
+        fields=['legajo','celular', 'telefono', 'foto'],
+        widgets={
+            'legajo': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'celular': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '20'}),
+            'areas': forms.SelectMultiple(attrs={'class': 'form-control'})
+        }
+    )
+
+    def get_success_url(self):
+        redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+
+        return HttpResponseRedirect(redirect_to)
+
+
+def FirstAccess(request):
+    form = CreateUsuarioModelForm()
+    django_user = get_object_or_404(User, pk=request.user.pk)
+    if request.method == "POST":
+        form = CreateUsuarioModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = Usuario(user_ptr_id=django_user.pk, **form.cleaned_data)
+            user.__dict__.update(django_user.__dict__)
+            user.is_active = _getUserIsActive(django_user.email, form)
+            user.save()
+
+            if user.is_active:
+                return render(request, 'app_usuarios/first_access.html', {
+                    'title': 'Su registro ha sido exitoso',
+                    'message': 'Su registro se ha realizado con exito.'
+                })
+            else:
+                return render(request, 'app_usuarios/warning_message.html', {
+                    'title': 'Su registro requiere la aprobación de un administrador',
+                    'message': 'Su usuario se ha creado con exito. Pero no podrá acceder al sistema hasta que un admistrador lo habilite'
+                })
+    return render(request, 'app_usuarios/first_access.html', {
+        'form': form,
+        'email': django_user.email
+    })

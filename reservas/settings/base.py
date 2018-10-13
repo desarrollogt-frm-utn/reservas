@@ -160,7 +160,8 @@ STATICFILES_DIRS = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
     'app_usuarios.emailLogin.EmailLogin', # Email login
-    'app_usuarios.glpiLogin.GlpiLogin'
+    'app_usuarios.glpiLogin.GlpiLogin',
+    'app_usuarios.UTNLogin.UTNLogin'
 )
 
 STATICFILES_FINDERS = (
@@ -248,3 +249,8 @@ GLPI_USER = os.environ.get('GLPI_USER', '')
 GLPI_PASS = os.environ.get('GLPI_PASS', '')
 
 WSDL_URL = os.environ.get('WSDL_URL','')
+
+UTN_MYSQL_HOST = os.environ.get('UTN_MYSQL_HOST', '')
+UTN_MYSQL_USER = os.environ.get('UTN_MYSQL_USER', '')
+UTN_MYSQL_PASS = os.environ.get('UTN_MYSQL_PASS', '')
+UTN_MYSQL_DB = os.environ.get('UTN_MYSQL_DB', '')

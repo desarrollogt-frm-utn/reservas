@@ -1,0 +1,85 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Primer Acceso
+{% endblock %}
+
+{% block navbar %} {% endblock %}
+{% block contenido %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        {% if form.errors %}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+            <strong> {{field.label_tag}} {{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="page-header">
+        <h1>Registro en el sistema de reservas</h1>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                Registro en el sistema para el usuario <strong>{{email}}</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="legajo">Legajo:</label>
+                    {{ form.legajo }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="celular">Celular:</label>
+                    {{ form.celular}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="telefono">Teléfono Fijo(opcional):</label>
+                    {{ form.telefono}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="foto">Foto de perfil:</label>
+                    {{ form.foto}}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <input class="btn btn-primary" type="submit" value="Registrarse">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
