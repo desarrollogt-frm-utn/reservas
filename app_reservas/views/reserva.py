@@ -4,8 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.conf import settings
-from rolepermissions.decorators import has_role_decorator, has_permission_decorator
-from dateutil.parser import parse
+from rolepermissions.decorators import has_permission_decorator
 
 from app_reservas.adapters.google_calendar import obtener_evento_especifico
 from app_reservas.errors import not_found_error, custom_error
@@ -136,10 +135,11 @@ class ReservaDetail(DetailView):
         context = super(ReservaDetail, self).get_context_data(**kwargs)
         estado_reserva_context = context['reserva'].get_estado_reserva()
         estado_reserva_context.estado_nombre = ESTADO_RESERVA.get(estado_reserva_context.estado)
-        estado_reserva_context.estado_final =  estado_reserva_context and estado_reserva_context.estado in ESTADOS_FINALES
+        estado_reserva_context.estado_final = estado_reserva_context and estado_reserva_context.estado in ESTADOS_FINALES
         context['estado_reserva'] = estado_reserva_context
-        context["dias_semana"] =  DIAS_SEMANA
+        context["dias_semana"] = DIAS_SEMANA
         return context
+
 
 class ReservaList(ListView):
     model = Reserva

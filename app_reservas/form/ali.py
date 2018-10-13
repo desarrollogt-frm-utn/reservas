@@ -1,6 +1,11 @@
 from django import forms
 from app_reservas.models import AccesorioPrestamo, Recurso, RecursoPrestamo, Accesorio
 
+INVALID_RESOURCE_MESSAGE = "El recurso ingresado no es válido. Intente nuevamente"
+INACTIVE_RESOURCE_MESSAGE = "El recurso ingresado no se encuetra activo. Consulte al administrador del sistema"
+RESOURCE_ALREADY_ADD_MESSAGE = "El recurso ingresado ya se encuentra agregado al prestamo"
+RESOURCE_ALREADY_HAS_LOAN_MESSAGE = "El recurso ingresado ya tiene un prestamo activo"
+
 
 class AliRecursoForm(forms.Form):
     recurso = forms.CharField(
@@ -10,13 +15,20 @@ class AliRecursoForm(forms.Form):
 
     def clean_recurso(self):
         recurso = self.cleaned_data['recurso']
+        elemento_obj = None
         try:
-            recurso_obj = Recurso.objects.get(codigo=recurso)
+            elemento_obj = Recurso.objects.get(codigo=recurso)
         except Recurso.DoesNotExist:
-            raise forms.ValidationError("El recurso ingresado no es válido. Intente nuevamente")
-        if not recurso_obj.activo:
-            raise forms.ValidationError("El recurso ingresado no se encuetra activo. Consulte al administrador del sistema")
-        return recurso_obj
+            pass
+        try:
+            elemento_obj = Accesorio.objects.get(codigo=recurso)
+        except Accesorio.DoesNotExist:
+            pass
+        if not elemento_obj:
+            raise forms.ValidationError(INVALID_RESOURCE_MESSAGE)
+        if not elemento_obj.activo:
+            raise forms.ValidationError(INACTIVE_RESOURCE_MESSAGE)
+        return elemento_obj
 
 
 class ElementoForm(forms.Form):
@@ -43,15 +55,15 @@ class ElementoForm(forms.Form):
         recurso_list = self.request.session.get('recurso_list', [])
         accesorio_list = self.request.session.get('accesorio_list', [])
         if not elemento_obj:
-            raise forms.ValidationError("El recurso ingresado no es válido. Intente nuevamente")
+            raise forms.ValidationError(INVALID_RESOURCE_MESSAGE)
         if not elemento_obj.activo:
-            raise forms.ValidationError("El recurso ingresado no se encuetra activo. Consulte al administrador del sistema")
+            raise forms.ValidationError(INACTIVE_RESOURCE_MESSAGE)
         if (type(elemento_obj) is Accesorio and elemento_obj.id in accesorio_list) or \
             (type(elemento_obj) is Recurso and elemento_obj.id in recurso_list):
-            raise forms.ValidationError("El recurso ingresado ya se encuentra agregado al prestamo")
+            raise forms.ValidationError(RESOURCE_ALREADY_ADD_MESSAGE)
         prestamo_obj = elemento_obj.get_active_loan()
         if prestamo_obj:
-            raise forms.ValidationError("El recurso ingresado ya tiene un prestamo activo")
+            raise forms.ValidationError(RESOURCE_ALREADY_HAS_LOAN_MESSAGE)
         return elemento_obj
 
 
