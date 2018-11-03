@@ -21,8 +21,8 @@ Baja Solicitud
 		<div class="text-left">
 
 			<h2>{{ solicitud_obj.docente.nombre }}</h2>
-			<p>Fecha de solicitud: {{ solicitud_obj.fechaCreacion }}</p>
-			<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:solicitud_obj.tipoSolicitud }}</p>
+			<p>Fecha de solicitud: {{ solicitud_obj.fecha_creacion }}</p>
+			<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:solicitud_obj.tipo_solicitud }}</p>
 			<p>Comision:
 			  {% if solicitud_obj.comision %}
 			  <li>Materia: {{solicitud_obj.comision.materia.nombre }}</li>

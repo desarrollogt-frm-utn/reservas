@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.crypto import get_random_string
 
+from app_reservas.models.BaseRecurso import BaseRecurso
+
 
 def obtener_codigo_aleatorio():
     random = get_random_string().upper()
@@ -9,19 +11,11 @@ def obtener_codigo_aleatorio():
     return random
 
 
-class Accesorio(models.Model):
+class Accesorio(BaseRecurso):
     # Atributos
     identificador = models.CharField(
         max_length=255,
         verbose_name='Nombre',
-    )
-
-    activo = models.BooleanField(default=True)
-
-    codigo = models.CharField(
-        max_length=12,
-        unique=True,
-        default=obtener_codigo_aleatorio
     )
 
     # Relaciones

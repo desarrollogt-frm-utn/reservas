@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_reservas', '0035_horarioreserva_id_evento_calendar'),
+        ('app_reservas', '0032_docente_model'),
     ]
 
     operations = [

@@ -28,7 +28,7 @@
 
                   {% for reserva in reservas%}
                   <tr>
-                    <td>{{reserva.recurso.id|get_nombre_recurso}} - {{reserva.fechaInicio}} {% if reserva.fechaFin %} a {{reserva.fechaFin}} {% endif %}
+                    <td>{{reserva.recurso.id|get_nombre_recurso}} - {{reserva.fecha_inicio}} {% if reserva.fecha_fin %} a {{reserva.fecha_fin}} {% endif %}
                     {% for horario in reserva.horarioreserva_set.all %}
                     <li>{{ dias_semana|get_item:horario.dia }} - {{horario.inicio}} a {{horario.fin}}</li>
                     {% endfor %}

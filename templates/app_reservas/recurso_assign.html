@@ -14,12 +14,12 @@ Detalle de Reserva
 <a href="{{request.META.HTTP_REFERER}}">Atrás</a>
 
 <h1>{{ object.docente.nombre }}</h1>
-<p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
-<p>Tipo de solicitud: {{ object.tipoSolicitud.nombre }}</p>
+<p>Fecha de solicitud: {{ object.fecha_creacion }}</p>
+<p>Tipo de solicitud: {{ object.tipo_solicitud.nombre }}</p>
 <p>Estado:
   {% for historico in object.historicoestadosolicitud_set.all %}
-  {% if historico.fechaFin == None  %}
-    {{ historico.estadoSolicitud }}
+  {% if historico.fecha_fin == None  %}
+    {{ historico.estado_solicitud }}
   {% endif %}
   {% endfor %}
 </p>
@@ -35,7 +35,7 @@ Detalle de Reserva
 <p>Dia: {{ dias_semana|get_item:horario.dia }}</p>
 <p>Inicio: {{ horario.inicio }}</p>
 <p>Fin: {{ horario.fin }}</p>
-<p>Tipo Recurso: {{ tipo_recursos|get_item:horario.tipoRecurso }} </p>
+<p>Tipo Recurso: {{ tipo_recursos|get_item:horario.tipo_recurso }} </p>
 <p>Cantidad de Alumnos: {{ horario.cantidad_alumnos }}</p>
 
 <form method="post" action="" id="reservas_assign">

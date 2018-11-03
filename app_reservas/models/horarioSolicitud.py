@@ -47,12 +47,12 @@ class HorarioSolicitud(models.Model):
         verbose_name='Hora de Inicio'
     )
 
-    tipoRecurso = TipoRecursoField()
+    tipo_recurso = TipoRecursoField()
 
     cantidad_alumnos = models.PositiveIntegerField(
         verbose_name='Cantidad de alumnos'
     )
-    softwareRequerido = models.TextField(
+    software_requerido = models.TextField(
         verbose_name='Software Requerido',
         null=True,
         blank=True,
@@ -65,13 +65,13 @@ class HorarioSolicitud(models.Model):
         verbose_name='Solicitud',
     )
 
-    tipoLaboratorio = models.ForeignKey(
+    tipo_laboratorio = models.ForeignKey(
         'TipoLaboratorio',
         verbose_name="Tipo de Laboratorio",
         null=True,
         blank=True,
     )
-    tipoRecursoAli = models.ManyToManyField(
+    tipo_recurso_ali = models.ManyToManyField(
         'TipoRecursoAli',
         verbose_name='Tipo de Recurso ALI',
         blank=True,

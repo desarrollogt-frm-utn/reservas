@@ -56,22 +56,22 @@ class SolicitudForm(forms.ModelForm):
         label='Comisión y Materia:',
     )
 
-    fechaInicio = forms.DateField(
+    fecha_inicio = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'})
     )
 
     class Meta:
         model = Solicitud
-        fields = ['fechaInicio', 'fechaFin', 'tipoSolicitud', 'comision']
+        fields = ['fecha_inicio', 'fecha_fin', 'tipo_solicitud', 'comision']
         widgets = {
-            'tipoSolicitud': forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', }),
-            'fechaFin': forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'}),
+            'tipo_solicitud': forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', }),
+            'fecha_fin': forms.DateInput(attrs={'class': 'form-control', 'disabled': 'true'}),
         }
 
     def clean_comision(self):
         comision = self.cleaned_data['comision']
-        tipo_solicitud = self.data['tipoSolicitud']
+        tipo_solicitud = self.data['tipo_solicitud']
         if tipo_solicitud == '1' or tipo_solicitud == '2':
             if not comision:
                 raise forms.ValidationError("La comision no puede estar vacia")
@@ -80,10 +80,10 @@ class SolicitudForm(forms.ModelForm):
         comision_obj = Comision.objects.get(id=comision)
         return comision_obj
 
-    def clean_fechaFin(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        fin = self.cleaned_data.get('fechaFin')
-        tipo_solicitud = self.data.get('tipoSolicitud')
+    def clean_fecha_fin(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        fin = self.cleaned_data.get('fecha_fin')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not fin:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
@@ -100,9 +100,9 @@ class SolicitudForm(forms.ModelForm):
             )
         return fin
 
-    def clean_fechaInicio(self):
-        inicio = self.cleaned_data.get('fechaInicio')
-        tipo_solicitud = self.data.get('tipoSolicitud')
+    def clean_fecha_inicio(self):
+        inicio = self.cleaned_data.get('fecha_inicio')
+        tipo_solicitud = self.data.get('tipo_solicitud')
         if not inicio:
             if tipo_solicitud == '1':
                 comision_obj = Comision.objects.get(id=self.data.get('comision'))
@@ -118,7 +118,7 @@ class HorarioSolicitudForm(forms.ModelForm):
 
     class Meta:
         model = HorarioSolicitud
-        fields = ['dia', 'tipoRecurso', 'inicio', 'fin', 'cantidad_alumnos', 'softwareRequerido', 'tipoLaboratorio', 'tipoRecursoAli']
+        fields = ['dia', 'tipo_recurso', 'inicio', 'fin', 'cantidad_alumnos', 'software_requerido', 'tipo_laboratorio', 'tipo_recurso_ali']
         widgets = {
             'dia': forms.Select(attrs={'class': 'form-control', }),
             'inicio': forms.TimeInput(
@@ -131,9 +131,9 @@ class HorarioSolicitudForm(forms.ModelForm):
             'cantidad_alumnos': forms.TextInput(
                 attrs={'class': 'form-control', }
             ),
-            'tipoRecurso': forms.Select(attrs={'class': 'form-control', }),
-            'tipoLaboratorio': forms.Select(attrs={'class': 'form-control', 'disabled': 'true'}),
-            'tipoRecursoAli': forms.SelectMultiple(attrs={'class': 'form-control', 'disabled': 'true'}),
+            'tipo_recurso': forms.Select(attrs={'class': 'form-control', }),
+            'tipo_laboratorio': forms.Select(attrs={'class': 'form-control', 'disabled': 'true'}),
+            'tipo_recurso_ali': forms.SelectMultiple(attrs={'class': 'form-control', 'disabled': 'true'}),
         }
 
     def clean_fin(self):

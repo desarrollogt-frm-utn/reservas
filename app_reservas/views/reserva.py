@@ -74,7 +74,7 @@ def ReservaCreate(request):
                             usuario=usuario_model
                         )
                         HistoricoEstadoReserva.objects.create(
-                            fechaInicio=timezone.now(),
+                            fecha_inicio=timezone.now(),
                             estado='1',
                             reserva=reserva_obj,
                         )
@@ -161,7 +161,7 @@ class ReservaList(ListView):
             estado = '1'
         reservas_qs = reservas_qs.filter(
             historicoestadoreserva__estado=estado,
-            historicoestadoreserva__fechaFin__isnull=True,
+            historicoestadoreserva__fecha_fin__isnull=True,
         )
         return reservas_qs
 
@@ -183,8 +183,8 @@ class ReservaListDocente(ListView):
         reservas_qs = Reserva.objects.filter(docente__id=self.request.user.id)
         if filter_val:
             reservas_qs = reservas_qs.filter(
-                historicoestadosolicitud__estadoSolicitud__id=filter_val,
-                historicoestadosolicitud__fechaFin__isnull=True,
+                historicoestadosolicitud__estado_solicitud__id=filter_val,
+                historicoestadosolicitud__fecha_fin__isnull=True,
             )
         return reservas_qs
 

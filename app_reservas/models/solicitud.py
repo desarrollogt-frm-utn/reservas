@@ -22,21 +22,21 @@ class TipoSolicitudField(models.CharField):
 
 class Solicitud(models.Model):
     # Atributos
-    fechaCreacion = models.DateTimeField(
+    fecha_creacion = models.DateTimeField(
         verbose_name='Fecha de Creación',
     )
 
-    fechaInicio = models.DateField(
+    fecha_inicio = models.DateField(
         verbose_name='Fecha de inicio de solicitud'
     )
 
-    fechaFin = models.DateField(
+    fecha_fin = models.DateField(
         verbose_name='Fecha de fin de solicitud',
         blank=True,
         null=True,
     )
 
-    tipoSolicitud = TipoSolicitudField()
+    tipo_solicitud = TipoSolicitudField()
 
     # relaciones
 
@@ -64,7 +64,7 @@ class Solicitud(models.Model):
         Información de la clase.
         """
         app_label = 'app_reservas'
-        ordering = ['fechaCreacion']
+        ordering = ['fecha_creacion']
         verbose_name = 'Solicitud'
         verbose_name_plural = 'Solicitudes'
 
@@ -87,12 +87,12 @@ class Solicitud(models.Model):
         """
         Retorna el nombre corto de la instancia.
         """
-        nombre_corto = self.fechaCreacion
+        nombre_corto = self.fecha_creacion
         return nombre_corto
 
     @property
     def get_estado_solicitud(obj):
         ultimo_historico_recurso = obj.historicoestadosolicitud_set.filter(
-            fechaFin__isnull=True
-        ).latest('fechaInicio')
+            fecha_fin__isnull=True
+        ).latest('fecha_inicio')
         return ultimo_historico_recurso

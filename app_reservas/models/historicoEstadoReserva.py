@@ -21,17 +21,17 @@ class EstadoReservaField(models.CharField):
 
 class HistoricoEstadoReserva(models.Model):
     # Atributos
-    fechaInicio = models.DateTimeField(
+    fecha_inicio = models.DateTimeField(
         verbose_name='Fecha de Inicio',
     )
 
-    fechaFin = models.DateTimeField(
+    fecha_fin = models.DateTimeField(
         verbose_name='Fecha de Fin',
         blank=True,
         null=True,
     )
 
-    descripcionCierre = models.CharField(
+    descripcion_cierre = models.CharField(
         max_length=150,
         verbose_name='Descripción de cierre de reserva'
     )
@@ -49,7 +49,7 @@ class HistoricoEstadoReserva(models.Model):
         Información de la clase.
         """
         app_label = 'app_reservas'
-        ordering = ['fechaInicio']
+        ordering = ['fecha_inicio']
         verbose_name = 'Historico del Estado de la Reserva'
         verbose_name_plural = 'Historicos de los Estados de las Reservas'
 
@@ -71,5 +71,5 @@ class HistoricoEstadoReserva(models.Model):
         """
         s = '{0!s} - {1!s}'.format(
             self.estado,
-            self.fechaInicio)
+            self.fecha_inicio)
         return s

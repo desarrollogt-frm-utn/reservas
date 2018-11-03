@@ -55,10 +55,10 @@ ESTADOS RESERVA
 def cambiar_estado_reserva(reserva_obj, estado_nuevo):
     estado_antiguo = reserva_obj.get_estado_reserva()
     if estado_antiguo and estado_antiguo not in ESTADOS_FINALES:
-        estado_antiguo.fechaFin = timezone.now()
+        estado_antiguo.fecha_fin = timezone.now()
         estado_antiguo.save()
         HistoricoEstadoReserva.objects.create(
-            fechaInicio=timezone.now(),
+            fecha_inicio=timezone.now(),
             estado=estado_nuevo,
             reserva=reserva_obj,
         )

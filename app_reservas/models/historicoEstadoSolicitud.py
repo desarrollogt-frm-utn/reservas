@@ -19,23 +19,23 @@ class EstadoSolicitudField(models.CharField):
 
 class HistoricoEstadoSolicitud(models.Model):
     # Atributos
-    fechaInicio = models.DateTimeField(
+    fecha_inicio = models.DateTimeField(
         verbose_name='Fecha de Inicio',
     )
 
-    fechaFin = models.DateTimeField(
+    fecha_fin = models.DateTimeField(
         verbose_name='Fecha de Fin',
         blank=True,
         null=True,
     )
 
-    descripcionCierre = models.CharField(
+    descripcion_cierre = models.CharField(
         max_length=150,
         verbose_name='Descripción de cierre de solicitud'
     )
 
     # relaciones
-    estadoSolicitud = EstadoSolicitudField()
+    estado_solicitud = EstadoSolicitudField()
 
     solicitud = models.ForeignKey(
         'Solicitud',
@@ -47,7 +47,7 @@ class HistoricoEstadoSolicitud(models.Model):
         Información de la clase.
         """
         app_label = 'app_reservas'
-        ordering = ['fechaInicio']
+        ordering = ['fecha_inicio']
         verbose_name = 'Historico del Estado de la Solicitud'
         verbose_name_plural = 'Historicos de los Estados de las Solicitudes'
 
@@ -69,7 +69,7 @@ class HistoricoEstadoSolicitud(models.Model):
         Retorna el nombre corto de la instancia.
         """
         s = '{0!s} - {1!s}'.format(
-            self.estadoSolicitud,
-            self.fechaInicio
+            self.estado_solicitud,
+            self.fecha_inicio
             )
         return s

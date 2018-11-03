@@ -34,12 +34,12 @@ Listado de Solicitudes
 		{% for solicitud in object_list %}
 		<tr>
 			<td>{{ solicitud.docente.nombre }}</td>
-			<td>{{ tipos_solicitudes|get_item:solicitud.tipoSolicitud }}</td>
-			<td>{{ solicitud.fechaCreacion }}</td>
+			<td>{{ tipos_solicitudes|get_item:solicitud.tipo_solicitud }}</td>
+			<td>{{ solicitud.fecha_creacion }}</td>
 			<td>
 				{% for historico in solicitud.historicoestadosolicitud_set.all %}
-				{% if historico.fechaFin == None  %}
-					{{ historico.estadoSolicitud }}
+				{% if historico.fecha_fin == None  %}
+					{{ historico.estado_solicitud }}
 				{% endif %}
 				{% endfor %}
 			</td>

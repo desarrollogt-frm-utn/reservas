@@ -2,159 +2,159 @@
 {% load static %}
 
 {% block title %}
-  Solicitud de Recursos
+Solicitud de Recursos
 {% endblock title %}
 
 
 {% block static_css %}
-    {{ block.super }}
+{{ block.super }}
 
 
-    <link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
+<link rel="stylesheet" href="{% static "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" %}" />
 {% endblock static_css %}
 
 {% block static_js_body %}
 
-    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
+<script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'apps/reservas/js/jquery.formset.js' %}"></script>
 {% endblock static_js_body %}
 
 
 {% block contenido %}
 {{form.errors}}
 
-      {% if form.errors %}
-         {% for field in form %}
-             {% for error in field.errors %}
-                 <div class="alert alert-danger">
-                     <strong>{{ error|escape }}</strong>
-                     {{error}}
-                 </div>
-             {% endfor %}
-         {% endfor %}
-         {% for error in form.non_field_errors %}
-             <div class="alert alert-danger">
-                 <strong>{{ error|escape }}</strong>
-             </div>
-         {% endfor %}
-      {% endif %}
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+    {{error}}
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endif %}
 
 {% if formset.errors %}
-         {% for field in form %}
-             {% for error in field.errors %}
-                 <div class="alert alert-danger">
-                     <strong>{{ error|escape }}</strong>
-                     {{error}}
-                 </div>
-             {% endfor %}
-         {% endfor %}
-         {% for error in form.non_field_errors %}
-             <div class="alert alert-danger">
-                 <strong>{{ error|escape }}</strong>
-             </div>
-         {% endfor %}
-      {% endif %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+    {{error}}
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endif %}
 
-      <div class="page-header">
-          <h1>Formulario de Solicitud de Recursos</h1>
-      </div>
+<div class="page-header">
+    <h1>Formulario de Solicitud de Recursos</h1>
+</div>
 
-      <div class="col-md-6 col-md-offset-3">
-        <p class="text-center">
-            Si observa algún error dentro del las comisiones listadas o en alguno de los horarios,
-             por favor informeselos al bedel correspondiente.
-            Muchas Gracias
-        </p>
-      </div>
+<div class="col-md-6 col-md-offset-3">
+    <p class="text-center">
+        Si observa algún error dentro del las comisiones listadas o en alguno de los horarios,
+        por favor informeselos al bedel correspondiente.
+        Muchas Gracias
+    </p>
+</div>
 
-        <form id="solicitud_form" method="post">
-            {% csrf_token %}
-              <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                  <div class="form-group">
-                      <label for="tipoSolicitud">Tipo de Solicitud:</label>
-                      {{ form.tipoSolicitud }}
-                   </div>
-                  </div>
-                </div>
-              <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                  <div class="form-group">
-                      <label for="comision">Comision:</label>
-                      {{ form.comision }}
-                   </div>
-                  </div>
-                </div>
+<form id="solicitud_form" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="tipo_solicitud">Tipo de Solicitud:</label>
+                {{ form.tipo_solicitud }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="comision">Comision:</label>
+                {{ form.comision }}
+            </div>
+        </div>
+    </div>
 
-              <div class="row">
-                <div class="col-md-3 col-md-offset-3">
-              		<div class="form-group">
-                  		<label for="fechaIncio">Fecha Inicio:</label>
-                  		{{ form.fechaInicio }}
-              	   </div>
-                  </div>
-                  <div class="col-md-3 col-md-offset-0">
-                		<div class="form-group">
-                    		<label for="last_name">Fecha Fin:</label>
-                    		{{ form.fechaFin }}
-                	   </div>
-                    </div>
-                  </div>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-3">
+            <div class="form-group">
+                <label for="fecha_incio">Fecha Inicio:</label>
+                {{ form.fecha_inicio }}
+            </div>
+        </div>
+        <div class="col-md-3 col-md-offset-0">
+            <div class="form-group">
+                <label for="last_name">Fecha Fin:</label>
+                {{ form.fecha_fin }}
+            </div>
+        </div>
+    </div>
 
 
-            <table border="0" cellpadding="0" cellspacing="0">
-                <tbody>
-                    {% for form in formset.forms %}
-                    <tr>
-                       <td>
-                         {{ form.dia.label_tag }}
-                          {{ form.dia }}
-                       </td>
-                       <td>
-                         {{ form.tipoRecurso.label_tag }}
-                         {{ form.tipoRecurso }}
-                       </td>
-                       <td>
-                           {{ form.inicio.label_tag }}
-                          <div class='input-group date'>
-                              {{ form.inicio }}
-                          <span class="input-group-addon">
+    <table border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+        {% for form in formset.forms %}
+        <tr>
+            <td>
+                {{ form.dia.label_tag }}
+                {{ form.dia }}
+            </td>
+            <td>
+                {{ form.tipo_recurso.label_tag }}
+                {{ form.tipo_recurso }}
+            </td>
+            <td>
+                {{ form.inicio.label_tag }}
+                <div class='input-group date'>
+                    {{ form.inicio }}
+                    <span class="input-group-addon">
                           <span class="glyphicon glyphicon-time"></span>
                           </span>
-                          </div>
-                       </td>
-                       <td>
-                           {{ form.fin.label_tag }}
-                           <div class='input-group date'>
-                              {{ form.fin }}
-                          <span class="input-group-addon">
+                </div>
+            </td>
+            <td>
+                {{ form.fin.label_tag }}
+                <div class='input-group date'>
+                    {{ form.fin }}
+                    <span class="input-group-addon">
                           <span class="glyphicon glyphicon-time"></span>
                           </span>
-                          </div>
-                       </td>
-                       <td>
-                         {{ form.cantidad_alumnos.label_tag }}
-                         {{ form.cantidad_alumnos }}
-                       </td>
-                       <td>
-                         {{ form.tipoLaboratorio.label_tag }}
-                         {{ form.tipoLaboratorio }}
-                       </td>
-                       <td>
-                         {{ form.tipoRecursoAli.label_tag }}
-                         {{ form.tipoRecursoAli }}
-                       </td>
-                       <td></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {{ formset.management_form }}
-            <div style="width:100px; float:right">
-                    <input class="form-control" type="submit" value="Solicitar" />
                 </div>
-        </form>
+            </td>
+            <td>
+                {{ form.cantidad_alumnos.label_tag }}
+                {{ form.cantidad_alumnos }}
+            </td>
+            <td>
+                {{ form.tipo_laboratorio.label_tag }}
+                {{ form.tipo_laboratorio }}
+            </td>
+            <td>
+                {{ form.tipo_recurso_ali.label_tag }}
+                {{ form.tipo_recurso_ali }}
+            </td>
+            <td></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {{ formset.management_form }}
+    <div style="width:100px; float:right">
+        <input class="form-control" type="submit" value="Solicitar" />
+    </div>
+</form>
 
 {% endblock contenido %}
 
@@ -174,12 +174,12 @@
           minDate: moment({h:8}),
       });
 
-      $('#id_fechaInicio').datetimepicker({
+      $('#id_fecha_inicio').datetimepicker({
           format: 'DD/MM/YYYY',
           minDate: moment(),
           maxDate: moment().endOf('year'),
       });
-      $('#id_fechaFin').datetimepicker({
+      $('#id_fecha_fin').datetimepicker({
           format: 'DD/MM/YYYY',
           minDate: moment(),
           maxDate: moment().endOf('year'),
@@ -194,21 +194,21 @@
       // Script que detecta cambios en el select de tipo_select y rellena las opciones de comisiones
       $select = $('#mat_select');
       $('#mat_select').attr("disabled", true);
-      $('#id_fechaInicio').attr("disabled", true);
-      $('#id_fechaFin').attr("disabled", true);
+      $('#id_fecha_inicio').attr("disabled", true);
+      $('#id_fecha_fin').attr("disabled", true);
       if ($(this).val()== 1) {
           $('#mat_select').attr("disabled", false);
          }
        else if ($(this).val()== 2) {
          $('#mat_select').attr("disabled", false);
-         $('#id_fechaInicio').attr("disabled", false);
+         $('#id_fecha_inicio').attr("disabled", false);
        }
        else if ($(this).val()== 3) {
-         $('#id_fechaInicio').attr("disabled", false);
-         $('#id_fechaFin').attr("disabled", false);
+         $('#id_fecha_inicio').attr("disabled", false);
+         $('#id_fecha_fin').attr("disabled", false);
        }
         else {
-          $('#id_fechaInicio').attr("disabled", false);
+          $('#id_fecha_inicio').attr("disabled", false);
         };
     });
 
@@ -234,16 +234,16 @@
       });
     });
 
-    $('[id$=-tipoRecurso]').change(function () {
+    $('[id$=-tipo_recurso]').change(function () {
       console.log(event.target.name.slice(-13, -12));
       if (event.target.value == 3) {
-        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", false);
-        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", true);
+        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipo_laboratorio]').attr("disabled", false);
+        $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipo_recurso_ali]').attr("disabled", true);
       } else if (event.target.value == 4) {
-          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoRecursoAli]').attr("disabled", false);
-          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipoLaboratorio]').attr("disabled", true);
+          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipo_recurso_ali]').attr("disabled", false);
+          $('[id$=set-' + event.target.name.slice(-13, -12) + '-tipo_laboratorio]').attr("disabled", true);
       } else {
-        $('[id$=id_' + event.target.name.slice(0, -12) + '_cantidadAlumnos]').attr("disabled", false);
+        $('[id$=id_' + event.target.name.slice(0, -12) + '_cantidad_alumnos]').attr("disabled", false);
       }
     });
 

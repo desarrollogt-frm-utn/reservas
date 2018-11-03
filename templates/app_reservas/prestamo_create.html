@@ -47,13 +47,13 @@
     	   </div>
         </div>
     </div>
-    {{ form.fechaInicio.as_hidden }}
+    {{ form.fecha_inicio.as_hidden }}
     <div class="row">
     	<div class="col-md-6 col-md-offset-3">
     		<div class="form-group">
           <p>
             <a href="{% url 'prestamo_quitar_elementos'%}"><button type="button" class="btn btn-danger">Limpiar Reserva</button></a>
-            <a href="{% url 'prestamo_agregar_elemento'%}"><button type="button" class="btn btn-success">Agregar Elemento</button></a>
+            <a href="{% url 'prestamo_creacion_agregar_elemento'%}"><button type="button" class="btn btn-success">Agregar Elemento</button></a>
         		<input class="btn btn-primary" type="submit" value="Continuar">
           </p>
     	   </div>

@@ -53,7 +53,7 @@ Listado de Reservas
 			<td>{{ reserva.fecha_inicio }} {% if reserva.fecha_fin %} a {{reserva.fecha_fin}} {% endif %}</td>
 			<td>
 				{% for historico in reserva.historicoestadoreserva_set.all %}
-				{% if historico.fechaFin == None  %}
+				{% if historico.fecha_fin == None  %}
 
 				{% with reserva_estado=estado_reserva|get_item:historico.estado %}
 				{% if reserva_estado == "Activa" %}

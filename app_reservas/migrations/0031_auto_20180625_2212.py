@@ -7,7 +7,6 @@ import app_reservas.models.horarioSolicitud
 import app_reservas.models.historicoEstadoReserva
 from django.conf import settings
 import app_reservas.models.accesorio
-import app_reservas.models.recurso
 import django.utils.timezone
 import app_reservas.models.horarioReserva
 import app_reservas.models.solicitud
@@ -50,30 +49,30 @@ class Migration(migrations.Migration):
             name='HistoricoEstadoReserva',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('fechaInicio', models.DateTimeField(verbose_name='Fecha de Inicio')),
-                ('fechaFin', models.DateTimeField(verbose_name='Fecha de Fin', blank=True, null=True)),
-                ('descripcionCierre', models.CharField(verbose_name='Descripción de cierre de reserva', max_length=150)),
+                ('fecha_inicio', models.DateTimeField(verbose_name='Fecha de Inicio')),
+                ('fecha_fin', models.DateTimeField(verbose_name='Fecha de Fin', blank=True, null=True)),
+                ('descripcion_cierre', models.CharField(verbose_name='Descripción de cierre de reserva', max_length=150)),
                 ('estado', app_reservas.models.historicoEstadoReserva.EstadoReservaField(max_length=1, choices=[('1', 'Activa'), ('2', 'Finalizada'), ('3', 'Dada de baja por usuario'), ('4', 'Dada de baja por bedel')])),
             ],
             options={
                 'verbose_name': 'Historico del Estado de la Reserva',
                 'verbose_name_plural': 'Historicos de los Estados de las Reservas',
-                'ordering': ['fechaInicio'],
+                'ordering': ['fecha_inicio'],
             },
         ),
         migrations.CreateModel(
             name='HistoricoEstadoSolicitud',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('fechaInicio', models.DateTimeField(verbose_name='Fecha de Inicio')),
-                ('fechaFin', models.DateTimeField(verbose_name='Fecha de Fin', blank=True, null=True)),
-                ('descripcionCierre', models.CharField(verbose_name='Descripción de cierre de solicitud', max_length=150)),
-                ('estadoSolicitud', app_reservas.models.historicoEstadoSolicitud.EstadoSolicitudField(max_length=1, choices=[('1', 'Pendiente'), ('2', 'En curso'), ('3', 'Finalizada'), ('4', 'Dada de baja por usuario')])),
+                ('fecha_inicio', models.DateTimeField(verbose_name='Fecha de Inicio')),
+                ('fecha_fin', models.DateTimeField(verbose_name='Fecha de Fin', blank=True, null=True)),
+                ('descripcion_cierre', models.CharField(verbose_name='Descripción de cierre de solicitud', max_length=150)),
+                ('estado_solicitud', app_reservas.models.historicoEstadoSolicitud.EstadoSolicitudField(max_length=1, choices=[('1', 'Pendiente'), ('2', 'En curso'), ('3', 'Finalizada'), ('4', 'Dada de baja por usuario')])),
             ],
             options={
                 'verbose_name': 'Historico del Estado de la Solicitud',
                 'verbose_name_plural': 'Historicos de los Estados de las Solicitudes',
-                'ordering': ['fechaInicio'],
+                'ordering': ['fecha_inicio'],
             },
         ),
         migrations.CreateModel(
@@ -96,9 +95,9 @@ class Migration(migrations.Migration):
                 ('dia', app_reservas.models.horarioSolicitud.DiasSemanaField(max_length=1, choices=[('1', 'Lunes'), ('2', 'Martes'), ('3', 'Miércoles'), ('4', 'Jueves'), ('5', 'Viernes'), ('6', 'Sábado'), ('7', 'Domingo')])),
                 ('fin', models.TimeField(verbose_name='Hora de Fin')),
                 ('inicio', models.TimeField(verbose_name='Hora de Inicio')),
-                ('tipoRecurso', app_reservas.models.horarioSolicitud.TipoRecursoField(max_length=1, choices=[('1', 'Aula'), ('2', 'Laboratorio Informatico'), ('3', 'Laboratorio'), ('4', 'Recurso de ALI')])),
+                ('tipo_recurso', app_reservas.models.horarioSolicitud.TipoRecursoField(max_length=1, choices=[('1', 'Aula'), ('2', 'Laboratorio Informatico'), ('3', 'Laboratorio'), ('4', 'Recurso de ALI')])),
                 ('cantidad_alumnos', models.PositiveIntegerField(verbose_name='Cantidad de alumnos')),
-                ('softwareRequerido', models.TextField(verbose_name='Software Requerido', blank=True, null=True)),
+                ('software_requerido', models.TextField(verbose_name='Software Requerido', blank=True, null=True)),
             ],
             options={
                 'verbose_name': 'Horario de la solicitud',
@@ -135,9 +134,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('fecha_creacion', models.DateTimeField(verbose_name='Fecha de Creación', default=django.utils.timezone.now)),
-                ('fechaInicio', models.DateField(verbose_name='Fecha de inicio de reserva')),
-                ('fechaFin', models.DateField(verbose_name='Fecha de fin de reserva', blank=True, null=True)),
-                ('nombreEvento', models.CharField(verbose_name='Nombre del evento', max_length=150)),
+                ('fecha_inicio', models.DateField(verbose_name='Fecha de inicio de reserva')),
+                ('fecha_fin', models.DateField(verbose_name='Fecha de fin de reserva', blank=True, null=True)),
+                ('nombre_evento', models.CharField(verbose_name='Nombre del evento', max_length=150)),
                 ('asignado_por', models.ForeignKey(verbose_name='Asignado por', to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -149,16 +148,16 @@ class Migration(migrations.Migration):
             name='Solicitud',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('fechaCreacion', models.DateTimeField(verbose_name='Fecha de Creación')),
-                ('fechaInicio', models.DateField(verbose_name='Fecha de inicio de solicitud')),
-                ('fechaFin', models.DateField(verbose_name='Fecha de fin de solicitud', blank=True, null=True)),
-                ('tipoSolicitud', app_reservas.models.solicitud.TipoSolicitudField(max_length=1, choices=[('1', 'Cursado Completo'), ('2', 'Cursado - Un solo día'), ('3', 'Fuera de Agenda - Periodo'), ('4', 'Fuera de Agenda - Un solo día')])),
+                ('fecha_creacion', models.DateTimeField(verbose_name='Fecha de Creación')),
+                ('fecha_inicio', models.DateField(verbose_name='Fecha de inicio de solicitud')),
+                ('fecha_fin', models.DateField(verbose_name='Fecha de fin de solicitud', blank=True, null=True)),
+                ('tipo_solicitud', app_reservas.models.solicitud.TipoSolicitudField(max_length=1, choices=[('1', 'Cursado Completo'), ('2', 'Cursado - Un solo día'), ('3', 'Fuera de Agenda - Periodo'), ('4', 'Fuera de Agenda - Un solo día')])),
                 ('solicitante', models.ForeignKey(blank=True, null=True, related_name='solicutudes', to='app_usuarios.Usuario')),
             ],
             options={
                 'verbose_name': 'Solicitud',
                 'verbose_name_plural': 'Solicitudes',
-                'ordering': ['fechaCreacion'],
+                'ordering': ['fecha_creacion'],
             },
         ),
         migrations.CreateModel(
@@ -173,16 +172,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Tipo de Accesorios',
                 'ordering': ['nombre'],
             },
-        ),
-        migrations.AddField(
-            model_name='recurso',
-            name='activo',
-            field=models.BooleanField(default=True),
-        ),
-        migrations.AddField(
-            model_name='recurso',
-            name='codigo',
-            field=models.CharField(max_length=12, blank=True, null=True, ),
         ),
         migrations.AlterField(
             model_name='laboratorio',
@@ -216,12 +205,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='horariosolicitud',
-            name='tipoLaboratorio',
+            name='tipo_laboratorio',
             field=models.ForeignKey(verbose_name='Tipo de Laboratorio', blank=True, null=True, to='app_reservas.TipoLaboratorio'),
         ),
         migrations.AddField(
             model_name='horariosolicitud',
-            name='tipoRecursoAli',
+            name='tipo_recurso_ali',
             field=models.ManyToManyField(verbose_name='Tipo de Recurso ALI', blank=True, to='app_reservas.TipoRecursoAli'),
         ),
         migrations.AddField(
@@ -248,5 +237,10 @@ class Migration(migrations.Migration):
             model_name='accesorio',
             name='tipo',
             field=models.ForeignKey(verbose_name='Tipo', to='app_reservas.TipoAccesorio'),
+        ),
+        migrations.AddField(
+            model_name='horarioreserva',
+            name='id_evento_calendar',
+            field=models.CharField(verbose_name='Id del evento', max_length=255, blank=True, null=True),
         ),
     ]

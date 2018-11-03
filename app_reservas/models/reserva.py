@@ -87,5 +87,5 @@ class Reserva(models.Model):
         """
         Retorna el estado actual de la reserva
         """
-        estado = self.historicoestadoreserva_set.filter(fechaFin__isnull=True)[0]
+        estado = self.historicoestadoreserva_set.filter(fecha_fin__isnull=True)[0]
         return estado

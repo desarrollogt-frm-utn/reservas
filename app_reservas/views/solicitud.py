@@ -2,7 +2,7 @@
 import datetime
 
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import TemplateView
 from django.core.urlresolvers import reverse_lazy
@@ -73,6 +73,7 @@ class SolicitudMaterialMultimediaView(TemplateView):
 
 
 def SolicitudCreate(request):
+    usuario_model = get_object_or_404(UsuarioModel, pk=request.user.id)
     solicitud = Solicitud()
     solicitud_form = SolicitudForm(request)  # setup a form for the parent
     formset = SolicitudInlineFormset(instance=solicitud)
@@ -86,24 +87,23 @@ def SolicitudCreate(request):
             formset = SolicitudInlineFormset(request.POST, request.FILES)
 
             if formset.is_valid():
-                usuario_model = UsuarioModel.objects.get(id=request.user.id)
                 docente_obj = Docente.objects.get(legajo=usuario_model.legajo)
                 comision_obj = None
                 if solicitud_form.cleaned_data.get('comision'):
                     comision_obj = solicitud_form.cleaned_data.get('comision')
                 solicitud_obj = Solicitud.objects.create(
-                    fechaCreacion=timezone.now(),
-                    tipoSolicitud=solicitud_form.cleaned_data.get('tipoSolicitud'),
+                    fecha_creacion=timezone.now(),
+                    tipo_solicitud=solicitud_form.cleaned_data.get('tipo_solicitud'),
                     docente=docente_obj,
                     comision=comision_obj,
-                    fechaInicio=solicitud_form.cleaned_data.get('fechaInicio'),
-                    fechaFin=solicitud_form.cleaned_data.get('fechaFin'),
+                    fecha_inicio=solicitud_form.cleaned_data.get('fecha_inicio'),
+                    fecha_fin=solicitud_form.cleaned_data.get('fecha_fin'),
                     solicitante=usuario_model,
                 )
                 HistoricoEstadoSolicitud.objects.create(
-                    fechaInicio=timezone.now(),
-                    fechaFin=None,
-                    estadoSolicitud=1,
+                    fecha_inicio=timezone.now(),
+                    fecha_fin=None,
+                    estado_solicitud=1,
                     solicitud=solicitud_obj,
                 )
                 formset = SolicitudInlineFormset(request.POST, request.FILES, instance=solicitud_obj)
@@ -140,8 +140,8 @@ class SolicitudList(ListView):
             solicitudes_qs = solicitudes_qs.filter(solicitante=usuario)
         if filter_val:
             solicitudes_qs = solicitudes_qs.filter(
-                historicoestadosolicitud__estadoSolicitud__id=filter_val,
-                historicoestadosolicitud__fechaFin__isnull=True,
+                historicoestadosolicitud__estado_solicitud__id=filter_val,
+                historicoestadosolicitud__fecha_fin__isnull=True,
             )
         return solicitudes_qs
 
@@ -171,13 +171,13 @@ class SolicitudDetail(DetailView):
 def RecursoAssign(request, solicitud, horario):
     solicitud_obj = Solicitud.objects.get(id=solicitud)
     horario_obj = HorarioSolicitud.objects.get(id=horario)
-    if horario_obj.tipoRecurso == '1':
+    if horario_obj.tipo_recurso == '1':
         model = Aula
-    elif horario_obj.tipoRecurso == '2':
+    elif horario_obj.tipo_recurso == '2':
         model = LaboratorioInformatico
-    elif horario_obj.tipoRecurso == '3':
+    elif horario_obj.tipo_recurso == '3':
         model = Laboratorio
-    elif horario_obj.tipoRecurso == '4':
+    elif horario_obj.tipo_recurso == '4':
         model = RecursoAli
     else:
         model = Recurso
@@ -188,13 +188,13 @@ def RecursoAssign(request, solicitud, horario):
         if form.is_valid():
             recurso_list = model.objects.filter(id=form.cleaned_data['recurso'])[:1]
             estado_solicitud = solicitud_obj.get_estado_solicitud
-            if estado_solicitud.estadoSolicitud.nombre == 'Pendiente':
-                estado_solicitud.fechaFin = timezone.now()
+            if estado_solicitud.estado_solicitud.nombre == 'Pendiente':
+                estado_solicitud.fecha_fin = timezone.now()
                 estado_solicitud.save()
                 HistoricoEstadoSolicitud.objects.create(
-                    estadoSolicitud=2,
+                    estado_solicitud=2,
                     solicitud=solicitud_obj,
-                    fechaInicio=timezone.now(),
+                    fecha_inicio=timezone.now(),
                 )
 
             titulo = get_nombre_evento(solicitud_obj.docente,solicitud_obj.comision)
@@ -205,8 +205,8 @@ def RecursoAssign(request, solicitud, horario):
                 recurso=recurso_list[0],
                 docente=solicitud_obj.solicitante,
                 nombreEvento=titulo,
-                fechaInicio=solicitud_obj.fechaInicio,
-                fechaFin=solicitud_obj.fechaFin,
+                fecha_inicio=solicitud_obj.fecha_inicio,
+                fecha_fin=solicitud_obj.fecha_fin,
             )
 
             HorarioReserva.objects.create(
@@ -218,7 +218,7 @@ def RecursoAssign(request, solicitud, horario):
             )
 
             HistoricoEstadoReserva.objects.create(
-                fechaInicio=timezone.now(),
+                fecha_inicio=timezone.now(),
                 estado='1',
                 reserva=reserva_obj,
             )
@@ -239,10 +239,7 @@ def RecursoAssign(request, solicitud, horario):
 
 
 def SolicitudReject(request, pk):
-    solicitud_qs = Solicitud.objects.filter(id=pk)[:1]
-    if not solicitud_qs:
-        return not_found_error(request)
-    solicitud_obj = solicitud_qs[0]
+    solicitud_obj = get_object_or_404(Solicitud, pk=pk)
     user = request.user
     usuarios_list = UsuarioModel.objects.filter(id=user.id)[:1]
 

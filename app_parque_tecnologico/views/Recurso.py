@@ -49,7 +49,7 @@ class RecursoCreate(CreateView):
             if trazabilidad.is_valid():
                 rec = recurso_obj.save()
                 trazabilidad_obj = trazabilidad.save(commit=False)
-                trazabilidad_obj.fechaInicio = time.strftime("%Y-%m-%d %H:%M")
+                trazabilidad_obj.fecha_inicio = time.strftime("%Y-%m-%d %H:%M")
 
 
         if form.is_valid() and componente.is_valid():

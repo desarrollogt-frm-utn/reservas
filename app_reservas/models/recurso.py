@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+
+from app_reservas.models.BaseRecurso import BaseRecurso
 from ..adapters.google_calendar import generar_lista_eventos
 from app_reservas.utils import parse_eventos_response
 
@@ -15,7 +17,7 @@ def obtener_codigo_aleatorio():
     return random
 
 
-class Recurso(models.Model):
+class Recurso(BaseRecurso):
     # Atributos
     calendar_codigo = models.CharField(
         max_length=100,
@@ -33,10 +35,6 @@ class Recurso(models.Model):
                   'Debe estar en formato hexadecimal. Por ejemplo, un valor válido es: '
                   '"#ff8c0a"',
     )
-
-    activo = models.BooleanField(default=True)
-
-    codigo = models.CharField(max_length=12, unique=True, default=obtener_codigo_aleatorio)
 
     url_detalles = models.URLField(
         max_length=400,
@@ -90,7 +88,7 @@ class Recurso(models.Model):
         reserva_qs = Reserva.objects.filter(
                  recurso__id=self.id,
                  historicoestadoreserva__estado='1',
-                 historicoestadoreserva__fechaFin__isnull=True,
+                 historicoestadoreserva__fecha_fin__isnull=True,
                  horarioreserva__dia=dia_reserva
              )
         inicio = timezone.localtime(timezone.now()) - timezone.timedelta(minutes=10)
@@ -110,7 +108,7 @@ class Recurso(models.Model):
         reservas_qs = Reserva.objects.filter(
             recurso__id=self.id,
             historicoestadoreserva__estado='1',
-            historicoestadoreserva__fechaFin__isnull=True
+            historicoestadoreserva__fecha_fin__isnull=True
         )
         return reservas_qs
 

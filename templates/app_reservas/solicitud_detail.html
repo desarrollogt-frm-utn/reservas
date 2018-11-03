@@ -15,12 +15,12 @@ Detalle de Reserva
 <a href="{{request.META.HTTP_REFERER}}">Atrás</a>
 
 <h1>{{ object.docente.nombre }}</h1>
-<p>Fecha de solicitud: {{ object.fechaCreacion }}</p>
-<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:object.tipoSolicitud }}</p>
+<p>Fecha de solicitud: {{ object.fecha_creacion }}</p>
+<p>Tipo de solicitud: {{ tipos_solicitudes|get_item:object.tipo_solicitud }}</p>
 <p>Estado:
   {% for historico in solicitud.historicoestadosolicitud_set.all %}
-  {% if historico.fechaFin == None  %}
-    {{ historico.estadoSolicitud }}
+  {% if historico.fecha_fin == None  %}
+    {{ historico.estado_solicitud }}
   {% endif %}
   {% endfor %}
 </p>
@@ -54,18 +54,18 @@ Detalle de Reserva
 			<td>{{ dias_semana|get_item:horario.dia }}</td>
 			<td>{{ horario.inicio }}</td>
 			<td>{{ horario.fin }}</td>
-			<td>{{ tipo_recursos|get_item:horario.tipoRecurso }}</td>
+			<td>{{ tipo_recursos|get_item:horario.tipo_recurso }}</td>
 			<td>{{ horario.cantidad_alumnos }}</td>
       <td>
-        {% if horario.tipoLaboratorio %}
-          {{ horario.tipoLaboratorio }}
+        {% if horario.tipo_laboratorio %}
+          {{ horario.tipo_laboratorio }}
         {% else %}
           ---
         {% endif %}
       </td>
       <td>
-        {% if horario.tipoRecursoAli.all %}
-          {% for recurso_ali in horario.tipoRecursoAli.all %}
+        {% if horario.tipo_recurso_ali.all %}
+          {% for recurso_ali in horario.tipo_recurso_ali.all %}
             <li> {{ recurso_ali.nombre }} </li>
           {% endfor %}
         {% else %}
@@ -98,7 +98,7 @@ Detalle de Reserva
 
 {% if edit_recurso_estado %}
 	{% for historico in recurso.historicosEstados.all %}
-	{% if historico.fechaFin == None and historico.estado.nombre == "Dado de alta"  %}
+	{% if historico.fecha_fin == None and historico.estado.nombre == "Dado de alta"  %}
 		<h1>El recurso tiene una verificacion pendiente de revisión</h1>
 		<a class="btn btn-primary" href="{% url 'recurso_approve' object.id %}">Aprobar Recurso</a>
 		<a class="btn btn-danger" href="{% url 'recurso_reject' object.id %}">Rechazar Recurso</a>
