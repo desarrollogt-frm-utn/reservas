@@ -29,7 +29,7 @@ Listado de Prestamos
 		{% for prestamo in object_list %}
 		<tr>
 			<td>{{ prestamo.id }}</td>
-      		<td>{{prestamo.recursos_all.first.reserva.docente.nombre}}</td>
+      		<td>{{prestamo.recursos_all.first.reserva.docente }}</td>
 			<td>{{ prestamo.inicio }}</td>
 			<td>
         {% if prestamo.fin == None  %}

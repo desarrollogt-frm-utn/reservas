@@ -26,7 +26,9 @@ Detalle de Prestamo
             <table class="table table-bordered">
                 <tr>
                     <th scope="row">Solicitante</th>
-                    <td class="text-center">{{ object.recursos_all.first.reserva.docente }}</td>
+                    <td class="text-center">
+                        {{ object.recursos_all.first.reserva.docente }}
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">Estado</th>
@@ -80,7 +82,7 @@ Detalle de Prestamo
                 <tr>
                     <th scope="row">Acciones</th>
                     <td class="text-center">
-                        <a class="btn btn-primary" href="">Agregar Elemento</a>
+                        <a class="btn btn-primary" href="{% url 'prestamo_agregar_elemento' object.id %}">Agregar Elemento</a>
                         <a class="btn btn-danger" href="{% url 'prestamo_finalizar' object.id %}">Finalizar Prestamo</a>
                     </td>
                 </tr>

@@ -74,7 +74,7 @@ def obtener_fecha_fin_reserva_cursado(semestre):
 
 
 def obtener_modelo_recurso(id):
-    from app_reservas.models import Aula, Laboratorio, LaboratorioInformatico, RecursoAli
+    from app_reservas.models import Aula, Accesorio, Laboratorio, LaboratorioInformatico, RecursoAli
     if Aula.objects.filter(id=id):
         return Aula
     elif LaboratorioInformatico.objects.filter(id=id):
@@ -83,6 +83,8 @@ def obtener_modelo_recurso(id):
         return Laboratorio
     elif RecursoAli.objects.filter(id=id):
         return RecursoAli
+    elif Accesorio.objects.filter(id=id):
+        return Accesorio
     else:
         return None
 
@@ -156,3 +158,18 @@ def obtener_recursos_asignables(user):
         recurso_list += list(LaboratorioInformatico.objects.all())
 
     return recurso_list
+
+
+def obtener_horario_comision(comision):
+    if comision:
+        now = timezone.now()
+        # Comparo el día requerido con el día actual
+        # Se resta uno para mantener compatibilidades entre datos del
+        # servidor académico y los datos de weekday obtenidos por python
+
+        horario_filtrado = [i for i in comision.get_horarios_comision_academico() if int(i['dia_numero']) == timezone.now().weekday()]
+
+        if horario_filtrado:
+            return horario_filtrado[0]
+
+    return None

@@ -105,7 +105,9 @@
         </div>
     </div>
 
+{% if reserva.recurso.recurso.calendar_codigo %}
     <div id="calendar" class="calendar col-sm-12"></div>
+{% endif %}
 {% endblock contenido %}
 
 
@@ -117,8 +119,8 @@
 {% block fullcalendar_eventSources %}
     {
         url: '{% url "reserva_eventos_json" reserva.id %}',
-        {% if reserva.recurso.calendar_color %}
-            color: '{{ reserva.recurso.calendar_color }}',
+        {% if reserva.recurso.recurso.calendar_color %}
+            color: '{{ reserva.recurso.recurso.calendar_color }}',
         {% endif %}
     },
 

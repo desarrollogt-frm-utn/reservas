@@ -21,6 +21,7 @@ from app_reservas.form import (
 from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA, ESTADOS_FINALES
 from app_reservas.models.horarioReserva import DIAS_SEMANA
 from app_reservas.roles import CREATE_RESERVA
+from app_reservas.services.recursos import get_recurso_obj
 from app_reservas.services.reservas import get_nombre_evento, crear_evento, dar_baja_evento
 from app_reservas.form.reserva import ReservaInlineFormset
 
@@ -87,8 +88,6 @@ def ReservaCreate(request):
                         fin=reserva.cleaned_data.get('fin'),
                     )
                 for created_reserva in created_reservas:
-
-
                     crear_evento(created_reserva)
 
                 return render(request, 'app_usuarios/success_message.html', {
@@ -200,9 +199,11 @@ def reserva_eventos_json(request, pk):
     """
     reserva = get_object_or_404(Reserva, pk=pk)
     eventos = []
-    for horario_reserva in reserva.horarioreserva_set.all():
-        eventos += obtener_evento_especifico(
-                reserva.recurso.calendar_codigo,
+    recurso_obj = get_recurso_obj(reserva.recurso.id)
+    if recurso_obj:
+        for horario_reserva in reserva.horarioreserva_set.all():
+            eventos += obtener_evento_especifico(
+                recurso_obj.calendar_codigo,
                 horario_reserva.id_evento_calendar
             )
 

@@ -1,7 +1,7 @@
 from .accesorio import Accesorio
-from .accesorioPrestamo import AccesorioPrestamo
 from .area import Area
 from .aula import Aula
+from .baseRecurso import BaseRecurso
 from .carruselImagenes import CarruselImagenes
 from .cuerpo import Cuerpo
 from .historicoEstadoSolicitud import HistoricoEstadoSolicitud
@@ -29,9 +29,9 @@ from .visorTv import VisorTv
 
 __all__ = [
     'Accesorio',
-    'AccesorioPrestamo',
     'Area',
     'Aula',
+    'BaseRecurso',
     'CarruselImagenes',
     'Cuerpo',
     'HistoricoEstadoSolicitud',

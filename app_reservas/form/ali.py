@@ -1,5 +1,5 @@
 from django import forms
-from app_reservas.models import AccesorioPrestamo, Recurso, RecursoPrestamo, Accesorio
+from app_reservas.models import Recurso, RecursoPrestamo, Accesorio
 
 INVALID_RESOURCE_MESSAGE = "El recurso ingresado no es válido. Intente nuevamente"
 INACTIVE_RESOURCE_MESSAGE = "El recurso ingresado no se encuetra activo. Consulte al administrador del sistema"
@@ -65,13 +65,6 @@ class ElementoForm(forms.Form):
         if prestamo_obj:
             raise forms.ValidationError(RESOURCE_ALREADY_HAS_LOAN_MESSAGE)
         return elemento_obj
-
-
-class AccesorioPrestamoForm(forms.ModelForm):
-
-    class Meta:
-        model = AccesorioPrestamo
-        fields = ['accesorio']
 
 
 class RecursoPrestamoForm(forms.ModelForm):

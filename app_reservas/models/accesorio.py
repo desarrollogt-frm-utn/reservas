@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.crypto import get_random_string
 
-from app_reservas.models.BaseRecurso import BaseRecurso
+from app_reservas.models.baseRecurso import BaseRecurso
 
 
 def obtener_codigo_aleatorio():
@@ -43,11 +43,14 @@ class Accesorio(BaseRecurso):
         """
         Retorna el nombre corto de la instancia.
         """
-        nombre_corto = self.identificador
+        if self.tipo:
+            nombre_corto = "{0!s}: {1!s}".format(self.tipo, self.identificador)
+        else:
+            nombre_corto = self.identificador
         return nombre_corto
 
     def get_active_loan(self):
-        prestamos = self.accesorios_all.filter(prestamo__fin=None)[:1]
+        prestamos = self.prestamos_all.filter(prestamo__fin=None)[:1]
         if prestamos:
             return prestamos[0]
         return None

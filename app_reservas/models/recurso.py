@@ -5,7 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
-from app_reservas.models.BaseRecurso import BaseRecurso
+from app_reservas.models.baseRecurso import BaseRecurso
 from ..adapters.google_calendar import generar_lista_eventos
 from app_reservas.utils import parse_eventos_response
 

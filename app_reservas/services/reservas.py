@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from app_reservas.models import HistoricoEstadoReserva
 from app_reservas.models.historicoEstadoReserva import ESTADOS_FINALES
+from app_reservas.services.recursos import get_recurso_obj
 from app_reservas.tasks import crear_evento_recurso_especifico, obtener_eventos_recurso_especifico
 
 from app_reservas.utils import (
@@ -34,14 +35,16 @@ def crear_evento(reserva_obj):
         elif not reserva_obj.comision and reserva_obj.fecha_fin:
             hasta = obtener_fecha_finalizacion_reserva_fuera_cursado(reserva_obj.fecha_fin)
 
-        crear_evento_recurso_especifico(
-            calendar_id=reserva_obj.recurso.calendar_codigo,
-            titulo=reserva_obj.nombre_evento,
-            inicio=inicio,
-            fin=fin,
-            hasta=hasta,
-            reserva_horario_obj=horario_obj,
-        )
+        recurso_obj = get_recurso_obj(reserva_obj.recurso.id)
+        if recurso_obj:
+            crear_evento_recurso_especifico(
+                calendar_id=recurso_obj.calendar_codigo,
+                titulo=reserva_obj.nombre_evento,
+                inicio=inicio,
+                fin=fin,
+                hasta=hasta,
+                reserva_horario_obj=horario_obj,
+            )
 
 """
 ESTADOS RESERVA
@@ -68,11 +71,11 @@ def cambiar_estado_reserva(reserva_obj, estado_nuevo):
 
 def dar_baja_evento(reserva_obj):
     cambiar_estado_reserva(reserva_obj, '4')
-    for horario_reserva in reserva_obj.horarioreserva_set.all():
-        borrar_evento(reserva_obj.recurso.calendar_codigo, horario_reserva.id_evento_calendar)
-    from app_reservas.models import Recurso
-    recurso_obj = Recurso.objects.get(calendar_codigo=reserva_obj.recurso.calendar_codigo)
-    obtener_eventos_recurso_especifico(recurso_obj)
+    recurso_obj = get_recurso_obj(reserva_obj.recurso.id)
+    if recurso_obj:
+        for horario_reserva in reserva_obj.horarioreserva_set.all():
+            borrar_evento(recurso_obj.calendar_codigo, horario_reserva.id_evento_calendar)
+        obtener_eventos_recurso_especifico(recurso_obj)
 
 
 def finalizar_reserva(reserva_obj):

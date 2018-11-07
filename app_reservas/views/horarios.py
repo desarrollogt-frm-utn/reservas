@@ -81,7 +81,7 @@ class HorariosComisionListView(ListView):
                 comisiones_qs = comisiones_qs.filter(materia__especialidad__id=especialidad)
             except ValueError:
                 pass
-        if buscar:
+        if buscar and buscar != 'None':
             try:
                 comisiones_qs = comisiones_qs.filter(
                 Q(materia__nombre__icontains=buscar) | Q(comision__icontains=buscar)

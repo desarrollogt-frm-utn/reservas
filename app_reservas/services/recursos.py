@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from ..models.aula import Aula
 from ..models.laboratorio import Laboratorio
 from ..models.laboratorioInformatico import LaboratorioInformatico
+from ..models.recurso import Recurso
 
 
 def get_recursos_asociados(instancia):
@@ -112,3 +113,13 @@ def get_recursos_asociados_por_cuerpo(instancia):
     ]
 
     return recursos_por_cuerpo
+
+
+def get_recurso_obj(id):
+    recurso_obj = None
+    try:
+        recurso_obj = Recurso.objects.get(id=id)
+    except Recurso.DoesNotExist:
+        pass
+
+    return recurso_obj

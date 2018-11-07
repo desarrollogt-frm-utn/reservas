@@ -6,7 +6,7 @@ class RecursoPrestamo(models.Model):
     # Relaciones
 
     recurso = models.ForeignKey(
-        'Recurso',
+        'BaseRecurso',
         verbose_name='Recurso',
         related_name='prestamos_all'
     )

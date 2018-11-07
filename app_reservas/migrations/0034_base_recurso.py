@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import app_reservas.models.BaseRecurso
+import app_reservas.models.baseRecurso
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('fecha_creacion', models.DateTimeField(auto_now_add=True)),
                 ('activo', models.BooleanField(default=True)),
-                ('codigo', models.CharField(max_length=12, unique=True, default=app_reservas.models.BaseRecurso.obtener_codigo_aleatorio)),
+                ('codigo', models.CharField(max_length=12, unique=True, default=app_reservas.models.baseRecurso.obtener_codigo_aleatorio)),
             ],
             options={
                 'verbose_name': 'Base del Recurso',

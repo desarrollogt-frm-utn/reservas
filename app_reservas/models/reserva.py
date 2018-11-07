@@ -36,7 +36,7 @@ class Reserva(models.Model):
     )
 
     recurso = models.ForeignKey(
-        'Recurso',
+        'BaseRecurso',
         verbose_name='Recurso de la Reserva',
     )
 

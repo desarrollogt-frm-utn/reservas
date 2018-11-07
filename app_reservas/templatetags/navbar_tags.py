@@ -44,3 +44,9 @@ def get_horario(horarios, dia):
 @register.filter
 def get_nombre_recurso(id):
     return str(obtener_recurso(id))
+
+@register.filter
+def get_tipo_recurso(id):
+    recurso_obj = obtener_recurso(id)
+    return recurso_obj.__class__._meta.verbose_name
+

@@ -103,8 +103,9 @@
                     <table class="table table-bordered">
                     	<thead>
                     		<tr>
-                    			<td>Recurso</td>
-                    			<td>Reserva</td>
+                                <th>Recurso</th>
+                                <th>Tipo de Recurso</th>
+                                <th>Reserva</th>
                     		</tr>
 
                     	</thead>
@@ -114,6 +115,9 @@
                            <td>
                              {{ recurso.object.id|get_nombre_recurso }}
                            </td>
+                            <td>
+                             {{ recurso.object.id|get_tipo_recurso }}
+                           </td>
                            {% if recurso.reserva %}
                            <td> {{ recurso.reserva }}</td>
                            {% else %}
@@ -121,29 +125,6 @@
                            {% endif %}
                         </tr>
                         {% endfor %}
-                    	</tbody>
-                    </table>
-                    </div>
-
-                    <div>
-                      <h3>Accesorios:</h3>
-                    <table class="table table-bordered">
-                    	<thead>
-                    		<tr>
-                    			<td>Accesorio</td>
-                    			<td>Tipo de accesorio</td>
-                    		</tr>
-
-                    	</thead>
-                    	<tbody>
-                    		{% for accesorio in accesorios %}
-                        <tr>
-                           <td>
-                             {{ accesorio }}
-                           </td>
-                           <td> {{ accesorio.tipo }}</td>
-                        </tr>
-                    		{% endfor %}
                     	</tbody>
                     </table>
                     </div>
