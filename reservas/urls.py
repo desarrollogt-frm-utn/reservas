@@ -18,7 +18,10 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth.views import login, logout_then_login
+from django.contrib.auth.views import logout_then_login
+from app_usuarios.views import login
+
+handler404 = 'app_reservas.errors.not_found_error'
 
 urlpatterns = [
     url(r'^' + settings.DJANGO_URL_PREFIX, include([

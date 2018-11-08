@@ -2,32 +2,26 @@
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
 
 from django.conf import settings
 
-from rolepermissions.decorators import has_role_decorator, has_permission_decorator
+from rolepermissions.decorators import has_permission_decorator
 
 from app_reservas.form import ElementoForm
-from app_reservas.errors import not_found_error, custom_error
-from app_reservas.models import HistoricoEstadoReserva
+from app_reservas.errors import custom_error
 from app_reservas.roles import FINALIZE_PRESTAMO, CREATE_PRESTAMO
-from app_reservas.services.reservas import finalizar_reserva
-from app_reservas.tasks import crear_evento_recurso_especifico
-
-from app_usuarios.models import Usuario as UsuarioModel
+from app_reservas.services.recursos import get_recurso_obj
+from app_reservas.services.reservas import finalizar_reserva, crear_reserva_rapida, buscar_reservas
 
 from ..models import (
     Aula,
-    Accesorio,
-    AccesorioPrestamo,
+    BaseRecurso,
     CarruselImagenes,
-    HorarioReserva,
     LaboratorioInformatico,
     Prestamo,
-    Recurso,
     RecursoPrestamo,
     Reserva,
     TipoRecursoAli,
@@ -38,6 +32,10 @@ from app_reservas.form import (
     ReservaWithoutSolicitudCreateForm
 )
 
+PRESTAMO_FINALIZADO_MESSAGE = "El prestamo ya se encuentra en estado finalizado."
+PRESTAMO_VACIO_MESSAGE = "Es necesario agregar al menos un recurso."
+PRESTAMO_FUERA_DE_RANGO_MESSAGE = "No se puede agregar un recurso a un prestamo que no fue creado hoy"
+PRESTAMO_CON_RESERVA_MESSAGE = "El recurso tiene una <a href={0!s}>reserva</a> que se pisa con el prestamo actual"
 
 class AliTemplateView(TemplateView):
     """
@@ -99,8 +97,8 @@ def PrestamoRegister(request):
             if prestamo_obj:
                 return redirect(reverse_lazy('prestamo_detalle', kwargs={'pk': prestamo_obj.id}))
             else:
-                request.session['recurso_list'] = [recurso_obj.id]
-                request.session['accesorio_list'] = []
+                recurso_list = [recurso_obj.id]
+                request.session['recurso_list'] = recurso_list
                 request.session['recursos_tuple'] = []
                 return redirect(reverse_lazy('prestamo_crear'))
     return render(request, 'app_reservas/prestamo_register.html', {
@@ -111,28 +109,21 @@ def PrestamoRegister(request):
 @has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoCreate(request):
     recurso_list = request.session.get('recurso_list', [])
-    accesorio_list = request.session.get('accesorio_list', [])
     recursos = []
-    accesorios = []
     for i, recurso in enumerate(recurso_list):
-        recurso_qs = Recurso.objects.filter(id=recurso)[:1]
-        if recurso_qs:
-            prefix = 'recurso-{0:d}'.format(i)
-            form = PrestamoReservaForm(request, recurso_qs[0], prefix=prefix)
-            recursos.append({
-                'object': recurso_qs[0],
-                'form': form
-                })
-        else:
-            return not_found_error()
-    for accesorio in accesorio_list:
-        accesorio_qs = Accesorio.objects.filter(id=accesorio)[:1]
-        if accesorio_qs:
-            accesorios.append(accesorio_qs[0])
-        else:
-            return not_found_error()
-
+        base_recurso_obj = get_object_or_404(BaseRecurso, id=recurso)
+        prefix = 'recurso-{0:d}'.format(i)
+        recurso_obj = get_recurso_obj(base_recurso_obj.id)
+        form = None
+        if recurso_obj:
+            form = PrestamoReservaForm(request, recurso_obj, prefix=prefix)
+        recursos.append({
+            'object': base_recurso_obj,
+            'form': form
+            })
     if request.method == "POST":
+        if not recurso_list:
+            return custom_error(request, PRESTAMO_VACIO_MESSAGE)
         recursos_tuple = []
         for i, recurso in enumerate(recurso_list):
             prefix = 'recurso-{0:d}-reserva'.format(i)
@@ -144,26 +135,73 @@ def PrestamoCreate(request):
         return redirect(reverse_lazy('prestamo_confirmar'))
     return render(request, 'app_reservas/prestamo_create.html', {
         'recursos': recursos,
-        'accesorios': accesorios
     })
 
 
 @has_permission_decorator(CREATE_PRESTAMO)
-def PrestamoElementAdd(request):
+def PrestamoElementAddOnCreate(request):
     form = ElementoForm(request)
     if request.method == "POST":
         form = ElementoForm(request, request.POST)
         if form.is_valid():
             recurso_list = request.session.get('recurso_list', [])
-            accesorio_list = request.session.get('accesorio_list',[])
             elemento_obj = form.cleaned_data['recurso']
-            if type(elemento_obj) is Accesorio:
-                accesorio_list.append(elemento_obj.id)
-            else:
-                recurso_list.append(elemento_obj.id)
+            recurso_list.append(elemento_obj.id)
             request.session['recurso_list'] = recurso_list
-            request.session['accesorio_list'] = accesorio_list
             return redirect(reverse_lazy('prestamo_crear'))
+    return render(request, 'app_reservas/prestamo_add_element.html', {
+        'form': form,
+    })
+
+@has_permission_decorator(CREATE_PRESTAMO)
+def PrestamoElementAdd(request, pk):
+    prestamo_obj = get_object_or_404(Prestamo, pk=pk)
+    if prestamo_obj.fin:
+        return custom_error(request, PRESTAMO_FINALIZADO_MESSAGE)
+
+    form = ElementoForm(request)
+    if request.method == "POST":
+        form = ElementoForm(request, request.POST)
+        if form.is_valid():
+            recurso_obj = form.cleaned_data['recurso']
+
+            base_reserva = prestamo_obj.recursos_all.first().reserva
+
+            from datetime import datetime
+
+            horario_reserva = base_reserva.get_horario_de_fecha(datetime.now())
+
+            if not horario_reserva:
+                return custom_error(request, PRESTAMO_FUERA_DE_RANGO_MESSAGE)
+
+            reserva_list = buscar_reservas(recurso_obj, datetime.now(), horario_reserva.inicio, horario_reserva.fin)
+
+            if reserva_list:
+                return custom_error(
+                    request,
+                    PRESTAMO_CON_RESERVA_MESSAGE.format(
+                        reverse_lazy('reserva_detalle', kwargs={'pk': reserva_list[0].pk})
+                    )
+                )
+
+            docente_obj = base_reserva.docente
+            comision_obj = base_reserva.comision
+            hora_fin = horario_reserva.fin
+
+            reserva_obj = crear_reserva_rapida(
+                recurso_obj,
+                docente_obj,
+                comision_obj,
+                request.user,
+                hora_fin
+            )
+
+            RecursoPrestamo.objects.create(
+                recurso=recurso_obj,
+                reserva=reserva_obj,
+                prestamo=prestamo_obj
+                )
+            return redirect(reverse_lazy('prestamo_detalle', kwargs={'pk': pk}))
     return render(request, 'app_reservas/prestamo_add_element.html', {
         'form': form,
     })
@@ -172,39 +210,31 @@ def PrestamoElementAdd(request):
 @has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoElementsRemove(request):
     request.session['recurso_list'] = []
-    request.session['accesorio_list'] = []
     request.session['recursos_tuple'] = []
     return redirect(reverse_lazy('prestamo_crear'))
 
 
 @has_permission_decorator(CREATE_PRESTAMO)
 def PrestamoConfirm(request):
-    accesorio_list = request.session.get('accesorio_list', [])
     recursos_tuple = request.session.get('recursos_tuple', [])
     show_form = False
     recursos = []
-    accesorios = []
+
+    if not recursos_tuple:
+        return custom_error(request, PRESTAMO_VACIO_MESSAGE)
+
     for recurso in recursos_tuple:
-        recurso_qs = Recurso.objects.filter(id=recurso.get('id', None))[:1]
-        if recurso_qs:
-            choice = recurso.get('choice', None)
-            reserva_obj = None
-            if not choice:
-                show_form = True
-            else:
-                reserva_obj = Reserva.objects.get(id=choice)
-            recursos.append({
-                'object': recurso_qs[0],
-                'reserva': reserva_obj
-                })
+        recurso_obj = get_object_or_404(BaseRecurso, id=recurso.get('id', None))
+        choice = recurso.get('choice', None)
+        reserva_obj = None
+        if not choice:
+            show_form = True
         else:
-            return not_found_error()
-    for accesorio in accesorio_list:
-        accesorio_qs = Accesorio.objects.filter(id=accesorio)[:1]
-        if accesorio_qs:
-            accesorios.append(accesorio_qs[0])
-        else:
-            return not_found_error()
+            reserva_obj = Reserva.objects.get(id=choice)
+        recursos.append({
+            'object': recurso_obj,
+            'reserva': reserva_obj
+            })
     form = None
     if show_form:
         form = ReservaWithoutSolicitudCreateForm()
@@ -220,47 +250,21 @@ def PrestamoConfirm(request):
                 if form.is_valid():
                     reserva_form = form.cleaned_data
                     docente_obj = reserva_form.pop('docente')
-                    try:
-                        user_model_obj = UsuarioModel.objects.get(legajo=docente_obj.legajo)
-                    except UsuarioModel.DoesNotExist:
-                        user_model_obj = None
-                    reserva_obj = Reserva.objects.create(
-                        fecha_inicio=timezone.now(),
-                        nombre_evento=reserva_form.get('nombre_evento'),
-                        asignado_por=request.user,
-                        recurso=recurso.get('object'),
-                        docente=docente_obj,
-                        comision=reserva_form.get('comision'),
-                        usuario=user_model_obj
-                    )
+                    recurso_obj = recurso.get('object')
+                    comision_obj = reserva_form.get('comision')
+                    hora_fin = reserva_form.get('fin')
 
-                    HistoricoEstadoReserva.objects.create(
-                        fechaInicio=timezone.now(),
-                        estado='1',
-                        reserva=reserva_obj,
-                    )
-                    import datetime
-
-                    HorarioReserva.objects.create(
-                        inicio=datetime.datetime.now().time(),
-                        fin=reserva_form.get('fin'),
-                        reserva=reserva_obj,
-                        dia=timezone.localtime(timezone.now()).weekday()+1
-                    )
-
-                    fin = datetime.datetime.combine(timezone.now().date(), reserva_form.get('fin')).isoformat()
-                    crear_evento_recurso_especifico.delay(
-                        calendar_id=recurso.get('object').calendar_codigo,
-                        titulo=reserva_obj.nombre_evento,
-                        inicio=timezone.now().isoformat(),
-                        fin=fin,
-                        hasta=None,
+                    reserva_obj = crear_reserva_rapida(
+                        recurso_obj,
+                        docente_obj,
+                        comision_obj,
+                        request.user,
+                        hora_fin
                     )
                 else:
                     return render(request, 'app_reservas/prestamo_confirm.html', {
                         'form': form,
                         'recursos': recursos,
-                        'accesorios': accesorios,
                         'SITE_URL': settings.SITE_URL
                     })
             else:
@@ -271,32 +275,21 @@ def PrestamoConfirm(request):
                 recurso=recurso.get('object'),
                 reserva=reserva_obj,
             )
-        prestamo_obj.save()
-        for accesorio in accesorios:
-            AccesorioPrestamo.objects.create(
-                prestamo=prestamo_obj,
-                accesorio=accesorio,
-            )
         request.session['recurso_list'] = []
-        request.session['accesorio_list'] = []
         request.session['recursos_tuple'] = []
         return redirect(reverse_lazy('prestamo_detalle', kwargs={'pk': prestamo_obj.id}))
     return render(request, 'app_reservas/prestamo_confirm.html', {
         'form': form,
         'recursos': recursos,
-        'accesorios': accesorios,
         'SITE_URL': settings.SITE_URL
     })
 
 
 @has_permission_decorator(FINALIZE_PRESTAMO)
 def PrestamoFinalize(request, pk):
-    prestamo_qs = Prestamo.objects.filter(id=pk)[:1]
-    if not prestamo_qs:
-        return not_found_error()
-    prestamo_obj = prestamo_qs[0]
+    prestamo_obj = get_object_or_404(Prestamo, pk=pk)
     if prestamo_obj.fin:
-        return custom_error(request, 'El prestamo ya se encuentra en estado finalizado.')
+        return custom_error(request, PRESTAMO_FINALIZADO_MESSAGE)
     if request.method == 'POST':
         prestamo_obj.fin = timezone.now()
         prestamo_obj.recibido_por = request.user

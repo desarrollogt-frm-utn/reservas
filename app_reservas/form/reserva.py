@@ -9,13 +9,12 @@ from app_reservas.models import (
 
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 
-from app_usuarios.models import Usuario
-
 from app_academica.models import Comision, Docente
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
+    obtener_horario_comision,
     obtener_recurso,
     obtener_recursos_asignables)
 
@@ -270,8 +269,19 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         tipo_solicitud = self.data.get('tipo_solicitud')
         if not nombre_evento or nombre_evento == '':
             if tipo_solicitud == '1' or tipo_solicitud == '2':
-                comision_obj = Comision.objects.get(id=self.data.get('comision'))
-                usuario_obj = Usuario.objects.get(id=self.data.get('docente'))
+                try:
+                    comision_obj = Comision.objects.get(id=self.data.get('comision'))
+                except Comision.DoesNotExist:
+                    raise forms.ValidationError(
+                        "La comisión ingresada no es válida"
+                    )
+                try:
+                    usuario_obj = Docente.objects.get(legajo=self.data.get('docente'))
+                except:
+                    raise forms.ValidationError(
+                        "El docente ingresado no es válido"
+                    )
+
                 nombre_evento = "{0!s} - {1!s} - {2!s}".format(comision_obj.materia.nombre, comision_obj.comision, usuario_obj.nombre)
             else:
                 raise forms.ValidationError(
@@ -280,14 +290,29 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
         return nombre_evento
 
     def clean_fin(self):
-        fin = self.cleaned_data['fin']
-        if not fin:
+        from datetime import datetime
+        tipo_solicitud = self.data.get('tipo_solicitud')
+        if tipo_solicitud == '2':
+            comision_obj = Comision.objects.get(id=self.data['comision'])
+            horario = obtener_horario_comision(comision_obj)
+
+            fin = None
+            if horario:
+                fin = datetime.strptime(horario['hora_fin'], "%H:%M").time()
+
+            if not horario or (horario and fin < datetime.now().time()):
+                raise forms.ValidationError(
+                    "La comisión seleccionada no posee horarios para el prestamo seleccionado"
+                )
+
+        elif tipo_solicitud == '4':
+            fin = self.cleaned_data['fin']
+            if fin < datetime.now().time():
+                raise forms.ValidationError(
+                    "La hora de fin de la solicitud no puede ser menor a la hora de inicio"
+                )
+        else:
             raise forms.ValidationError(
-                "La hora de fin no puede ser nula"
-            )
-        import datetime
-        if fin < datetime.datetime.now().time():
-            raise forms.ValidationError(
-                "La hora de fin de la solicitud no puede ser menor a la hora de inicio"
+                "La fecha de fin no puede ser nula"
             )
         return fin

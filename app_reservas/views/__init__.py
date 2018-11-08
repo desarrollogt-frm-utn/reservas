@@ -2,6 +2,7 @@ from .ali import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
     PrestamoElementAdd,
+    PrestamoElementAddOnCreate,
     PrestamoCreate,
     PrestamoConfirm,
     PrestamoDetail,

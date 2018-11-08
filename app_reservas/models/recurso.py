@@ -111,9 +111,3 @@ class Recurso(BaseRecurso):
             historicoestadoreserva__fecha_fin__isnull=True
         )
         return reservas_qs
-
-    def get_active_loan(self):
-        prestamos = self.prestamos_all.filter(prestamo__fin__isnull=True)[:1]
-        if prestamos:
-            return prestamos[0].prestamo
-        return None

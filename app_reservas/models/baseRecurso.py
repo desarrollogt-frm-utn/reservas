@@ -36,3 +36,13 @@ class BaseRecurso(models.Model):
         """
 
         return "Recurso #{0!s}".format(self.pk)
+
+
+    def get_active_loan(self):
+        """
+        Retorna todos los prestamos activos del recurso
+        """
+        prestamos = self.prestamos_all.filter(prestamo__fin__isnull=True)[:1]
+        if prestamos:
+            return prestamos[0].prestamo
+        return None

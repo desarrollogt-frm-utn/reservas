@@ -23,6 +23,7 @@ from .views import (
     PrestamoConfirm,
     PrestamoDetail,
     PrestamoElementAdd,
+    PrestamoElementAddOnCreate,
     PrestamoElementsRemove,
     PrestamoFinalize,
     PrestamoList,
@@ -276,8 +277,14 @@ urlpatterns = [
         name='prestamo_listar'),
     url(
         r'^prestamos/agregar_elemento/$',
+        login_required(PrestamoElementAddOnCreate),
+        name='prestamo_creacion_agregar_elemento'
+    ),
+    url(
+        r'^prestamos/agregar_elemento/(?P<pk>\d+)$',
         login_required(PrestamoElementAdd),
-        name='prestamo_agregar_elemento'),
+        name='prestamo_agregar_elemento'
+    ),
     url(
         r'^prestamos/quitar_elementos/$',
         login_required(PrestamoElementsRemove),

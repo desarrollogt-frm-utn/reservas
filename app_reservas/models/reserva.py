@@ -89,3 +89,15 @@ class Reserva(models.Model):
         """
         estado = self.historicoestadoreserva_set.filter(fecha_fin__isnull=True)[0]
         return estado
+
+
+    def get_horario_de_fecha(self, fecha):
+        """
+        Retorna el horario a partir de una fecha, se suma uno por compatibilidad
+        """
+        horario_obj = None
+        dia_buscado = fecha.weekday() + 1
+        horario_list = self.horarioreserva_set.filter(dia=dia_buscado)
+        if horario_list:
+            horario_obj = horario_list[0]
+        return horario_obj

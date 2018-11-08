@@ -2,7 +2,7 @@ import datetime
 
 from django.utils import timezone
 
-from app_reservas.models import HistoricoEstadoReserva
+from app_reservas.models import HistoricoEstadoReserva, Reserva, HorarioReserva
 from app_reservas.models.historicoEstadoReserva import ESTADOS_FINALES
 from app_reservas.services.recursos import get_recurso_obj
 from app_reservas.tasks import crear_evento_recurso_especifico, obtener_eventos_recurso_especifico
@@ -14,6 +14,9 @@ from app_reservas.utils import (
 )
 
 from app_reservas.adapters.google_calendar import borrar_evento
+
+from app_usuarios.models import Usuario as UsuarioModel
+
 
 def get_nombre_evento(docente_obj, comision_obj):
     if comision_obj is not None:
@@ -81,3 +84,72 @@ def dar_baja_evento(reserva_obj):
 def finalizar_reserva(reserva_obj):
     if not reserva_obj.fecha_fin or (reserva_obj and reserva_obj.fecha_fin <= timezone.now().date()):
         cambiar_estado_reserva(reserva_obj, '2')
+
+
+def crear_reserva_rapida(recurso, docente_obj, comision_obj, asignado_por, hora_fin):
+    try:
+        user_model_obj = UsuarioModel.objects.get(legajo=docente_obj.legajo)
+    except UsuarioModel.DoesNotExist:
+        user_model_obj = None
+
+    reserva_obj = Reserva.objects.create(
+        fecha_inicio=timezone.now(),
+        nombre_evento=get_nombre_evento(docente_obj, comision_obj),
+        asignado_por=asignado_por,
+        recurso=recurso,
+        docente=docente_obj,
+        comision=comision_obj,
+        usuario=user_model_obj
+    )
+
+    HistoricoEstadoReserva.objects.create(
+        fecha_inicio=timezone.now(),
+        estado='1',
+        reserva=reserva_obj,
+    )
+    from datetime import datetime
+
+    HorarioReserva.objects.create(
+        inicio=datetime.now().time(),
+        fin=hora_fin,
+        reserva=reserva_obj,
+        dia=datetime.now().weekday() + 1
+    )
+    recurso_obj = get_recurso_obj(recurso.id)
+
+    if recurso_obj:
+        fin = datetime.combine(datetime.now().date(), hora_fin).isoformat()
+        crear_evento_recurso_especifico.delay(
+            calendar_id=recurso_obj.calendar_codigo,
+            titulo=reserva_obj.nombre_evento,
+            inicio=timezone.now().isoformat(),
+            fin=fin,
+            hasta=None,
+        )
+
+    return reserva_obj
+
+
+def buscar_reservas(base_recurso_obj, fecha, hora_inicio, hora_fin=None):
+
+    reserva_list = []
+
+    recurso_obj = get_recurso_obj(base_recurso_obj.id)
+    if recurso_obj:
+        reserva_qs = recurso_obj.get_active_reservations()
+        dia_reserva = fecha.weekday() + 1
+        reserva_qs = reserva_qs.filter(
+            horarioreserva__dia=dia_reserva
+        )
+
+        for reserva in reserva_qs:
+            horario_obj = reserva.get_horario_de_fecha(fecha)
+            if (horario_obj.inicio <= hora_inicio <= horario_obj.fin) or \
+                    (hora_fin and horario_obj.inicio <= hora_fin <= horario_obj.fin):
+                reserva_list.append(reserva)
+
+    else:
+        prestamo_obj = base_recurso_obj.get_active_loan()
+        if prestamo_obj:
+            reserva_list = prestamo_obj.recursos_all.filter(recurso=base_recurso_obj)
+    return reserva_list
