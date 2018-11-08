@@ -13,8 +13,11 @@ def obtener_pass_aleatoria():
 
 class UTNLogin(object):
     def authenticate(self, username=None, password=None):
-        db = MySQLdb.connect(host=settings.UTN_MYSQL_HOST, user=settings.UTN_MYSQL_USER, passwd=settings.UTN_MYSQL_PASS, db=settings.UTN_MYSQL_DB)
-        cursor = db.cursor()
+        try:
+            db = MySQLdb.connect(host=settings.UTN_MYSQL_HOST, user=settings.UTN_MYSQL_USER, passwd=settings.UTN_MYSQL_PASS, db=settings.UTN_MYSQL_DB)
+            cursor = db.cursor()
+        except Exception:
+            return None
         query = """
                     SELECT username, password2, name
                     FROM mailbox 
