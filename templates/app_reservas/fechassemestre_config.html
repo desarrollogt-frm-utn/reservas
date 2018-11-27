@@ -25,6 +25,9 @@
 {% block navbar %} {% endblock %}
 {% block contenido %}
 <form method="post">
+    <div class="row">
+        {% include 'commons/error_header.html' %}
+    </div>
 	{% csrf_token %}
   <h1>Panel de cambio de Fechas de Semestre</h1>
   <div class="row">

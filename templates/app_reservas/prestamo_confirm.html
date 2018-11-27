@@ -24,21 +24,7 @@
 
 {% block contenido %}
 
-      {% if form.errors %}
-         {% for field in form %}
-             {% for error in field.errors %}
-                 <div class="alert alert-danger">
-                     <strong>{{ field|escape }}</strong>
-                     {{error}}
-                 </div>
-             {% endfor %}
-         {% endfor %}
-         {% for error in form.non_field_errors %}
-             <div class="alert alert-danger">
-                 <strong>{{ error|escape }}</strong>
-             </div>
-         {% endfor %}
-      {% endif %}
+{% include 'commons/error_header.html' %}
 
 
         <form id="solicitud_form" method="post">

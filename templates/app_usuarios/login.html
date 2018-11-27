@@ -1,0 +1,51 @@
+{% extends 'app_reservas/base.html' %}
+{% load static %}
+
+{% block static_js %}
+{% endblock %}
+
+{% block title %}
+Ingresar al Sistema
+{% endblock %}
+
+{% block navbar %} {% endblock %}
+{% block contenido %}
+<div class="row">
+    {% include 'commons/error_header.html' %}
+</div>
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="username">Email institucional:</label>
+                <input class="form-control" type="text" name="username">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="username">Contraseña:</label>
+                <input class="form-control" type="password" name="password">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <p>
+                    ¿No tienes cuenta? <a href="{% url 'signup' %}">Registrarse</a>
+                </p>
+                <p>
+                    ¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Recuperar contraseña</a>
+                </p>
+                <p>
+                    <input class="btn btn-primary" type="submit" value="Ingresar">
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
