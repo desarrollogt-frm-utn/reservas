@@ -2,49 +2,18 @@
 import csv
 import codecs
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from app_academica.adapters.frm_utn import get_horarios
 from app_academica.form import FilterComisionForm
-from app_academica.models import Especialidad, Materia, Comision
+from app_academica.models import Comision
 from app_academica.models.comision import SEMESTRE
 from app_academica.constants import DIAS_SEMANA_LIST
 from app_academica.services.serializerService import get_docentes_by_comision_materia_especialidad_plan
 from app_reservas.templatetags.navbar_tags import get_horario
-from app_reservas.utils import parse_time, add_minutes_to_time
 from django.db.models import Q
-
-
-def HorariosWeekView(request):
-
-    horario_response = get_horarios()
-    horario_list = []
-
-
-    for i in range(10):
-        horario = horario_response[i]
-        especialidad_obj = Especialidad.objects.get(codigo=horario.get('especialid'))
-        materia_obj = Materia.objects.get(codigo=horario.get('materia'))
-        hora_inicio = parse_time(horario['horacomien'])
-        hora_fin = add_minutes_to_time(hora_inicio, horario['duracion'])
-        horario_json = {
-            'hora_inicio':hora_inicio,
-            'dia': horario['dia'],
-            'hora_fin': hora_fin,
-            'duracion': horario['duracion'],
-            'especialidad': especialidad_obj.nombre,
-            'materia': materia_obj.nombre,
-            'semestre': horario['cuatrimest']
-            }
-        horario_list.append(horario_json)
-
-
-
-    return render(request, 'app_reservas/horarios_list_week.html', {
-            'horarios': horario_list,
-        })
 
 
 class HorariosComisionListView(ListView):

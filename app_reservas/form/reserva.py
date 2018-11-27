@@ -1,3 +1,4 @@
+from datetime import datetime
 from django import forms
 from django.forms import inlineformset_factory, BaseInlineFormSet
 
@@ -10,15 +11,21 @@ from app_reservas.models import (
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 
 from app_academica.models import Comision, Docente
+from app_reservas.services.reservas import buscar_reservas_activas_por_fechas
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
     obtener_fecha_fin_reserva_cursado,
     obtener_horario_comision,
     obtener_recurso,
-    obtener_recursos_asignables)
+    obtener_recursos_asignables, get_now_timezone)
 
 from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA
+
+INVALID_SCHEDULE_MESSAGE = "La comisión no tiene horarios disponibles"
+LOWER_END_HOUR_MESSAGE = "La hora de fin no puede ser menor a la hora de inicio"
+INVALID_DAY_MESSAGE = "El día seleccionado no corresponde con el día de la fecha de inicio"
+
 
 class ReservaAssignForm(forms.Form):
     def __init__(self, request=None, model=None, *args, **kwargs):
@@ -53,15 +60,6 @@ class HorarioReservaForm(forms.ModelForm):
                 widget=forms.Select(attrs={'class': 'form-control'})
             )
 
-    def clean_recurso(self):
-        cleaned_data = super(HorarioReservaForm, self).clean()
-        recurso = cleaned_data.get("recurso")
-        if recurso is None:
-            # Only do something if both fields are valid so far.
-            raise forms.ValidationError(
-                "Es necesario asignar un recurso"
-            )
-        return recurso
 
     class Meta:
         model = HorarioReserva
@@ -102,13 +100,69 @@ class HorarioReservaForm(forms.ModelForm):
         return inicio
 
     def clean_recurso(self):
-        reserva_id = self.cleaned_data.get('recurso')
-        recurso_list = Recurso.objects.filter(pk=reserva_id)
+        cleaned_data = super(HorarioReservaForm, self).clean()
+        recurso = cleaned_data.get("recurso")
+        if recurso is None:
+            # Only do something if both fields are valid so far.
+            raise forms.ValidationError(
+                "Es necesario asignar un recurso"
+            )
+        recurso_list = Recurso.objects.filter(pk=recurso)
         if not recurso_list:
             raise forms.ValidationError(
                 "El recurso ingresado no es válido"
             )
         return recurso_list[0]
+
+    def clean(self):
+        super(HorarioReservaForm, self).clean()
+
+        reserva_form = ReservaCreateForm(self.data)
+        if reserva_form.is_valid():
+            dia = self.cleaned_data.get('dia')
+            tipo_solicitud = reserva_form.cleaned_data.get('tipo_solicitud')
+
+            # Validación de horarios de comisión
+            if tipo_solicitud == '1' or tipo_solicitud == '2':
+                comision = reserva_form.cleaned_data.get('comision')
+                horario = obtener_horario_comision(comision, int(dia))
+
+                if not horario:
+                    raise forms.ValidationError(
+                        INVALID_SCHEDULE_MESSAGE
+                    )
+                hora_inicio_comision = datetime.strptime(horario.get('hora_inicio'), '%H:%M').time()
+                hora_fin_comision = datetime.strptime(horario.get('hora_fin'), '%H:%M').time()
+
+                if self.cleaned_data.get('inicio') < hora_inicio_comision or\
+                    self.cleaned_data.get('inicio') > hora_fin_comision or \
+                    self.cleaned_data.get('fin') < hora_inicio_comision or\
+                    self.cleaned_data.get('fin') > hora_fin_comision:
+                        raise forms.ValidationError(
+                            INVALID_SCHEDULE_MESSAGE
+                        )
+
+            fecha_inicio = reserva_form.cleaned_data.get('fecha_inicio')
+            if tipo_solicitud == '2' or tipo_solicitud == '4':
+                if fecha_inicio.weekday() != dia:
+                    raise forms.ValidationError(
+                        INVALID_DAY_MESSAGE
+                    )
+
+            # Validación de disponibilidad de recurso
+
+            fecha_fin = reserva_form.cleaned_data.get('fecha_fin')
+
+            recurso = self.cleaned_data.get('recurso')
+
+            reservas_qs = buscar_reservas_activas_por_fechas(recurso, fecha_inicio, fecha_fin, dia)
+
+            if reservas_qs:
+                from app_reservas.views.prestamo import PRESTAMO_CON_RESERVA_MESSAGE
+
+                raise forms.ValidationError(
+                    PRESTAMO_CON_RESERVA_MESSAGE
+                )
 
 
 class ReservaCreateForm(forms.ModelForm):
@@ -149,7 +203,11 @@ class ReservaCreateForm(forms.ModelForm):
 
     def clean_comision(self):
         comision = self.cleaned_data['comision']
-        tipo_solicitud = self.data['tipo_solicitud']
+        tipo_solicitud = self.data.get('tipo_solicitud')
+        if not tipo_solicitud:
+            raise forms.ValidationError(
+                "El tipo de solicitud no puede ser nulo"
+            )
         if tipo_solicitud == '1' or tipo_solicitud == '2':
             if not comision:
                 raise forms.ValidationError("La comision no puede estar vacia")
@@ -174,7 +232,7 @@ class ReservaCreateForm(forms.ModelForm):
                 return None
         if inicio > fin:
             raise forms.ValidationError(
-                "La fecha de fin de la solicitud no puede ser menor a la fecha de inicio"
+                LOWER_END_HOUR_MESSAGE
             )
         return fin
 
@@ -204,7 +262,6 @@ class BaseFormSet(BaseInlineFormSet):
                 if not choices:
                     choices = [('','--------')]
                 form.fields['recurso'].choices = choices
-
 
 
 ReservaInlineFormset = inlineformset_factory(Reserva, HorarioReserva, form=HorarioReservaForm, formset=BaseFormSet, extra=3)
@@ -300,16 +357,16 @@ class ReservaWithoutSolicitudCreateForm(forms.Form):
             if horario:
                 fin = datetime.strptime(horario['hora_fin'], "%H:%M").time()
 
-            if not horario or (horario and fin < datetime.now().time()):
+            if not horario or (horario and fin < get_now_timezone().time()):
                 raise forms.ValidationError(
-                    "La comisión seleccionada no posee horarios para el prestamo seleccionado"
+                    INVALID_SCHEDULE_MESSAGE
                 )
 
         elif tipo_solicitud == '4':
             fin = self.cleaned_data['fin']
-            if fin < datetime.now().time():
+            if fin < get_now_timezone().time():
                 raise forms.ValidationError(
-                    "La hora de fin de la solicitud no puede ser menor a la hora de inicio"
+                    LOWER_END_HOUR_MESSAGE
                 )
         else:
             raise forms.ValidationError(

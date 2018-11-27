@@ -1,16 +1,6 @@
 from .ali import (
     AliTemplateView,
-    AliVideoconferenciasDetailView,
-    PrestamoElementAdd,
-    PrestamoElementAddOnCreate,
-    PrestamoCreate,
-    PrestamoConfirm,
-    PrestamoDetail,
-    PrestamoElementsRemove,
-    PrestamoFinalize,
-    PrestamoList,
-    PrestamoRegister,
-
+    AliVideoconferenciasDetailView
 )
 from .area import AreaDetailView
 from .aula import AulaDetailView
@@ -24,6 +14,19 @@ from .laboratorio_informatico import (
 )
 from .nivel import NivelDetailView
 from .novedad import NovedadView
+
+from .prestamo import (
+    PrestamoElementAdd,
+    PrestamoElementAddOnCreate,
+    PrestamoCreate,
+    PrestamoConfirm,
+    PrestamoDetail,
+    PrestamoElementsRemove,
+    PrestamoFinalize,
+    PrestamoList,
+    PrestamoRegister,
+)
+
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
 from .rolesManager import UserList, AsingRole, RemoveRole
@@ -40,7 +43,7 @@ from .solicitud import (
     SolicitudDetail,
     SolicitudReject,
 )
-from .reserva import ReservaCreate, ReservaList, ReservaListDocente
+from .reserva import reservaCreate, ReservaList, ReservaListDocente
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
 from .tipo_recurso_sae import TipoRecursoSAEDetailView

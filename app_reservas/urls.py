@@ -31,7 +31,7 @@ from .views import (
     RecursoAssign,
     recurso_eventos_json,
     RecursoAliDetailView,
-    ReservaCreate,
+    reservaCreate,
     ReservaList,
     ReservaListDocente,
     RemoveRole,
@@ -213,7 +213,7 @@ urlpatterns = [
         name='mis_reservas'),
     url(
         r'^reservas/crear/$',
-        login_required(ReservaCreate),
+        login_required(reservaCreate),
         name='reserva_crear'),
     url(
         r'^reservas/listar/$',

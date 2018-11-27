@@ -29,7 +29,7 @@ from app_usuarios.models import Usuario as UsarioModel
 
 
 @has_permission_decorator(CREATE_RESERVA)
-def ReservaCreate(request):
+def reservaCreate(request):
     solicitud = Solicitud()
     reserva_form = ReservaCreateForm()  # setup a form for the parent
     formset = ReservaInlineFormset(instance=solicitud, request=request)
@@ -90,7 +90,7 @@ def ReservaCreate(request):
                 for created_reserva in created_reservas:
                     crear_evento(created_reserva)
 
-                return render(request, 'app_usuarios/success_message.html', {
+                return render(request, 'commons/success_message.html', {
                     'title': 'Se registro tu reserva',
                     'message': 'Tu reserva se ha registrado con éxito.'
                 })
@@ -99,6 +99,7 @@ def ReservaCreate(request):
         "formset": formset,
         "SITE_URL": settings.SITE_URL
     })
+
 
 @has_permission_decorator(CREATE_RESERVA)
 def ReservaFinalize(request, pk):
@@ -112,7 +113,7 @@ def ReservaFinalize(request, pk):
     if request.method == "POST":
         dar_baja_evento(reserva_obj)
 
-        return render(request, 'app_usuarios/success_message.html', {
+        return render(request, 'commons/success_message.html', {
             'title': 'La reserva fue finalizada',
             'message': 'La reserva ha sido finalizada con éxito.'
         })

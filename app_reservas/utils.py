@@ -7,18 +7,15 @@ from rolepermissions.checkers import has_permission, has_role
 
 from app_reservas.roles import ASSIGN_RECURSO_AULA, ASSIGN_RECURSO_ALI, ASSIGN_RECURSO_LABORATORIO, \
     ASSIGN_RECURSO_LABORATORIO_INFORMATICO, ADMINISTRADOR_ROLE
-from app_usuarios.models import Usuario
 
 
 def obtener_siguiente_dia_vigente(dia, horario):
-    now = timezone.now()
-    # Comparo el día requerido con el día actual
-    # Se resta uno para mantener compatibilidades entre datos del
-    # servidor académico y los datos de weekday obtenidos por python
-    if now.weekday() == dia-1:
+    now = get_now_timezone()
+
+    if now.weekday() == dia:
         return datetime.datetime.combine(now.date(), horario).isoformat()
-    elif now.weekday() < dia-1:
-        dia = now.date() + datetime.timedelta(days=(dia-1)-now.weekday())
+    elif now.weekday() < dia:
+        dia = now.date() + datetime.timedelta(days=dia-now.weekday())
     else:
         dia = now.date() + datetime.timedelta(days=6-(now.weekday()-dia))
     return datetime.datetime.combine(dia, horario).isoformat()
@@ -27,16 +24,16 @@ def obtener_siguiente_dia_vigente(dia, horario):
 def obtener_fecha_finalizacion_reserva_cursado(semestre):
     if semestre == '1':
         fecha_fin = config.FECHA_FIN_PRIMER_SEMESTRE
-        if fecha_fin.year == timezone.now().year:
+        if fecha_fin.year == get_now_timezone().year:
             return datetime.datetime.combine(fecha_fin, datetime.time(23, 00)).strftime("%Y%m%dT%H%M%SZ")
         else:
-            return timezone.datetime(timezone.now().year, 6, 25, 23, 00).strftime("%Y%m%dT%H%M%SZ")
+            return timezone.datetime(get_now_timezone().year, 6, 25, 23, 00).strftime("%Y%m%dT%H%M%SZ")
     if semestre == '2' or semestre == '0':
         fecha_fin = config.FECHA_FIN_SEGUNDO_SEMESTRE
-        if fecha_fin.year == timezone.now().year:
+        if fecha_fin.year == get_now_timezone().year:
             return datetime.datetime.combine(fecha_fin, datetime.time(23, 00)).strftime("%Y%m%dT%H%M%SZ")
         else:
-            return timezone.datetime(timezone.now().year, 11, 30, 23, 00).strftime("%Y%m%dT%H%M%SZ")
+            return timezone.datetime(get_now_timezone().year, 11, 30, 23, 00).strftime("%Y%m%dT%H%M%SZ")
 
 
 def obtener_fecha_finalizacion_reserva_fuera_cursado(date):
@@ -46,31 +43,31 @@ def obtener_fecha_finalizacion_reserva_fuera_cursado(date):
 def obtener_fecha_inicio_reserva_cursado(semestre):
     if semestre == '1' or semestre == '0':
         fecha_inicio = config.FECHA_INICIO_PRIMER_SEMESTRE
-        if fecha_inicio.year == timezone.now().year:
+        if fecha_inicio.year == get_now_timezone().year:
             return fecha_inicio
         else:
-            return timezone.datetime(timezone.now().year, 3, 8,)
+            return timezone.datetime(get_now_timezone().year, 3, 8,)
     if semestre == '2':
         fecha_inicio = config.FECHA_INICIO_SEGUNDO_SEMESTRE
-        if fecha_inicio.year == timezone.now().year:
+        if fecha_inicio.year == get_now_timezone().year:
             return fecha_inicio
         else:
-            return timezone.datetime(timezone.now().year, 8, 8,)
+            return timezone.datetime(get_now_timezone().year, 8, 8,)
 
 
 def obtener_fecha_fin_reserva_cursado(semestre):
     if semestre == '1':
         fecha_fin = config.FECHA_FIN_PRIMER_SEMESTRE
-        if fecha_fin.year == timezone.now().year:
+        if fecha_fin.year == get_now_timezone().year:
             return fecha_fin
         else:
-            return timezone.datetime(timezone.now().year, 6, 25,)
+            return timezone.datetime(get_now_timezone().year, 6, 25,)
     if semestre == '2' or semestre == '0':
         fecha_fin = config.FECHA_FIN_SEGUNDO_SEMESTRE
-        if fecha_fin.year == timezone.now().year:
+        if fecha_fin.year == get_now_timezone().year:
             return fecha_fin
         else:
-            return timezone.datetime(timezone.now().year, 12, 19,)
+            return timezone.datetime(get_now_timezone().year, 12, 19,)
 
 
 def obtener_modelo_recurso(id):
@@ -132,6 +129,7 @@ def parse_eventos_response(eventos, resource_id):
 
 def obtener_recursos_asignables(user):
     from app_reservas.models import Recurso, Aula, Laboratorio, LaboratorioInformatico, RecursoAli
+    from app_usuarios.models import Usuario
     recurso_list = []
 
     if not user:
@@ -160,16 +158,17 @@ def obtener_recursos_asignables(user):
     return recurso_list
 
 
-def obtener_horario_comision(comision):
+def obtener_horario_comision(comision, dia_semana=None):
     if comision:
-        now = timezone.now()
-        # Comparo el día requerido con el día actual
-        # Se resta uno para mantener compatibilidades entre datos del
-        # servidor académico y los datos de weekday obtenidos por python
-
-        horario_filtrado = [i for i in comision.get_horarios_comision_academico() if int(i['dia_numero']) == timezone.now().weekday()]
+        if not dia_semana:
+            dia_semana = get_now_timezone().weekday()
+        horario_filtrado = [i for i in comision.get_horarios_comision_academico() if int(i['dia_numero']) == dia_semana]
 
         if horario_filtrado:
             return horario_filtrado[0]
 
     return None
+
+
+def get_now_timezone():
+    return timezone.localtime(timezone.now())

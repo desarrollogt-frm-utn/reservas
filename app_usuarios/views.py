@@ -36,7 +36,7 @@ from rolepermissions.mixins import HasRoleMixin
 @sensitive_post_parameters()
 @csrf_protect
 @never_cache
-def login(request, template_name='app_reservas/login.html',
+def login(request, template_name='app_usuarios/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
           current_app=None, extra_context=None):
@@ -93,17 +93,17 @@ def CreateDocente(request):
             user_list = Usuario.objects.filter(email=email)[:1]
             if user_list:
                 if not user_list[0].is_active:
-                    return render(request, 'app_usuarios/warning_message.html', {
+                    return render(request, 'commons/warning_message.html', {
                         'title': 'Su registro requiere la aprobación de un administrador',
                         'message': 'Ya existe un usuario registrado con este email, pero requiere la aprobación de un administrador'
                     })
                 else:
-                    return render(request, 'app_usuarios/error_message.html', {
+                    return render(request, 'commons/error_message.html', {
                         'message': 'Ya existe un usuario registrado con este email.'
                     })
             enviarMailRegistro.delay(email)
 
-            return render(request, 'app_usuarios/success_message.html', {
+            return render(request, 'commons/success_message.html', {
                 'title': 'Su solicitud de registro se ha procesado',
                 'message': 'Pronto recibirá en su correo un mail informando como continuar con el registro dentro del sistema. '
             })
@@ -122,12 +122,12 @@ def CreateDocenteConfirm(request, code):
     docente_list = Usuario.objects.filter(email=email)[:1]
     if docente_list:
         if not docente_list[0].is_active:
-            return render(request, 'app_usuarios/warning_message.html', {
+            return render(request, 'commons/warning_message.html', {
                 'title': 'Su registro requiere la aprobación de un administrador',
                 'message': 'Ya existe un usuario registrado con este email, pero requiere la aprobación de un administrador'
             })
         else:
-            return render(request, 'app_usuarios/error_message.html', {
+            return render(request, 'commons/error_message.html', {
                 'message': 'Ya existe un usuario registrado con este email.'
             })
     else:
@@ -144,12 +144,12 @@ def CreateDocenteConfirm(request, code):
                 user.save()
 
                 if user.is_active:
-                    return render(request, 'app_usuarios/success_message.html', {
+                    return render(request, 'commons/success_message.html', {
                         'title': 'Su registro ha sido exitoso',
                         'message': 'Su registro se ha realizado con exito.'
                     })
                 else:
-                    return render(request, 'app_usuarios/warning_message.html', {
+                    return render(request, 'commons/warning_message.html', {
                         'title': 'Su registro requiere la aprobación de un administrador',
                         'message': 'Su usuario se ha creado con exito. Pero no podrá acceder al sistema hasta que un admistrador lo habilite'
                     })
@@ -157,6 +157,7 @@ def CreateDocenteConfirm(request, code):
             'form': form,
             'email': email
         })
+
 
 def _getUserIsActive(email, form):
     is_active = True
@@ -286,7 +287,7 @@ def FirstAccess(request):
                     'message': 'Su registro se ha realizado con exito.'
                 })
             else:
-                return render(request, 'app_usuarios/warning_message.html', {
+                return render(request, 'commons/warning_message.html', {
                     'title': 'Su registro requiere la aprobación de un administrador',
                     'message': 'Su usuario se ha creado con exito. Pero no podrá acceder al sistema hasta que un admistrador lo habilite'
                 })

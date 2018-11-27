@@ -71,11 +71,15 @@ def get_horarios_comision_list(comision_obj):
     for horario in horarios_academicos_list:
         hora_inicio = parse_time(horario.get('horacomien'))
         hora_fin = add_minutes_to_time(hora_inicio, horario.get('duracion'))
+
+        # Se arregla el día número para tener el formato de python donde 0 es lunes
+        dia_numero_fixed = int(horario.get('dia')) - 1
+
         parsed_horario = {
             'hora_inicio': hora_inicio.strftime("%H:%M"),
             'hora_fin': hora_fin.strftime("%H:%M"),
-            'dia_numero': horario.get('dia'),
-            'dia_nombre': DIAS_SEMANA[str(horario.get('dia'))],
+            'dia_numero': dia_numero_fixed,
+            'dia_nombre': DIAS_SEMANA[str(dia_numero_fixed)],
         }
         horarios_list += [parsed_horario]
 

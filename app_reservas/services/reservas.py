@@ -1,5 +1,4 @@
-import datetime
-
+from django.db.models import Q
 from django.utils import timezone
 
 from app_reservas.models import HistoricoEstadoReserva, Reserva, HorarioReserva
@@ -10,8 +9,8 @@ from app_reservas.tasks import crear_evento_recurso_especifico, obtener_eventos_
 from app_reservas.utils import (
     obtener_siguiente_dia_vigente,
     obtener_fecha_finalizacion_reserva_cursado,
-    obtener_fecha_finalizacion_reserva_fuera_cursado
-)
+    obtener_fecha_finalizacion_reserva_fuera_cursado,
+    get_now_timezone)
 
 from app_reservas.adapters.google_calendar import borrar_evento
 
@@ -61,10 +60,10 @@ ESTADOS RESERVA
 def cambiar_estado_reserva(reserva_obj, estado_nuevo):
     estado_antiguo = reserva_obj.get_estado_reserva()
     if estado_antiguo and estado_antiguo not in ESTADOS_FINALES:
-        estado_antiguo.fecha_fin = timezone.now()
+        estado_antiguo.fecha_fin = get_now_timezone()
         estado_antiguo.save()
         HistoricoEstadoReserva.objects.create(
-            fecha_inicio=timezone.now(),
+            fecha_inicio=get_now_timezone(),
             estado=estado_nuevo,
             reserva=reserva_obj,
         )
@@ -93,7 +92,7 @@ def crear_reserva_rapida(recurso, docente_obj, comision_obj, asignado_por, hora_
         user_model_obj = None
 
     reserva_obj = Reserva.objects.create(
-        fecha_inicio=timezone.now(),
+        fecha_inicio=get_now_timezone(),
         nombre_evento=get_nombre_evento(docente_obj, comision_obj),
         asignado_por=asignado_por,
         recurso=recurso,
@@ -103,28 +102,29 @@ def crear_reserva_rapida(recurso, docente_obj, comision_obj, asignado_por, hora_
     )
 
     HistoricoEstadoReserva.objects.create(
-        fecha_inicio=timezone.now(),
+        fecha_inicio=get_now_timezone(),
         estado='1',
         reserva=reserva_obj,
     )
     from datetime import datetime
 
-    HorarioReserva.objects.create(
-        inicio=datetime.now().time(),
+    horario_reserva_obj = HorarioReserva.objects.create(
+        inicio=get_now_timezone(),
         fin=hora_fin,
         reserva=reserva_obj,
-        dia=datetime.now().weekday() + 1
+        dia=get_now_timezone().weekday()
     )
     recurso_obj = get_recurso_obj(recurso.id)
 
     if recurso_obj:
-        fin = datetime.combine(datetime.now().date(), hora_fin).isoformat()
+        fin = datetime.combine(get_now_timezone().date(), hora_fin).isoformat()
         crear_evento_recurso_especifico.delay(
             calendar_id=recurso_obj.calendar_codigo,
             titulo=reserva_obj.nombre_evento,
-            inicio=timezone.now().isoformat(),
+            inicio=get_now_timezone().isoformat(),
             fin=fin,
             hasta=None,
+            reserva_horario_obj=horario_reserva_obj
         )
 
     return reserva_obj
@@ -137,7 +137,7 @@ def buscar_reservas(base_recurso_obj, fecha, hora_inicio, hora_fin=None):
     recurso_obj = get_recurso_obj(base_recurso_obj.id)
     if recurso_obj:
         reserva_qs = recurso_obj.get_active_reservations()
-        dia_reserva = fecha.weekday() + 1
+        dia_reserva = fecha.weekday()
         reserva_qs = reserva_qs.filter(
             horarioreserva__dia=dia_reserva
         )
@@ -147,6 +147,57 @@ def buscar_reservas(base_recurso_obj, fecha, hora_inicio, hora_fin=None):
             if (horario_obj.inicio <= hora_inicio <= horario_obj.fin) or \
                     (hora_fin and horario_obj.inicio <= hora_fin <= horario_obj.fin):
                 reserva_list.append(reserva)
+
+    else:
+        prestamo_obj = base_recurso_obj.get_active_loan()
+        if prestamo_obj:
+            reserva_list = prestamo_obj.recursos_all.filter(recurso=base_recurso_obj)
+    return reserva_list
+
+
+def buscar_reservas_por_hora(base_recurso_obj, fecha_inicio, fecha_fin,  dia_reserva, hora_inicio, hora_fin=None):
+
+    reserva_list = []
+
+    recurso_obj = get_recurso_obj(base_recurso_obj.id)
+    if recurso_obj:
+        reserva_qs = recurso_obj.buscar_reservas_activas_por_fechas(recurso_obj, fecha_inicio, fecha_fin, dia_reserva)
+
+        for reserva in reserva_qs:
+            horario_obj = reserva.horarioreserva_set.get(dia=dia_reserva)
+            if (horario_obj.inicio <= hora_inicio <= horario_obj.fin) or \
+                    (hora_fin and horario_obj.inicio <= hora_fin <= horario_obj.fin):
+                reserva_list.append(reserva)
+
+    else:
+        prestamo_obj = base_recurso_obj.get_active_loan()
+        if prestamo_obj:
+            reserva_list = prestamo_obj.recursos_all.filter(recurso=base_recurso_obj)
+    return reserva_list
+
+
+def buscar_reservas_activas_por_fechas(base_recurso_obj, fecha_inicio, fecha_fin=None, dia_reserva=None):
+    reserva_list = []
+
+    recurso_obj = get_recurso_obj(base_recurso_obj.id)
+
+    if recurso_obj and fecha_inicio:
+        reserva_list = Reserva.objects.filter(
+            recurso__id=recurso_obj.id,
+            historicoestadoreserva__estado='1',
+            historicoestadoreserva__fecha_fin__isnull=True,
+            fecha_inicio__lte=fecha_inicio,
+            fecha_fin__gte=fecha_inicio
+        )
+        if fecha_fin:
+            reserva_list = reserva_list.filter(
+                fecha_inicio__lte=fecha_fin, fecha_fin__gte=fecha_fin
+            )
+
+        if dia_reserva:
+            reserva_list = reserva_list.filter(
+                horarioreserva__dia=dia_reserva
+            )
 
     else:
         prestamo_obj = base_recurso_obj.get_active_loan()

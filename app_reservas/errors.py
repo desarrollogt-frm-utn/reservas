@@ -3,7 +3,7 @@ from django.template import RequestContext
 
 
 def not_found_error(request, *args, **argv):
-    response = render_to_response('app_usuarios/error_message.html', {
+    response = render_to_response('commons/error_message.html', {
         'message': 'El link desde el intentas ingresar no es un link válido.'
     },
                                  context_instance=RequestContext(request))
@@ -12,6 +12,6 @@ def not_found_error(request, *args, **argv):
 
 
 def custom_error(request, message):
-    return render(request, 'app_usuarios/error_message.html', {
+    return render(request, 'commons/error_message.html', {
         'message': message
     })

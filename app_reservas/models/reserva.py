@@ -93,10 +93,10 @@ class Reserva(models.Model):
 
     def get_horario_de_fecha(self, fecha):
         """
-        Retorna el horario a partir de una fecha, se suma uno por compatibilidad
+        Retorna el horario a partir de una fecha
         """
         horario_obj = None
-        dia_buscado = fecha.weekday() + 1
+        dia_buscado = fecha.weekday()
         horario_list = self.horarioreserva_set.filter(dia=dia_buscado)
         if horario_list:
             horario_obj = horario_list[0]

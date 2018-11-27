@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil import parser
 from httplib2 import ServerNotFoundError
 
+from app_reservas.utils import get_now_timezone
 from reservas.settings.base import GOOGLE_CALENDAR_TOKEN, GOOGLE_SECRET_JSON_FILE
 
 import httplib2
@@ -126,10 +127,10 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True, desde_hoy = False, 
 
         if desde_hoy:
             # Obtine solo los eventos porteriores
-            inicio = datetime.now().isoformat('T') + 'Z'
+            inicio = get_now_timezone().isoformat('T') + 'Z'
         else:
             inicio = datetime(
-                datetime.today().year,
+                get_now_timezone().year,
                 1,
                 1,
             ).isoformat('T') + 'Z'
@@ -226,14 +227,10 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
 
 def borrar_evento(calendar_id, event_id):
     service = build_service()
-
-
-    eventos = obtener_eventos(calendar_id, True, True, event_id)
-
-    for evento in eventos:
-        service.events().delete(calendarId=calendar_id, eventId=evento.get('id')).execute()
-
-
+    if event_id:
+        eventos = obtener_eventos(calendar_id, True, True, event_id)
+        for evento in eventos:
+            service.events().delete(calendarId=calendar_id, eventId=evento.get('id')).execute()
     return None
 
 

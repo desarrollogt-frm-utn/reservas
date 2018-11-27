@@ -2,12 +2,13 @@
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from app_reservas.models.baseRecurso import BaseRecurso
 from ..adapters.google_calendar import generar_lista_eventos
-from app_reservas.utils import parse_eventos_response
+from app_reservas.utils import parse_eventos_response, get_now_timezone
 
 
 def obtener_codigo_aleatorio():
@@ -84,15 +85,15 @@ class Recurso(BaseRecurso):
 
     def get_nearby_reservations(self):
         from app_reservas.models import Reserva
-        dia_reserva = timezone.now().weekday() + 1
+        dia_reserva = get_now_timezone().weekday()
         reserva_qs = Reserva.objects.filter(
                  recurso__id=self.id,
                  historicoestadoreserva__estado='1',
                  historicoestadoreserva__fecha_fin__isnull=True,
                  horarioreserva__dia=dia_reserva
              )
-        inicio = timezone.localtime(timezone.now()) - timezone.timedelta(minutes=10)
-        fin = timezone.localtime(timezone.now()) + timezone.timedelta(minutes=100)
+        inicio = get_now_timezone() - timezone.timedelta(minutes=10)
+        fin = get_now_timezone() + timezone.timedelta(minutes=100)
         neaby_reservation = []
         if settings.TEST:
             neaby_reservation = reserva_qs
@@ -103,11 +104,17 @@ class Recurso(BaseRecurso):
                     neaby_reservation.append(reserva)
         return neaby_reservation
 
-    def get_active_reservations(self):
+    def get_active_reservations(self, fecha_inicio = None, fecha_fin = None):
         from app_reservas.models import Reserva
         reservas_qs = Reserva.objects.filter(
             recurso__id=self.id,
             historicoestadoreserva__estado='1',
             historicoestadoreserva__fecha_fin__isnull=True
         )
+
+        if fecha_inicio:
+            reservas_qs = reservas_qs.filter(
+                Q(semestre=0) | Q(semestre=semestre)
+            )
+
         return reservas_qs

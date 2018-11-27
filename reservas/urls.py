@@ -58,7 +58,7 @@ urlpatterns = [
         url(
             r'^cuentas/login/$',
             login,
-            {'template_name':'app_reservas/login.html'},
+            {'template_name':'app_usuarios/login.html'},
             name='login'
         ),
         url(
