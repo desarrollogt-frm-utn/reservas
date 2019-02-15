@@ -144,7 +144,7 @@ class HorarioReservaForm(forms.ModelForm):
 
             fecha_inicio = reserva_form.cleaned_data.get('fecha_inicio')
             if tipo_solicitud == '2' or tipo_solicitud == '4':
-                if fecha_inicio.weekday() != dia:
+                if fecha_inicio.weekday() != int(dia):
                     raise forms.ValidationError(
                         INVALID_DAY_MESSAGE
                     )

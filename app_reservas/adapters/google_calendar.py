@@ -127,7 +127,7 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True, desde_hoy = False, 
 
         if desde_hoy:
             # Obtine solo los eventos porteriores
-            inicio = get_now_timezone().isoformat('T') + 'Z'
+            inicio = get_now_timezone().utcnow().isoformat('T') + 'Z'
         else:
             inicio = datetime(
                 get_now_timezone().year,

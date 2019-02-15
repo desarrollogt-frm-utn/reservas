@@ -17,7 +17,7 @@ def obtener_siguiente_dia_vigente(dia, horario):
     elif now.weekday() < dia:
         dia = now.date() + datetime.timedelta(days=dia-now.weekday())
     else:
-        dia = now.date() + datetime.timedelta(days=6-(now.weekday()-dia))
+        dia = now.date() + datetime.timedelta(days=7-(now.weekday()-dia))
     return datetime.datetime.combine(dia, horario).isoformat()
 
 

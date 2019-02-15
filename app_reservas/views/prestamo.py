@@ -13,6 +13,7 @@ from app_reservas.errors import custom_error
 from app_reservas.roles import FINALIZE_PRESTAMO, CREATE_PRESTAMO
 from app_reservas.services.recursos import get_recurso_obj
 from app_reservas.services.reservas import finalizar_reserva, crear_reserva_rapida, buscar_reservas
+from app_reservas.utils import get_now_timezone
 
 from ..models import (
     BaseRecurso,
@@ -105,6 +106,9 @@ def PrestamoElementAdd(request, pk):
     prestamo_obj = get_object_or_404(Prestamo, pk=pk)
     if prestamo_obj.fin:
         return custom_error(request, PRESTAMO_FINALIZADO_MESSAGE)
+
+    if get_now_timezone().date() > prestamo_obj.inicio.date():
+        return custom_error(request, PRESTAMO_FUERA_DE_RANGO_MESSAGE)
 
     form = ElementoForm(request)
     if request.method == "POST":
