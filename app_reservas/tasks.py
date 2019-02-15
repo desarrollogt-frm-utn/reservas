@@ -10,7 +10,6 @@ from django.conf import settings
 
 from app_reservas.adapters.google_calendar import crear_evento
 
-
 @shared_task(name='obtener_eventos_recursos')
 def obtener_eventos_recursos():
     # Indica la ruta donde se almacenarán los archivos.
@@ -68,3 +67,20 @@ def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta, res
     from .models import Recurso
     recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
     obtener_eventos_recurso_especifico(recurso_obj)
+
+
+@shared_task(name='finalizar_reservas')
+def finalizar_reservas():
+
+    from .models import Reserva
+    from app_reservas.utils import get_now_timezone
+    from app_reservas.services.reservas import finalizar_reserva
+
+    reserva_qs = Reserva.objects.filter(
+            historicoestadoreserva__estado='1',
+            historicoestadoreserva__fecha_fin__isnull=True,
+            fecha_fin__lte=get_now_timezone()
+        )
+
+    for reserva in reserva_qs:
+        finalizar_reserva(reserva)

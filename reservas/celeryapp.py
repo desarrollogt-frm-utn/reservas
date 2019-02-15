@@ -7,7 +7,9 @@ from datetime import timedelta
 
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'reservas.settings.production')
+from celery.schedules import crontab
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'reservas.settings.deploy')
 
 from django.conf import settings  # noqa
 
@@ -31,6 +33,10 @@ app.conf.CELERYBEAT_SCHEDULE = {
         'task': 'obtener_materias',
         'schedule': timedelta(days=30)
     },
+    'finalizar_reservas': {
+        'task': 'finalizar_reservas',
+        'schedule': crontab(hour=1, minute=0)
+    }
 }
 
 
