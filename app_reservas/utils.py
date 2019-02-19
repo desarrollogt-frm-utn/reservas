@@ -9,15 +9,16 @@ from app_reservas.roles import ASSIGN_RECURSO_AULA, ASSIGN_RECURSO_ALI, ASSIGN_R
     ASSIGN_RECURSO_LABORATORIO_INFORMATICO, ADMINISTRADOR_ROLE
 
 
-def obtener_siguiente_dia_vigente(dia, horario):
+def obtener_siguiente_dia_vigente(dia, horario, base=None):
     now = get_now_timezone()
-
-    if now.weekday() == dia:
-        return datetime.datetime.combine(now.date(), horario).isoformat()
-    elif now.weekday() < dia:
-        dia = now.date() + datetime.timedelta(days=dia-now.weekday())
+    if not base or base > now.date():
+        base = now.date()
+    if base.weekday() == dia:
+        return datetime.datetime.combine(base, horario).isoformat()
+    elif base.weekday() < dia:
+        dia = base + datetime.timedelta(days=dia-base.weekday())
     else:
-        dia = now.date() + datetime.timedelta(days=7-(now.weekday()-dia))
+        dia = base + datetime.timedelta(days=7-(base.weekday()-dia))
     return datetime.datetime.combine(dia, horario).isoformat()
 
 

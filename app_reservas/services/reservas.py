@@ -28,8 +28,8 @@ def get_nombre_evento(docente_obj, comision_obj):
 
 def crear_evento(reserva_obj):
     for horario_obj in reserva_obj.horarioreserva_set.all():
-        inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio)
-        fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin)
+        inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio, reserva_obj.fecha_inicio)
+        fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin, reserva_obj.fecha_inicio)
         hasta = None
 
         if reserva_obj.comision and reserva_obj.fecha_fin:
