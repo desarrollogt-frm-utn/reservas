@@ -127,5 +127,5 @@
 {% endblock fullcalendar_eventSources %}
 
 {% block fullcalendar_start_day %}
-new Date({{reserva.fecha_inicio.year}});
+new Date('{{reserva.fecha_inicio|date:"Y-m-d"}} 12:00:00');
 {% endblock %}

@@ -15,7 +15,7 @@
 {% block static_js_body %}
     <script src='{% static 'moment/min/moment.min.js' %}'></script>
     <script src='{% static 'fullcalendar/dist/fullcalendar.min.js' %}'></script>
-    <script src='{% static 'fullcalendar/dist/lang/es.js' %}'></script>
+    <script src='{% static 'fullcalendar/dist/locale/es.js' %}'></script>
     <script src='{% static 'fullcalendar-scheduler/dist/scheduler.min.js' %}'></script>
     <script src='{% static 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}'></script>
     <script src='{% static 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js' %}'></script>
@@ -51,6 +51,7 @@
         {% endblock fullcalendar_js_vars %}
 
         $(document).ready(function() {
+            var default_date = {% block fullcalendar_start_day %} new Date() {% endblock fullcalendar_start_day %};
             $({% block fullcalendar_container %}'#calendar'{% endblock %}).fullCalendar({
                 {% block fullcalendar_defaultView %}
                     defaultView: 'timelineDay',
@@ -61,6 +62,7 @@
                     contentHeight: 'auto',
                     minTime: '07:00:00',
                     nowIndicator: true,
+                    defaultDate: default_date,
                 {% endblock fullcalendar_base_config %}
                 {% block fullcalendar_resources %}{% endblock %}
                 eventSources: [
@@ -106,7 +108,7 @@
                     }
                     // Obtiene las fechas establecidas, en el calendario y en el datepicker.
 
-                    var fechaFullcalendar = {% block fullcalendar_start_day %} new Date(view.intervalStart); {% endblock fullcalendar_start_day %}
+                    var fechaFullcalendar = new Date(view.intervalStart);
                     var fechaDatepicker = new Date(datepicker.datepicker('getDate'));
                     // Crea momentos en base a las fechas, especificadas en UTC.
                     var momentoFullcalendar = moment(fechaFullcalendar).utc();
