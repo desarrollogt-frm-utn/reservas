@@ -11,7 +11,7 @@ from app_reservas.roles import ASSIGN_RECURSO_AULA, ASSIGN_RECURSO_ALI, ASSIGN_R
 
 def obtener_siguiente_dia_vigente(dia, horario, base=None):
     now = get_now_timezone()
-    if not base or base > now.date():
+    if not base or base < now.date():
         base = now.date()
     if base.weekday() == dia:
         return datetime.datetime.combine(base, horario).isoformat()

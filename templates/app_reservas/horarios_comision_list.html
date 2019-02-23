@@ -16,8 +16,10 @@ Horarios de Comisiones
 <form method="get" action="{% url 'comisiones_listar' %}">
     <div class="col-md-10 col-md-offset-1">
 
-		<div class="col-md-6 col-md-offset-0">Semestre: {{ comision_form.semestre }}</div>
-		<div class="col-md-6 col-md-offset-0">Especialidad: {{comision_form.especialidad}} </div>
+		<div class="col-md-4 col-md-offset-0">Semestre: {{ comision_form.semestre }}</div>
+		<div class="col-md-4 col-md-offset-0">Especialidad: {{comision_form.especialidad}} </div>
+		<div class="col-md-4 col-md-offset-0">Año Académico: {{ comision_form.anioacademico }}</div>
+
 
         <div class="col-md-12 col-md-offset-0">
             Buscar: {{ comision_form.buscar }}
@@ -25,7 +27,7 @@ Horarios de Comisiones
 
         <div class="col-md-12 col-md-offset-0">
 			<div class="text-right">
-				<a class="btn btn-default" href="{% url 'comisiones_horarios_descargar' %}?semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}">Descargar</a>
+				<a class="btn btn-default" href="{% url 'comisiones_horarios_descargar' %}?semestre={{ comision_form.semestre.value }}&especialidad={{ comision_form.especialidad.value }}&buscar={{ comision_form.buscar.value }}&anioacademico={{ comision_form.anioacademico.value }}">Descargar</a>
 				<input class="btn btn-primary" type="submit" value="Filtrar"/>
             </div>
         </div>

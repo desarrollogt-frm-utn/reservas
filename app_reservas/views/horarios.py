@@ -35,6 +35,7 @@ class HorariosComisionListView(ListView):
         especialidad = self.request.GET.get('especialidad', '')
         semestre = self.request.GET.get('semestre', '')
         buscar = self.request.GET.get('buscar','')
+        anioacademico = self.request.GET.get('anioacademico', '')
         comisiones_qs = Comision.objects.filter(materia__especialidad__visible=True)
         if semestre == '0':
           comisiones_qs = comisiones_qs.filter(
@@ -50,6 +51,14 @@ class HorariosComisionListView(ListView):
                 comisiones_qs = comisiones_qs.filter(materia__especialidad__id=especialidad)
             except ValueError:
                 pass
+
+        if anioacademico:
+            try:
+                int(anioacademico)
+                comisiones_qs = comisiones_qs.filter(anioacademico=anioacademico)
+            except ValueError:
+                pass
+
         if buscar and buscar != 'None':
             try:
                 comisiones_qs = comisiones_qs.filter(
@@ -65,6 +74,8 @@ def horario_descargar(request):
     semestre = request.GET.get('semestre', '')
     buscar = request.GET.get('buscar', '')
     comisiones_qs = Comision.objects.filter(materia__especialidad__visible=True)
+    anioacademico = request.GET.get('anioacademico', '')
+
     if semestre == '0':
         comisiones_qs = comisiones_qs.filter(
             semestre=semestre,
@@ -77,6 +88,13 @@ def horario_descargar(request):
         try:
             int(especialidad)
             comisiones_qs = comisiones_qs.filter(materia__especialidad__id=especialidad)
+        except ValueError:
+            pass
+
+    if anioacademico:
+        try:
+            int(anioacademico)
+            comisiones_qs = comisiones_qs.filter(anioacademico=anioacademico)
         except ValueError:
             pass
     if buscar and buscar != 'None':
