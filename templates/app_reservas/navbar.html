@@ -168,7 +168,7 @@
                         <li><a href="{% url 'solicitud_material_multimedia' %}">SAE</a></li>
 
 
-                        {% if user.is_authenticated %}
+                        {% if user|has_role:'administrador' %}
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'solicitud_nueva' %}">Realizar solicitud</a></li>
                         <li><a href="{% url 'solicitud_listar' %}">Mis solicitudes</a></li>
