@@ -25,6 +25,7 @@ from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA
 INVALID_SCHEDULE_MESSAGE = "La comisión no tiene horarios disponibles"
 LOWER_END_HOUR_MESSAGE = "La hora de fin no puede ser menor a la hora de inicio"
 INVALID_DAY_MESSAGE = "El día seleccionado no corresponde con el día de la fecha de inicio"
+EMPTY_DAY_MESSAGE = "El campo día no puede estar vacío"
 
 
 class ReservaAssignForm(forms.Form):
@@ -124,6 +125,10 @@ class HorarioReservaForm(forms.ModelForm):
 
             # Validación de horarios de comisión
             if tipo_solicitud == '1' or tipo_solicitud == '2':
+                if str(dia) == 'None':
+                    raise forms.ValidationError(
+                        EMPTY_DAY_MESSAGE
+                    )
                 comision = reserva_form.cleaned_data.get('comision')
                 horario = obtener_horario_comision(comision, int(dia))
 

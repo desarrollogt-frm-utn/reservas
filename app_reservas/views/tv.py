@@ -132,7 +132,7 @@ class TvCuerposListView(ListView):
             if visor.texto_pie_pagina:
                 novedades.append(visor.get_novedad())
         # Retorna el contexto modificado.
-        context['texto_pie_pagina'] = ' | '.join(map(str, novedades))
+        context['texto_pie_pagina'] = '    ||    '.join(map(str, novedades))
         # Busca si existe imagenes de contingencia activas
         imagen_contingencia = ImagenContingencia.objects.filter(activo=True)
         if imagen_contingencia:
