@@ -160,14 +160,14 @@ class HorarioReservaForm(forms.ModelForm):
 
             recurso = self.cleaned_data.get('recurso')
 
-            reservas_qs = buscar_reservas_activas_por_fechas(recurso, fecha_inicio, fecha_fin, dia)
-
-            if reservas_qs:
-                from app_reservas.views.prestamo import PRESTAMO_CON_RESERVA_MESSAGE
-
-                raise forms.ValidationError(
-                    PRESTAMO_CON_RESERVA_MESSAGE
-                )
+            # reservas_qs = buscar_reservas_activas_por_fechas(recurso, fecha_inicio, fecha_fin, dia)
+            #
+            # if reservas_qs:
+            #     from app_reservas.views.prestamo import PRESTAMO_CON_RESERVA_MESSAGE
+            #
+            #     raise forms.ValidationError(
+            #         PRESTAMO_CON_RESERVA_MESSAGE
+            #     )
 
 
 class ReservaCreateForm(forms.ModelForm):
