@@ -1,18 +1,15 @@
 from app_academica.constants import DIAS_SEMANA
 from app_academica.models import Comision
-from app_academica.utils import filter_by_legajo, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, \
+from app_academica.utils import obtener_anio_academico, obtener_comision_by_esp_mat_com_plan, \
     filter_by_comision_materia_especialidad_plan
-from app_academica.adapters.frm_utn import get_comisiones_docentes, get_horarios_comision
+from app_academica.adapters.frm_utn import get_comisiones_docentes, get_horarios_comision, get_comisiones_docentes_por_legajo
 
 from app_reservas.utils import parse_time, add_minutes_to_time
 
 
 def get_comisiones_by_legajo(legajo):
     comision_list = []
-    docente_comisiones_list = filter_by_legajo(
-        get_comisiones_docentes(obtener_anio_academico()),
-        legajo)
-
+    docente_comisiones_list = get_comisiones_docentes_por_legajo(obtener_anio_academico(), legajo)
     for comision_json in docente_comisiones_list:
         comision_obj = obtener_comision_by_esp_mat_com_plan(
             comision_json.get('especialid'),

@@ -66,14 +66,14 @@ def get_materias(from_cache=True):
 
 def get_comisiones_docentes(anio, from_cache=True):
     if from_cache:
-        get_comisiones_docentes_cache = cache.get('get_especialidades_{0!s}'.format(anio))
+        get_comisiones_docentes_cache = cache.get('get_comisiones_docentes_{0!s}'.format(anio))
         if get_comisiones_docentes_cache:
             return json.loads(get_comisiones_docentes_cache)
     url = settings.WSDL_URL
     client = Client(url)
 
     json_response = client.service.seticGetComisionesDocentes(anio)
-    cache.add('get_especialidades_{0!s}'.format(anio), json_response)
+    cache.add('get_comisiones_docentes_{0!s}'.format(anio), json_response)
     parse_json = json.loads(json_response)
 
     return parse_json
@@ -144,6 +144,21 @@ def get_horarios_comision(anio, especialidad, plan, materia, comision, from_cach
         materia,
         comision
     ), json_response)
+    parse_json = json.loads(json_response)
+
+    return parse_json
+
+
+def get_comisiones_docentes_por_legajo(anio, legajo, from_cache=True):
+    if from_cache:
+        get_comisiones_docentes_por_legajo_cache = cache.get('get_comisiones_docentes_{0!s}_{1!s}'.format(anio, legajo))
+        if get_comisiones_docentes_por_legajo_cache:
+            return json.loads(get_comisiones_docentes_por_legajo_cache)
+    url = settings.WSDL_URL
+    client = Client(url)
+
+    json_response = client.service.seticGetComisionesDocentesAnioLegajo(anio, legajo)
+    cache.add('get_comisiones_docentes_{0!s}_{1!s}'.format(anio, legajo), json_response)
     parse_json = json.loads(json_response)
 
     return parse_json

@@ -12,10 +12,10 @@ from app_reservas.utils import (
     obtener_fecha_fin_reserva_cursado,
 )
 
-from app_academica.adapters.frm_utn import get_comisiones_docentes
+from app_academica.adapters.frm_utn import get_comisiones_docentes_por_legajo
 from app_usuarios.models import Usuario as UsuarioModel
 from app_reservas.models.historicoEstadoSolicitud import ESTADO_SOLICITUD
-from app_academica.utils import filter_by_legajo, obtener_anio_academico, obtener_comision_by_esp_mat_com_plan
+from app_academica.utils import obtener_anio_academico, obtener_comision_by_esp_mat_com_plan
 
 
 class SolicitudForm(forms.ModelForm):
@@ -29,8 +29,7 @@ class SolicitudForm(forms.ModelForm):
 
         docente_comisiones_qs = []
         if user:
-            comisiones_list = get_comisiones_docentes(obtener_anio_academico())
-            docente_comisiones_list = filter_by_legajo(comisiones_list, user.legajo)
+            docente_comisiones_list = get_comisiones_docentes_por_legajo(obtener_anio_academico(), user.legajo)
             for comision_json in docente_comisiones_list:
                 comision_obj = obtener_comision_by_esp_mat_com_plan(
                     comision_json.get('especialid'),
