@@ -161,7 +161,7 @@ def obtener_recursos_asignables(user):
 
 def obtener_horario_comision(comision, dia_semana=None):
     if comision:
-        if str(dia_semana) != 'None':
+        if str(dia_semana) == 'None':
             dia_semana = get_now_timezone().weekday()
         horario_filtrado = [i for i in comision.get_horarios_comision_academico() if int(i['dia_numero']) == dia_semana]
 
