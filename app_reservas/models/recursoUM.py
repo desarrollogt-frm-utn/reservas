@@ -5,7 +5,7 @@ from django.db import models
 from .recurso import Recurso
 
 
-class RecursoSAE(Recurso):
+class RecursoUM(Recurso):
     # Atributos
     nombre = models.CharField(
         max_length=20,
@@ -24,7 +24,7 @@ class RecursoSAE(Recurso):
 
     # Relaciones
     tipo = models.ForeignKey(
-        'TipoRecursoSAE',
+        'TipoRecursoUM',
         verbose_name='Tipo',
     )
 
@@ -34,8 +34,8 @@ class RecursoSAE(Recurso):
         """
         app_label = 'app_reservas'
         ordering = ['nombre']
-        verbose_name = 'Recurso de la SAE'
-        verbose_name_plural = 'Recursos de la SAE'
+        verbose_name = 'Recurso de Usos Múltiples'
+        verbose_name_plural = 'Recursos de Usos Múltiples'
 
     def __str__(self):
         """

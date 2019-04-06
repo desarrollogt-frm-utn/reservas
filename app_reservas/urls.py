@@ -35,7 +35,7 @@ from .views import (
     ReservaList,
     ReservaListDocente,
     RemoveRole,
-    RecursoSAEDetailView,
+    RecursoUMDetailView,
     SolicitudAliReclamosSugerencias,
     SolicitudAulaView,
     SolicitudCreate,
@@ -47,7 +47,7 @@ from .views import (
     SolicitudReject,
     TipoLaboratorioDetailView,
     TipoRecursoAliDetailView,
-    TipoRecursoSAEDetailView,
+    TipoRecursoUMDetailView,
     TvCuerposListView,
     TvVisorCuerposDetailView,
     TvVisorDetailView,
@@ -83,7 +83,7 @@ urlpatterns = [
         name='aula_detalle'
     ),
     url(
-        r'^area/(?P<slug>[-\w]+)/$',
+        r'^(?P<model>area|aulas)/(?P<slug>[-\w]+)/$',
         AreaDetailView.as_view(),
         name='area_detalle'
     ),
@@ -133,14 +133,14 @@ urlpatterns = [
         name='recurso_ali_detalle'
     ),
     url(
-        r'^sae/(?P<slug>[-\w]+)/$',
-        TipoRecursoSAEDetailView.as_view(),
-        name='tipo_recurso_sae_detalle'
+        r'^usos_multiple/(?P<slug>[-\w]+)/$',
+        TipoRecursoUMDetailView.as_view(),
+        name='tipo_recurso_um_detalle'
     ),
     url(
-        r'^sae/(?P<tipo>[-\w]+)/(?P<slug>[A-Za-z0-9_-]+)/$',
-        RecursoSAEDetailView.as_view(),
-        name='recurso_sae_detalle'
+        r'^usos_multiple/(?P<tipo>[-\w]+)/(?P<slug>[A-Za-z0-9_-]+)/$',
+        RecursoUMDetailView.as_view(),
+        name='recurso_um_detalle'
     ),
     url(
         r'^solicitud/ali/reclamos_sugerencias/$',

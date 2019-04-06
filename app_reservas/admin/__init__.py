@@ -10,9 +10,10 @@ from .laboratorioInformatico import LaboratorioInformaticoAdmin
 from .nivel import NivelAdmin
 from .novedad import NovedadAdmin
 from .recursoAli import RecursoAliAdmin
-from .recursoSAE import RecursoSAEAdmin
+from .recursoUM import RecursoUMAdmin
 from .tipoAccesorio import TipoAccesorioAdmin
+from .tipoAula import TipoAulaAdmin
 from .tipoLaboratorio import TipoLaboratorioAdmin
 from .tipoRecursoAli import TipoRecursoAliAdmin
-from .tipoRecursoSAE import TipoRecursoSAEAdmin
+from .tipoRecursoUM import TipoRecursoUMAdmin
 from .visorTv import VisorTvAdmin

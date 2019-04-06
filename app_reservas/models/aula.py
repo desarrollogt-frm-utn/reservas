@@ -52,6 +52,11 @@ class Aula(Recurso):
         verbose_name='Nivel',
     )
 
+    tipo =models.ManyToManyField(
+        'TipoAula',
+        verbose_name='Tipo de Aula'
+    )
+
     class Meta:
         """
         Información de la clase.

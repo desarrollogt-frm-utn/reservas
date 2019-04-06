@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class TipoRecursoSAE(models.Model):
+class TipoRecursoUM(models.Model):
     # Atributos
     nombre = models.CharField(
         max_length=50,
@@ -28,7 +28,7 @@ class TipoRecursoSAE(models.Model):
     is_visible_navbar = models.BooleanField(
         default=False,
         verbose_name='Visible en la navbar',
-        help_text='Indica si el tipo de recurso se lista dentro de las opciones de SAE, en la '
+        help_text='Indica si el tipo de recurso se lista dentro de las opciones de UM, en la '
                   'navbar (barra de navegación superior) del sitio.',
     )
 
@@ -38,8 +38,8 @@ class TipoRecursoSAE(models.Model):
         """
         app_label = 'app_reservas'
         ordering = ['nombre']
-        verbose_name = 'Tipo de recurso de la SAE'
-        verbose_name_plural = 'Tipos de recurso de la SAE'
+        verbose_name = 'Tipo de recurso de usos múltiple'
+        verbose_name_plural = 'Tipos de recurso de usos múltiple'
 
     def __str__(self):
         """

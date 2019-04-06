@@ -2,13 +2,13 @@
 
 from django.contrib import admin
 
-from ..models import TipoRecursoSAE
+from ..models import TipoRecursoUM
 
 
-@admin.register(TipoRecursoSAE)
-class TipoRecursoSAEAdmin(admin.ModelAdmin):
+@admin.register(TipoRecursoUM)
+class TipoRecursoUMAdmin(admin.ModelAdmin):
     """
-    Especificación de la representación de TipoRecursoSAE en la interfaz de administración.
+    Especificación de la representación de TipoRecursoUM en la interfaz de administración.
     """
     list_display = (
         'nombre',

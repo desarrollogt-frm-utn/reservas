@@ -30,7 +30,7 @@ from .prestamo import (
 from .recurso import recurso_eventos_json
 from .recurso_ali import RecursoAliDetailView
 from .rolesManager import UserList, AsingRole, RemoveRole
-from .recurso_sae import RecursoSAEDetailView
+from .recurso_um import RecursoUMDetailView
 from .solicitud import (
     RecursoAssign,
     SolicitudAliReclamosSugerencias,
@@ -46,7 +46,7 @@ from .solicitud import (
 from .reserva import reservaCreate, ReservaList, ReservaListDocente
 from .tipo_laboratorio import TipoLaboratorioDetailView
 from .tipo_recurso_ali import TipoRecursoAliDetailView
-from .tipo_recurso_sae import TipoRecursoSAEDetailView
+from .tipo_recurso_usos_multiples import TipoRecursoUMDetailView
 
 from .tv import (
     TvCuerposListView,

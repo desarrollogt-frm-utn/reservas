@@ -10,13 +10,13 @@ from celery import group
 
 from app_reservas.tasks import obtener_eventos_recurso_especifico
 
-from ..models import RecursoSAE
+from ..models import RecursoUM
 
 
-@admin.register(RecursoSAE)
-class RecursoSAEAdmin(admin.ModelAdmin):
+@admin.register(RecursoUM)
+class RecursoUMAdmin(admin.ModelAdmin):
     """
-    Especificación de la representación de RecursoSAE en la interfaz de administración.
+    Especificación de la representación de RecursoUM en la interfaz de administración.
     """
     list_display = (
         '_nombre',
@@ -46,7 +46,7 @@ class RecursoSAEAdmin(admin.ModelAdmin):
     _tipo.admin_order_field = 'tipo__nombre'
 
     def get_urls(self):
-        urls = super(RecursoSAEAdmin, self).get_urls()
+        urls = super(RecursoUMAdmin, self).get_urls()
         add_urls = [
             url(
                 r'^actualizar/$',
@@ -81,9 +81,9 @@ class RecursoSAEAdmin(admin.ModelAdmin):
         os.makedirs(ruta_archivos, exist_ok=True)
 
         # Importación de Recurso, para evitar dependencia circular.
-        from app_reservas.models import RecursoSAE
+        from app_reservas.models import RecursoUM
         # Obtiene todos los recursos existentes.
-        recursos = RecursoSAE.objects.all()
+        recursos = RecursoUM.objects.all()
 
         subtareas = group(
             obtener_eventos_recurso_especifico.s(recurso, ruta_archivos)

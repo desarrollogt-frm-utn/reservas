@@ -17,14 +17,15 @@ from .novedad import Novedad
 from .prestamo import Prestamo
 from .recurso import Recurso
 from .recursoAli import RecursoAli
-from .recursoSAE import RecursoSAE
+from .recursoUM import RecursoUM
 from .recursoPrestamo import RecursoPrestamo
 from .reserva import Reserva
 from .solicitud import Solicitud
 from .tipoAccesorio import TipoAccesorio
+from .tipoAula import TipoAula
 from .tipoLaboratorio import TipoLaboratorio
 from .tipoRecursoAli import TipoRecursoAli
-from .tipoRecursoSAE import TipoRecursoSAE
+from .tipoRecursoUM import TipoRecursoUM
 from .visorTv import VisorTv
 
 __all__ = [
@@ -47,13 +48,14 @@ __all__ = [
     'Prestamo',
     'Recurso',
     'RecursoAli',
-    'RecursoSAE',
+    'RecursoUM',
     'RecursoPrestamo',
     'Reserva',
     'Solicitud',
+    'TipoAula',
     'TipoAccesorio',
     'TipoLaboratorio',
     'TipoRecursoAli',
-    'TipoRecursoSAE',
+    'TipoRecursoUM',
     'VisorTv',
 ]

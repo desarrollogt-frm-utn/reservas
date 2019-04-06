@@ -13,6 +13,69 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+
+                <li class="dropdown">
+                    <a href="#"
+                       class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="hidden-sm"><i class="fa fa-users fa-lg fa-fw"></i></span>
+                        &nbsp;Recursos<span class="caret"></span>
+                    </a>
+
+
+
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Aulas</li>
+
+                        {% for tipo_aula in lista_tipos_aulas %}
+                            <li>
+                                <a href="{% url 'area_detalle' 'aulas' tipo_aula.slug %}">
+                                    {{ tipo_aula.nombre }}
+                                </a>
+                            </li>
+                        {% endfor %}
+
+                        <li role="separator" class="divider"></li>
+                       <li class="dropdown-header">Espacios de usos múltiple</li>
+
+
+                        {% for tipo in lista_tipos_recurso_um %}
+                            <li>
+                                <a href="{% url 'tipo_recurso_um_detalle' tipo.slug %}">
+                                    {{ tipo.nombre_plural }}
+                                </a>
+                            </li>
+                        {% endfor %}
+
+
+                        <li role="separator" class="divider"></li>
+
+
+
+                        <li class="dropdown-header">Equipamiento Multimedia</li>
+                        {% for tipo in lista_tipos_recurso_ali %}
+                            <li>
+                                <a href="{% url 'tipo_recurso_ali_detalle' tipo.slug %}">
+                                    {{ tipo.nombre_plural }}
+                                </a>
+                            </li>
+                        {% endfor %}
+
+
+
+
+
+
+                    </ul>
+                </li>
+
+
+
+
+
                 <li class="dropdown">
                     <a href="#"
                        class="dropdown-toggle"
@@ -28,55 +91,6 @@
                             <li>
                                 <a href="{% url 'cuerpo_detalle' cuerpo.numero %}">
                                     {{ cuerpo.get_nombre_corto }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#"
-                       class="dropdown-toggle"
-                       data-toggle="dropdown"
-                       role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false">
-                        <span class="hidden-sm"><i class="fa fa-book fa-lg fa-fw"></i></span>
-                        &nbsp;Aulas <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for area in lista_areas %}
-                            <li>
-                                <a href="{% url 'area_detalle' area.slug %}">
-                                    {{ area.nombre }}
-                                </a>
-                            </li>
-                        {% endfor %}
-
-                        {% if user|can:'edit_reserva_estado' %}
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a href="{% url 'comisiones_listar' %}">
-                                Listado de Comisiones
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#"
-                       class="dropdown-toggle"
-                       data-toggle="dropdown"
-                       role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false">
-                        <span class="hidden-sm"><i class="fa fa-flask fa-lg fa-fw"></i></span>
-                        &nbsp;Laboratorios <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for tipo in lista_tipos_laboratorio %}
-                            <li>
-                                <a href="{% url 'tipo_laboratorio_detalle' tipo.slug %}">
-                                    {{ tipo.nombre }}
                                 </a>
                             </li>
                         {% endfor %}
@@ -129,26 +143,9 @@
                         {% endif %}
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#"
-                       class="dropdown-toggle"
-                       data-toggle="dropdown"
-                       role="button"
-                       aria-haspopup="true"
-                       aria-expanded="false">
-                        <span class="hidden-sm"><i class="fa fa-users fa-lg fa-fw"></i></span>
-                        &nbsp;SAE <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for tipo in lista_tipos_recurso_sae %}
-                            <li>
-                                <a href="{% url 'tipo_recurso_sae_detalle' tipo.slug %}">
-                                    {{ tipo.nombre_plural }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
+
+
+
                 <li class="dropdown">
                     <a href="#"
                        class="dropdown-toggle"
@@ -196,6 +193,13 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{% url 'user_roles' %}">Administración de usuarios</a></li>
                             <li><a href="{% url 'fechas_semestre_config' %}">Fechas de semestre</a></li>
+                            {% if user|can:'edit_reserva_estado' %}
+                                <li>
+                                    <a href="{% url 'comisiones_listar' %}">
+                                        Listado de Comisiones
+                                    </a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
                 {% endif %}

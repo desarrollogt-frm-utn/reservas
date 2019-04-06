@@ -2,38 +2,35 @@
 {% load static %}
 
 {% block title %}
-    Área: {{ area }}
+    {{ tipo_recurso.nombre_plural }}
 {% endblock title %}
 
 
 {% block contenido %}
     <div class="page-header">
-        <h1>{{ area }}</h1>
+        <h1>{{ tipo_recurso.nombre_plural }}</h1>
     </div>
 
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="heading_listado_aulas">
+            <div class="panel-heading" role="tab" id="heading_listado_tipo_recurso">
                 <h4 class="panel-title">
                     <a role="button"
                        data-toggle="collapse"
                        data-parent="#accordion"
-                       href="#listado_aulas" aria-expanded="true" aria-controls="listado_aulas">
-                        Listado de aulas
+                       href="#listado_tipo_recurso" aria-expanded="true" aria-controls="listado_tipo_recurso">
+                        Listado de {{ tipo_recurso.nombre_plural }}
                     </a>
                 </h4>
             </div>
-            <div id="listado_aulas" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_listado_aulas">
+            <div id="listado_tipo_recurso" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_listado_tipo_recurso">
                 <div class="panel-body">
                     <div class="table-responsive">
                         <table class="table table-condensed table-bordered table-striped">
                             <thead>
                             <tr>
                                 <th class="text-center">
-                                    Aula
-                                </th>
-                                <th class="text-center">
-                                    Capacidad
+                                    {{ tipo_recurso }}
                                 </th>
                                 <th class="text-center">
                                     Acciones
@@ -41,23 +38,16 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% if area.get_aulas %}
-                                {% for aula in area.get_aulas %}
+                            {% if tipo_recurso.recursoum_set.exists %}
+                                {% for recurso in tipo_recurso.recursoum_set.all %}
                                     <tr>
                                         <td>
-                                            {{ aula.get_aula_nivel }}
-                                        </td>
-                                        <td class="text-center">
-                                            {% if aula.capacidad > 0 %}
-                                                {{ aula.capacidad }}
-                                            {% else %}
-                                                &#8212;
-                                            {% endif %}
+                                            {{ recurso.get_nombre_corto }}
                                         </td>
                                         <td class="text-center">
                                             <a role="button"
                                                class="btn btn-xs btn-info"
-                                               href="{% url 'aula_detalle' aula.id %}">
+                                               href="{% url 'recurso_um_detalle' tipo_recurso.slug recurso.slug %}">
                                                 <span class="glyphicon glyphicon-eye-open"
                                                       aria-hidden="true">
                                                 </span>
@@ -65,38 +55,25 @@
                                                     &nbsp;Detalles
                                                 </span>
                                             </a>
-                                            {% if aula.archivo_ubicacion %}
+                                            {% if recurso.url_detalles %}
                                                 <a role="button"
-                                                   class="btn btn-xs btn-success"
-                                                   target="_blank"
-                                                   href="{{ aula.archivo_ubicacion.url }}">
-                                                    <span class="glyphicon glyphicon-map-marker"
+                                                   class="btn btn-xs btn-default"
+                                                   target='_blank'
+                                                   href="{{ recurso.url_detalles }}">
+                                                    <span class="glyphicon glyphicon-info-sign"
                                                           aria-hidden="true">
                                                     </span>
                                                     <span class="hidden-xs">
-                                                        &nbsp;Ubicación
+                                                        &nbsp;Más información
                                                     </span>
                                                 </a>
-                                            {% endif %}
-                                            {% if aula.url_detalles %}
-                                                        <a role="button"
-                                                           class="btn btn-xs btn-default"
-                                                           target='_blank'
-                                                           href="{{ aula.url_detalles }}">
-                                                            <span class="glyphicon glyphicon-info-sign"
-                                                                  aria-hidden="true">
-                                                            </span>
-                                                            <span class="hidden-xs">
-                                                                &nbsp;Más información
-                                                            </span>
-                                                        </a>
                                             {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}
                             {% else %}
                                 <td class="text-center alert-warning" colspan="4">
-                                    Este área no tiene aulas asociadas.
+                                    No hay recursos cargados.
                                 </td>
                             {% endif %}
                             </tbody>
@@ -112,12 +89,12 @@
 
 
 {% block fullcalendar_resources %}
-    resourceLabelText: 'Aula',
+    resourceLabelText: '{{ tipo_recurso }}',
     resources: [
-        {% for aula in area.get_aulas %}
+        {% for recurso in tipo_recurso.recursoum_set.all %}
             {
-                id: '{{ aula.id }}',
-                title: '{{ aula.get_aula_nivel }}',
+                id: '{{ recurso.id }}',
+                title: '{{ recurso.get_nombre_corto }}',
             },
         {% endfor %}
     ],
@@ -125,11 +102,11 @@
 
 
 {% block fullcalendar_eventSources %}
-    {% for aula in area.get_aulas %}
+    {% for recurso in tipo_recurso.recursoum_set.all %}
         {
-            url: '{% url "recurso_eventos_json" aula.id %}',
-            {% if aula.calendar_color %}
-                color: '{{ aula.calendar_color }}',
+            url: '{% url "recurso_eventos_json" recurso.id %}',
+            {% if recurso.calendar_color %}
+                color: '{{ recurso.calendar_color }}',
             {% endif %}
         },
     {% endfor %}

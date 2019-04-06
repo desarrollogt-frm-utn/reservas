@@ -2,10 +2,11 @@
 
 from django import template
 
-from app_reservas.models import TipoRecursoSAE
+from app_reservas.models import TipoRecursoUM
 from ..models import (
     Area,
     Cuerpo,
+    TipoAula,
     TipoLaboratorio,
     TipoRecursoAli,
 )
@@ -24,7 +25,9 @@ def obtener_informacion_navbar(context):
         'lista_tipos_laboratorio': TipoLaboratorio.objects.all(),
         'lista_tipos_recurso_ali': TipoRecursoAli.objects.filter(is_visible_navbar=True),
         'user': context.get('user'),
-        'lista_tipos_recurso_sae': TipoRecursoSAE.objects.filter(is_visible_navbar=True),
+        'lista_tipos_recurso_um': TipoRecursoUM.objects.filter(is_visible_navbar=True),
+        'lista_tipos_aulas': TipoAula.objects.filter(is_visible_navbar=True),
+
     }
     return context
 
