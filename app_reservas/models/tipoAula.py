@@ -46,3 +46,9 @@ class TipoAula(models.Model):
         Representación de la instancia.
         """
         return self.nombre
+
+    def get_aulas(self):
+        """
+        Retorna el listado de aulas asociadas a la instancia.
+        """
+        return self.aula_set.all()

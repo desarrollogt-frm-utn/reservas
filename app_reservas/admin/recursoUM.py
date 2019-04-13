@@ -20,12 +20,14 @@ class RecursoUMAdmin(admin.ModelAdmin):
     """
     list_display = (
         '_nombre',
+        'activo',
         '_tipo',
         'calendar_codigo',
         'calendar_color',
     )
 
     list_filter = (
+        'activo',
         'tipo',
     )
 

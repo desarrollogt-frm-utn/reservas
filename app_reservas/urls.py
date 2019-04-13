@@ -7,10 +7,10 @@ from app_reservas.views.reserva import ReservaFinalize, ReservaDetail, reserva_e
 from .views import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
-    AreaDetailView,
     AsingRole,
     AulaDetailView,
     CuerpoDetailView,
+    CustomAulaDetailView,
     FechasSemestreConfig,
     IndexView,
     LaboratorioDetailView,
@@ -84,8 +84,8 @@ urlpatterns = [
     ),
     url(
         r'^(?P<model>area|aulas)/(?P<slug>[-\w]+)/$',
-        AreaDetailView.as_view(),
-        name='area_detalle'
+        CustomAulaDetailView.as_view(),
+        name='custom_aula_detalle'
     ),
     url(
         r'^recurso/(?P<pk>\d+)/eventos/$',

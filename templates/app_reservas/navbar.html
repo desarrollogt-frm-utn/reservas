@@ -32,7 +32,7 @@
 
                         {% for tipo_aula in lista_tipos_aulas %}
                             <li>
-                                <a href="{% url 'area_detalle' 'aulas' tipo_aula.slug %}">
+                                <a href="{% url 'custom_aula_detalle' 'aulas' tipo_aula.slug %}">
                                     {{ tipo_aula.nombre }}
                                 </a>
                             </li>

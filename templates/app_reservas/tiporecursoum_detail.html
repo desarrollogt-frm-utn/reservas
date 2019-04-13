@@ -38,8 +38,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% if tipo_recurso.recursoum_set.exists %}
-                                {% for recurso in tipo_recurso.recursoum_set.all %}
+                            {% if filtered_set %}
+                                {% for recurso in filtered_set %}
                                     <tr>
                                         <td>
                                             {{ recurso.get_nombre_corto }}
@@ -91,7 +91,7 @@
 {% block fullcalendar_resources %}
     resourceLabelText: '{{ tipo_recurso }}',
     resources: [
-        {% for recurso in tipo_recurso.recursoum_set.all %}
+        {% for recurso in filtered_set %}
             {
                 id: '{{ recurso.id }}',
                 title: '{{ recurso.get_nombre_corto }}',
@@ -102,7 +102,7 @@
 
 
 {% block fullcalendar_eventSources %}
-    {% for recurso in tipo_recurso.recursoum_set.all %}
+    {% for recurso in filtered_set %}
         {
             url: '{% url "recurso_eventos_json" recurso.id %}',
             {% if recurso.calendar_color %}

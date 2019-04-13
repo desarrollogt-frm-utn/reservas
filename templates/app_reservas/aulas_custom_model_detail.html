@@ -41,8 +41,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% if model.get_aulas %}
-                                {% for aula in model.get_aulas %}
+                            {% if filtered_set %}
+                                {% for aula in filtered_set %}
                                     <tr>
                                         <td>
                                             {{ aula.get_aula_nivel }}
@@ -114,7 +114,7 @@
 {% block fullcalendar_resources %}
     resourceLabelText: 'Aula',
     resources: [
-        {% for aula in model.get_aulas %}
+        {% for aula in filtered_set %}
             {
                 id: '{{ aula.id }}',
                 title: '{{ aula.get_aula_nivel }}',
@@ -125,7 +125,7 @@
 
 
 {% block fullcalendar_eventSources %}
-    {% for aula in model.get_aulas %}
+    {% for aula in filtered_set %}
         {
             url: '{% url "recurso_eventos_json" aula.id %}',
             {% if aula.calendar_color %}

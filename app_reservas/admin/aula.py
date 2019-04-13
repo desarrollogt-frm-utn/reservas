@@ -20,19 +20,22 @@ class AulaAdmin(admin.ModelAdmin):
     """
     list_display = (
         '_nombre',
+        'activo',
         'capacidad',
         '_nivel',
         '_cuerpo',
         'archivo_ubicacion',
         '_areas',
+        '_tipo',
         'calendar_codigo',
-        'calendar_color',
     )
 
     list_filter = (
+        'activo',
         'nivel',
         'nivel__cuerpo',
         'areas',
+        'tipo',
     )
 
     def _nombre(self, obj):
@@ -65,6 +68,14 @@ class AulaAdmin(admin.ModelAdmin):
         """
         return ", ".join([area.nombre for area in obj.areas.all()])
     _areas.short_description = 'Áreas'
+
+
+    def _tipo(self, obj):
+        """
+        Obtiene el listado de tipos asociadas a la instancia.
+        """
+        return ", ".join([tipo.nombre for tipo in obj.tipo.all()])
+    _tipo.short_description = 'Tipo de aula'
 
 
     def get_urls(self):

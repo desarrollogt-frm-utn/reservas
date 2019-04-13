@@ -2,8 +2,7 @@ from .ali import (
     AliTemplateView,
     AliVideoconferenciasDetailView
 )
-from .area import AreaDetailView
-from .aula import AulaDetailView
+from .aula import AulaDetailView, CustomAulaDetailView
 from .cuerpo import CuerpoDetailView
 from .fechasSemestre import FechasSemestreConfig
 from .index import IndexView, LoginIndexView
