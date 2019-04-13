@@ -84,3 +84,22 @@ def finalizar_reservas():
 
     for reserva in reserva_qs:
         finalizar_reserva(reserva)
+
+@shared_task(name='sincronizar_reservas')
+def sincronizar_reserva(pk=None):
+
+    from .models import Reserva
+    from app_reservas.services.reservas import crear_evento
+    if pk is None:
+        reserva_qs = Reserva.objects.filter(
+            horarioreserva__id_evento_calendar__isnull = True
+        )
+        if reserva_qs.__len__() == 0:
+            print("Sin reservas para sincronizar")
+        else:
+            for reserva in reserva_qs:
+                crear_evento(reserva)
+    else:
+        print("Sincronización forzada...")
+        reserva = Reserva.objects.filter(pk=pk)
+        crear_evento(reserva)
