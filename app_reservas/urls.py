@@ -3,7 +3,7 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
-from app_reservas.views.reserva import ReservaFinalize, ReservaDetail, reserva_eventos_json
+from app_reservas.views.reserva import ReservaFinalize, ReservaDetail, reserva_eventos_json, ReservaSincronizar
 from .views import (
     AliTemplateView,
     AliVideoconferenciasDetailView,
@@ -223,6 +223,11 @@ urlpatterns = [
         r'^reservas/finalizar/(?P<pk>\d+)/$',
         login_required(ReservaFinalize),
         name='reserva_finalizar'),
+    url(
+        r'^reservas/sincronizar/(?P<pk>\d+)/$',
+        login_required(ReservaSincronizar),
+        name='reserva_sincronizar'),
+
     url(
         r'^reservas/detalle/(?P<pk>\d+)/$',
         login_required(ReservaDetail.as_view()),
