@@ -20,7 +20,7 @@ class TipoRecursoUMDetailView(DetailView):
         # Obtiene la información de contexto base.
         context = super(TipoRecursoUMDetailView, self).get_context_data(**kwargs)
         # Busca solo los recursos activos
-        filtered_set = self.object.recursoali_set.filter(activo=True)
+        filtered_set = self.object.recursoum_set.filter(activo=True)
 
         context['filtered_set'] = filtered_set
         # Retorna el contexto modificado.
