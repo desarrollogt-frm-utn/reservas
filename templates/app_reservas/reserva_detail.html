@@ -98,6 +98,15 @@
                         {% else %}
                            ---
                         {% endif %}
+                        {% if request.user.is_staff %}
+                            {%if not reserva.reserva_sincronizada %}
+                                <a role="button"
+                                    class="btn btn-xs btn-primary"
+                                    href="{% url 'reserva_sincronizar' reserva.id %}">
+                                    Sincronizar
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
             </table>
