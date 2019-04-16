@@ -59,14 +59,17 @@ def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta, res
         fin=fin,
         hasta=hasta
     )
-
-    if reserva_horario_obj:
-        reserva_horario_obj.id_evento_calendar = evento.get('id')
-        reserva_horario_obj.save()
-
-    from .models import Recurso
-    recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
-    obtener_eventos_recurso_especifico(recurso_obj)
+    if evento.get('Error'):
+        from .models import Recurso
+        recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
+        obtener_eventos_recurso_especifico(recurso_obj)
+    else:
+        if reserva_horario_obj:
+            reserva_horario_obj.id_evento_calendar = evento.get('id')
+            reserva_horario_obj.save()
+            from .models import Recurso
+            recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
+            obtener_eventos_recurso_especifico(recurso_obj)
 
 
 @shared_task(name='finalizar_reservas')
