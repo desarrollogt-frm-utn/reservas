@@ -102,6 +102,15 @@ def reservaCreate(request):
 
 
 @has_permission_decorator(CREATE_RESERVA)
+def ReservaSincronizar(request, pk):
+    from app_reservas.tasks import sincronizar_reserva
+    sincronizar_reserva.delay(pk)
+    return render(request, 'commons/success_message.html', {
+        'title': 'La reserva fue sincronizada',
+        'message': 'La reserva ha sido sincronizada con éxito.'
+    })
+
+@has_permission_decorator(CREATE_RESERVA)
 def ReservaFinalize(request, pk):
     reserva_qs = Reserva.objects.filter(id=pk)[:1]
     if not reserva_qs:
@@ -133,9 +142,11 @@ class ReservaDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ReservaDetail, self).get_context_data(**kwargs)
+        reserva_sincronizada_context = context['reserva'].reserva_sincronizada()
         estado_reserva_context = context['reserva'].get_estado_reserva()
         estado_reserva_context.estado_nombre = ESTADO_RESERVA.get(estado_reserva_context.estado)
         estado_reserva_context.estado_final = estado_reserva_context and estado_reserva_context.estado in ESTADOS_FINALES
+        context['reserva_sincronizada'] = reserva_sincronizada_context
         context['estado_reserva'] = estado_reserva_context
         context["dias_semana"] = DIAS_SEMANA
         return context
