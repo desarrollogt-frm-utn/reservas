@@ -3,17 +3,21 @@ from suds.client import Client
 import json
 from django.core.cache import cache
 
+from app_academica.utils import obtener_anio_academico
 
-def get_horarios(from_cache=True):
+
+def get_horarios(anio=None, from_cache=True):
+    if not anio:
+        anio = obtener_anio_academico()
     if from_cache:
-        get_horarios_cache = cache.get('get_horarios')
+        get_horarios_cache = cache.get('get_horarios_{0!s}'.format(anio))
         if get_horarios_cache:
             return json.loads(get_horarios_cache)
 
     url = settings.WSDL_URL
     client = Client(url)
-    json_response = client.service.seticGetHorarios()
-    cache.add('get_horarios', json_response)
+    json_response = client.service.seticGetHorarios(anio)
+    cache.add('get_horarios_{0!s}'.format(anio), json_response)
     parse_json = json.loads(json_response)
 
     return parse_json
