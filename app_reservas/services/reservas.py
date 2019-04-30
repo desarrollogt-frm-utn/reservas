@@ -26,7 +26,7 @@ def get_nombre_evento(docente_obj, comision_obj, nombre_evento = None):
 
 
 def crear_evento(reserva_obj):
-    for horario_obj in reserva_obj.horarioreserva_set.all():
+    for horario_obj in reserva_obj.horarioreserva_set.filter(id_evento_calendar__isnull=True):
         inicio = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.inicio, reserva_obj.fecha_inicio)
         fin = obtener_siguiente_dia_vigente(int(horario_obj.dia), horario_obj.fin, reserva_obj.fecha_inicio)
         hasta = None
@@ -35,7 +35,7 @@ def crear_evento(reserva_obj):
             hasta = obtener_fecha_finalizacion_reserva_cursado(reserva_obj.comision.semestre)
         elif not reserva_obj.comision and reserva_obj.fecha_fin:
             hasta = obtener_fecha_finalizacion_reserva_fuera_cursado(reserva_obj.fecha_fin)
-
+        
         recurso_obj = get_recurso_obj(reserva_obj.recurso.id)
         if recurso_obj:
             crear_evento_recurso_especifico(

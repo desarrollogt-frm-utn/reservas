@@ -93,12 +93,12 @@ class Reserva(models.Model):
 
     def reserva_sincronizada(self):
         horarioreserva_list = self.horarioreserva_set.filter(
-            id_evento_calendar__isnull = True
+            id_evento_calendar__isnull=True
         )
         if horarioreserva_list:
-            return True
-        else:
             return False
+        else:
+            return True
     
     def get_horario_de_fecha(self, fecha):
         """

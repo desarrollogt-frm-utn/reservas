@@ -1,0 +1,13 @@
+{
+    "name": "Python: Django Reservas-Development-Settings",
+    "type": "python",
+    "request": "launch",
+    "program": "${workspacefolder}/manage.py",
+    "console": "integratedTerminal",
+    "args": [
+        "runserver",
+        "0.0.0.0:8000",
+        "--settings=reservas.settings.development"
+    ],
+    "django": true
+}

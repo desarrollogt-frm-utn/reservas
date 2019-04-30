@@ -215,16 +215,7 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
          ],
       },
     }
-
-    if hasta is not None:
-        event['recurrence'] = ['RRULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta), ]
-    try:
-        created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
-    except Exception:
-        created_event= {
-            'Error' : '500'
-        }
-    print(created_event)
+    created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
     return created_event
 
 
