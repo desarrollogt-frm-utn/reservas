@@ -1,6 +1,0 @@
-{
-    "python.pythonPath": "/home/federico/Escritorio/gtenv/bin/",
-    "python.linting.pylintPath": "pylint_django",
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
-}
