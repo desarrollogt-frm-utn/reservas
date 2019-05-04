@@ -62,11 +62,10 @@ def crear_evento_recurso_especifico(calendar_id, titulo, inicio, fin, hasta, res
     if reserva_horario_obj:
         reserva_horario_obj.id_evento_calendar = evento.get('id')
         reserva_horario_obj.save()
-
     from .models import Recurso
     recurso_obj = Recurso.objects.get(calendar_codigo=calendar_id)
     obtener_eventos_recurso_especifico(recurso_obj)
-
+    return evento
 
 @shared_task(name='finalizar_reservas')
 def finalizar_reservas():
@@ -91,14 +90,10 @@ def sincronizar_reserva(pk=None):
     from app_reservas.services.reservas import crear_evento
     if pk is None:
         reserva_qs = Reserva.objects.filter(
-            horarioreserva__id_evento_calendar__isnull = True
+            horarioreserva__id_evento_calendar__isnull=True
         )
         if reserva_qs.__len__() == 0:
             print("Sin reservas para sincronizar")
         else:
             for reserva in reserva_qs:
                 crear_evento(reserva)
-    else:
-        print("Sincronización forzada...")
-        reserva = Reserva.objects.filter(pk=pk)
-        crear_evento(reserva)
