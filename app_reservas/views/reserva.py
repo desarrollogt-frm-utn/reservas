@@ -22,7 +22,7 @@ from app_reservas.models.historicoEstadoReserva import ESTADO_RESERVA, ESTADOS_F
 from app_reservas.models.horarioReserva import DIAS_SEMANA
 from app_reservas.roles import CREATE_RESERVA
 from app_reservas.services.recursos import get_recurso_obj
-from app_reservas.services.reservas import get_nombre_evento, crear_evento, dar_baja_evento
+from app_reservas.services.reservas import crear_evento, dar_baja_evento
 from app_reservas.form.reserva import ReservaInlineFormset
 
 from app_usuarios.models import Usuario as UsarioModel
@@ -49,7 +49,7 @@ def reservaCreate(request):
                 comision_obj = None
                 if reserva_form.cleaned_data.get('comision'):
                     comision_obj = reserva_form.cleaned_data.get('comision')
-                nombre_evento = get_nombre_evento(docente_obj, comision_obj)
+                nombre_evento = reserva_form.cleaned_data.get('nombre_evento')
                 fecha_inicio = reserva_form.cleaned_data.get('fecha_inicio')
                 fecha_fin = reserva_form.cleaned_data.get('fecha_fin')
 

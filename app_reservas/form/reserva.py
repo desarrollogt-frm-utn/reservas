@@ -11,7 +11,7 @@ from app_reservas.models import (
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 
 from app_academica.models import Comision, Docente
-from app_reservas.services.reservas import buscar_reservas_activas_por_fechas
+from app_reservas.services.reservas import get_nombre_evento
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
@@ -199,6 +199,12 @@ class ReservaCreateForm(forms.ModelForm):
         widget=forms.Select(attrs={'id': 'tipo_select', 'class': 'form-control', 'disabled': 'true'}),
     )
 
+    nombre_evento = forms.CharField(
+        label='Nombre del Evento:',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'disabled': 'true'}),
+        required=False,
+    )
+
     class Meta:
         model = Reserva
         fields = ['fecha_inicio', 'fecha_fin', 'docente', 'tipo_solicitud', 'comision']
@@ -253,6 +259,35 @@ class ReservaCreateForm(forms.ModelForm):
                     "La fecha de inicio no puede ser nula"
                 )
         return inicio
+
+
+    def clean_nombre_evento(self):
+        nombre_evento = self.cleaned_data.get('nombre_evento')
+        tipo_solicitud = self.data.get('tipo_solicitud')
+        comision_obj = None
+        try:
+            usuario_obj = Docente.objects.get(legajo=self.data.get('docente'))
+        except:
+            raise forms.ValidationError(
+                "El docente ingresado no es válido"
+            )
+
+        if not nombre_evento or nombre_evento == '':
+            if tipo_solicitud == '1' or tipo_solicitud == '2':
+                try:
+                    comision_obj = Comision.objects.get(id=self.data.get('comision'))
+                except Comision.DoesNotExist:
+                    raise forms.ValidationError(
+                        "La comisión ingresada no es válida"
+                    )
+
+            else:
+                raise forms.ValidationError(
+                    "El nombre del evento no puede ser nulo"
+                )
+
+        cleaned_nombre_evento = get_nombre_evento(usuario_obj, comision_obj, nombre_evento)
+        return cleaned_nombre_evento
 
 
 class BaseFormSet(BaseInlineFormSet):

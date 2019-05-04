@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.utils import timezone
 
 from app_reservas.models import HistoricoEstadoReserva, Reserva, HorarioReserva
@@ -17,12 +16,12 @@ from app_reservas.adapters.google_calendar import borrar_evento
 from app_usuarios.models import Usuario as UsuarioModel
 
 
-def get_nombre_evento(docente_obj, comision_obj):
+def get_nombre_evento(docente_obj, comision_obj, nombre_evento = None):
     if comision_obj is not None:
         titulo = "{0!s} - {1!s} - {2!s}".format(comision_obj.materia.nombre, comision_obj.comision,
                                                 docente_obj.nombre)
     else:
-        titulo = "Solicitud fuera de agenda - {0!s}".format(docente_obj.nombre)
+        titulo = "FA - {0!s} - {1!s}".format(nombre_evento,docente_obj.nombre)
     return titulo
 
 

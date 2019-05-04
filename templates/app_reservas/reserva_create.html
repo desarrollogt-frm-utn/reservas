@@ -87,6 +87,14 @@
                     	   </div>
                         </div>
                     </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <label for="nombre_evento">Nombre del evento:</label>
+                    {{ form.nombre_evento }}
+                 </div>
+                </div>
+              </div>
 
             <div class="col-md-8 col-md-offset-2">
             <table border="0" cellpadding="0" cellspacing="0">
@@ -181,8 +189,9 @@
       $('#tipo_select').val("");
       $('#mat_select').attr("disabled", true);
       $('#mat_select').html('<option value="" selected="selected">---------</option>');
-      //$('[id$=id_cantidad_alumnos]').val("");
-      //$('[id^=id_horarioreserva_set-\d]]').val("");
+      $('#id_nombre_evento').attr("disabled", true);
+      $('[id$=id_cantidad_alumnos]').val("");
+      $('[id^=id_horarioreserva_set-\d]]').val("");
 
     });
 
@@ -197,6 +206,7 @@
       $('#mat_select').attr("disabled", true);
       $('#id_fecha_inicio').attr("disabled", true);
       $('#id_fecha_fin').attr("disabled", true);
+      $('#id_nombre_evento').attr("disabled", true);
       if ($(this).val()== 1) {
           $('#mat_select').attr("disabled", false);
          }
@@ -207,9 +217,11 @@
        else if ($(this).val()== 3) {
          $('#id_fecha_inicio').attr("disabled", false);
          $('#id_fecha_fin').attr("disabled", false);
+         $('#id_nombre_evento').attr("disabled", false);
        }
         else {
           $('#id_fecha_inicio').attr("disabled", false);
+          $('#id_nombre_evento').attr("disabled", false);
         };
       if ($(this).val()== 1 || $(this).val()== 2) {
         $.ajax({

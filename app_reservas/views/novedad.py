@@ -31,11 +31,12 @@ class NovedadView(DetailView):
         context = super(NovedadView, self).get_context_data(**kwargs)
         # Añade el carrusel de imágenes de la novedad, en caso de que exista.
         try:
-            carrusel = CarruselImagenes.objects.get(slug=self.object.carrusel.slug)
+            if self.object.carrusel:
+                carrusel = CarruselImagenes.objects.get(slug=self.object.carrusel.slug)
 
 
-            context['carrusel'] = carrusel
-            context['carrusel_imagenes'] = carrusel.imagenes.all()
+                context['carrusel'] = carrusel
+                context['carrusel_imagenes'] = carrusel.imagenes.all()
         except ObjectDoesNotExist:
             pass
 
