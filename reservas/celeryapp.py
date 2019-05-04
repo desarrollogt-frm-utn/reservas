@@ -39,7 +39,7 @@ app.conf.CELERYBEAT_SCHEDULE = {
     },
     'sincronizar_reservas':{
         'task': 'sincronizar_reservas',
-        'schedule': timedelta(minutes=1)
+        'schedule': timedelta(minutes=15)
     }
 }
 
