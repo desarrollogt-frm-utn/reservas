@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.conf import settings
@@ -103,12 +103,14 @@ def reservaCreate(request):
 
 @has_permission_decorator(CREATE_RESERVA)
 def ReservaSincronizar(request, pk):
-    from app_reservas.tasks import sincronizar_reserva
-    sincronizar_reserva.delay(pk)
-    return render(request, 'commons/success_message.html', {
-        'title': 'La reserva fue sincronizada',
-        'message': 'La reserva ha sido sincronizada con éxito.'
-    })
+    from app_reservas.services.reservas import crear_evento
+    reserva = Reserva.objects.get(pk=pk)
+    if crear_evento(reserva):
+        return redirect('reserva_detalle', pk=pk)
+    else:
+        return render(request, 'commons/error_message.html', {
+            'message': 'Hubo un error al sincronizar la reserva. Intentelo mas tarde.'
+        })
 
 @has_permission_decorator(CREATE_RESERVA)
 def ReservaFinalize(request, pk):
