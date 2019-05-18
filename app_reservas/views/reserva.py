@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.conf import settings
@@ -102,6 +102,17 @@ def reservaCreate(request):
 
 
 @has_permission_decorator(CREATE_RESERVA)
+def ReservaSincronizar(request, pk):
+    from app_reservas.services.reservas import crear_evento
+    reserva = Reserva.objects.get(pk=pk)
+    if crear_evento(reserva):
+        return redirect('reserva_detalle', pk=pk)
+    else:
+        return render(request, 'commons/error_message.html', {
+            'message': 'Hubo un error al sincronizar la reserva. Intentelo mas tarde.'
+        })
+
+@has_permission_decorator(CREATE_RESERVA)
 def ReservaFinalize(request, pk):
     reserva_qs = Reserva.objects.filter(id=pk)[:1]
     if not reserva_qs:
@@ -133,9 +144,11 @@ class ReservaDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ReservaDetail, self).get_context_data(**kwargs)
+        reserva_sincronizada_context = context['reserva'].reserva_sincronizada()
         estado_reserva_context = context['reserva'].get_estado_reserva()
         estado_reserva_context.estado_nombre = ESTADO_RESERVA.get(estado_reserva_context.estado)
         estado_reserva_context.estado_final = estado_reserva_context and estado_reserva_context.estado in ESTADOS_FINALES
+        context['reserva_sincronizada'] = reserva_sincronizada_context
         context['estado_reserva'] = estado_reserva_context
         context["dias_semana"] = DIAS_SEMANA
         return context

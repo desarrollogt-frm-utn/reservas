@@ -205,7 +205,7 @@ BOWER_INSTALLED_APPS = (
 # de los calendarios de Google Calendar.
 GOOGLE_CALENDAR_TOKEN = os.environ.get('GOOGLE_CALENDAR_TOKEN', '')
 
-BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@rabbit//')
+BROKER_URL = os.environ.get('BROKER_URL', '')
 
 LOGIN_URL = '/' + DJANGO_URL_PREFIX + 'cuentas/login/'
 
@@ -225,7 +225,11 @@ CONSTANCE_CONFIG = {
     'FECHA_FIN_SEGUNDO_SEMESTRE': (datetime.datetime.now().date() , 'Fecha de fin del segundo semestre', datetime.date),
 }
 
-# Configuración de para el envío de emails
+# Configuración de para el envío de emails.
+
+"""
+Se pueden configurar como variables de ambiente local.
+"""
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
@@ -244,7 +248,7 @@ RAVEN_CONFIG = {
     # release based on the git info.
     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
-GLPI_URL = os.environ.get('GLPI_URL', 'http://localhost/glpi')
+GLPI_URL = os.environ.get('GLPI_URL', '')
 GLPI_USER = os.environ.get('GLPI_USER', '')
 GLPI_PASS = os.environ.get('GLPI_PASS', '')
 

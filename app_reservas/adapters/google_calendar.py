@@ -118,7 +118,7 @@ def obtener_eventos(calendar_id, limite_anio_siguiente=True, desde_hoy = False, 
     list of dicts
         Lista de eventos, organizados como diccionarios.
     """
-    service = crear_servicio()
+    service = build_service()
 
     inicio = None
     primer_dia_anio_subsiguiente = None
@@ -217,11 +217,10 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
     }
 
     if hasta is not None:
-        event['recurrence'] = ['RRULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta), ]
+        event['recurrence'] = ['RRULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta),]
 
     created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
     print(created_event)
-
     return created_event
 
 

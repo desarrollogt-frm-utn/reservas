@@ -1,10 +1,11 @@
 # coding=utf-8
 
 from .base import *
+import os
 
 DEBUG = False
-TEST = True
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
+TEST = True
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*')
 

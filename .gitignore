@@ -1,3 +1,6 @@
+#Configuración de Visual Studio Code.
+/.vscode
+
 # Directorio de componentes instalados por Django-Bower.
 /components
 

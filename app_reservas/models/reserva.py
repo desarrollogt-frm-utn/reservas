@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from app_usuarios.models import Usuario
 from app_academica.models import Comision, Docente
+from . import HorarioReserva
 
 
 class Reserva(models.Model):
@@ -90,7 +91,15 @@ class Reserva(models.Model):
         estado = self.historicoestadoreserva_set.filter(fecha_fin__isnull=True)[0]
         return estado
 
-
+    def reserva_sincronizada(self):
+        horarioreserva_list = self.horarioreserva_set.filter(
+            id_evento_calendar__isnull=True
+        )
+        if horarioreserva_list:
+            return False
+        else:
+            return True
+    
     def get_horario_de_fecha(self, fecha):
         """
         Retorna el horario a partir de una fecha
