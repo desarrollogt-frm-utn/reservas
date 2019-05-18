@@ -4,7 +4,6 @@ from .base import *
 import os
 
 DEBUG = False
-ALLOWED_HOSTS = ['*']
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 TEST = True
 
