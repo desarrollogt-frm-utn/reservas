@@ -213,7 +213,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
 
-GOOGLE_SECRET_JSON_FILE = os.environ.get('GOOGLE_SECRET_JSON','')
+GOOGLE_SECRET_JSON_FILE = os.environ.get('BASE_DIR','Reservas-FRM-UTN.json')
 
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
@@ -231,7 +231,7 @@ CONSTANCE_CONFIG = {
 Se pueden configurar como variables de ambiente local.
 """
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
