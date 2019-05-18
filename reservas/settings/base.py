@@ -213,7 +213,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 ROLEPERMISSIONS_MODULE = 'app_reservas.roles'
 
-GOOGLE_SECRET_JSON_FILE = os.environ.get('BASE_DIR','Reservas-FRM-UTN.json')
+GOOGLE_SECRET_JSON_FILE = os.path.join('BASE_DIR','Reservas-FRM-UTN.json')
 
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
