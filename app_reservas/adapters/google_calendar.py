@@ -215,7 +215,12 @@ def crear_evento(calendar_id, titulo, inicio, fin, hasta=None):
          ],
       },
     }
+
+    if hasta is not None:
+        event['recurrence'] = ['RULE:FREQ=WEEKLY;UNTIL={0!s}'.format(hasta),]
+
     created_event = service.events().insert(calendarId=calendar_id, body=event).execute()
+    print(created_event)
     return created_event
 
 
