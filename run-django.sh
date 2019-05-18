@@ -3,7 +3,7 @@
 # Función que espera a que PostgreSQL haya sido inicializado.
 function pg_wait {
   while : ; do
-    pg_isready --host db --user postgress
+    pg_isready --host db --user postgres
     sleep 5
     if [ $? == 0 ]; then
       break
