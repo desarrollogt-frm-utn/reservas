@@ -11,7 +11,7 @@ from app_reservas.models import (
 from app_reservas.models.solicitud import TIPO_SOLICITUD
 
 from app_academica.models import Comision, Docente
-from app_reservas.services.reservas import get_nombre_evento
+from app_reservas.services.reservas import get_nombre_evento, buscar_reservas_por_hora
 
 from app_reservas.utils import (
     obtener_fecha_inicio_reserva_cursado,
@@ -123,6 +123,9 @@ class HorarioReservaForm(forms.ModelForm):
             dia = self.cleaned_data.get('dia')
             tipo_solicitud = reserva_form.cleaned_data.get('tipo_solicitud')
 
+            hora_inicio = self.cleaned_data.get('inicio')
+            hora_fin = self.cleaned_data.get('fin')
+
             # Validación de horarios de comisión
             if tipo_solicitud == '1' or tipo_solicitud == '2':
                 if str(dia) == 'None':
@@ -139,10 +142,10 @@ class HorarioReservaForm(forms.ModelForm):
                 hora_inicio_comision = datetime.strptime(horario.get('hora_inicio'), '%H:%M').time()
                 hora_fin_comision = datetime.strptime(horario.get('hora_fin'), '%H:%M').time()
 
-                if self.cleaned_data.get('inicio') < hora_inicio_comision or\
-                    self.cleaned_data.get('inicio') > hora_fin_comision or \
-                    self.cleaned_data.get('fin') < hora_inicio_comision or\
-                    self.cleaned_data.get('fin') > hora_fin_comision:
+                if hora_inicio < hora_inicio_comision or \
+                    hora_inicio > hora_fin_comision or \
+                    hora_fin < hora_inicio_comision or \
+                    hora_fin > hora_fin_comision:
                         raise forms.ValidationError(
                             INVALID_SCHEDULE_MESSAGE
                         )
@@ -160,14 +163,13 @@ class HorarioReservaForm(forms.ModelForm):
 
             recurso = self.cleaned_data.get('recurso')
 
-            # reservas_qs = buscar_reservas_activas_por_fechas(recurso, fecha_inicio, fecha_fin, dia)
-            #
-            # if reservas_qs:
-            #     from app_reservas.views.prestamo import PRESTAMO_CON_RESERVA_MESSAGE
-            #
-            #     raise forms.ValidationError(
-            #         PRESTAMO_CON_RESERVA_MESSAGE
-            #     )
+            reservas_qs = buscar_reservas_por_hora(recurso, fecha_inicio, fecha_fin, dia, hora_inicio, hora_fin )
+
+            if reservas_qs:
+                from app_reservas.views.prestamo import PRESTAMO_CON_RESERVA_MESSAGE
+                raise forms.ValidationError(
+                    PRESTAMO_CON_RESERVA_MESSAGE
+                )
 
 
 class ReservaCreateForm(forms.ModelForm):

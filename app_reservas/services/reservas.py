@@ -164,12 +164,12 @@ def buscar_reservas_por_hora(base_recurso_obj, fecha_inicio, fecha_fin,  dia_res
 
     recurso_obj = get_recurso_obj(base_recurso_obj.id)
     if recurso_obj:
-        reserva_qs = recurso_obj.buscar_reservas_activas_por_fechas(recurso_obj, fecha_inicio, fecha_fin, dia_reserva)
+        reserva_qs = buscar_reservas_activas_por_fechas(recurso_obj, fecha_inicio, fecha_fin, dia_reserva)
 
         for reserva in reserva_qs:
             horario_obj = reserva.horarioreserva_set.get(dia=dia_reserva)
-            if (horario_obj.inicio <= hora_inicio <= horario_obj.fin) or \
-                    (hora_fin and horario_obj.inicio <= hora_fin <= horario_obj.fin):
+            if (horario_obj.inicio <= hora_inicio < horario_obj.fin) or \
+                    (hora_fin and horario_obj.inicio < hora_fin <= horario_obj.fin):
                 reserva_list.append(reserva)
 
     else:
