@@ -10,22 +10,29 @@ Listado de Reservas
 {% endblock %}
 
 {% block contenido %}
-<div class="col-sm-offset-0 col-sm-8">
-	<div class="text-center">
-	 	<h1>Listado de Reservas</h1>
-	</div>
- </div>
+<div class="page-header">
+        <h1>Listado de Reservas</h1>
+</div>
 
- <div class="col-sm-offset-1 col-sm-3">
-	 <label for="estado">Estado:</label>
+ <div class="col-sm-offset-0 col-sm-12">
+
 	 <form method="get" action="{% url 'reserva_listar' %}">
 
-		 <div class="col-sm-offset-0 col-sm-9">
-
-			{{ estado_form.estado }}
+		 <div class="col-sm-offset-1 col-sm-3">
+			 <label for="estado">Estado:</label>
+			{{ filter_form.estado }}
 		 </div>
+
+		 <div class="col-sm-offset-0 col-sm-5">
+			 <label for="buscar">Buscar:</label>
+			{{ filter_form.buscar }}
+		 </div>
+
 		 <div class="col-sm-offset-0 col-sm-2">
-			<input class="btn btn-primary" type="submit" value="Filtrar"/>
+			 <div style="margin-top: 25px;">
+				<input class="btn btn-primary" type="submit" value="Filtrar"/>
+			 </div>
+
 		 </div>
 	 </form>
  </div>
@@ -116,7 +123,9 @@ Listado de Reservas
 		{% endfor %}
 
 		{% else %}
-		<h1>No existen reservas para mostrar</h1>
+		<div class="page-header">
+			<h3>No existen reservas para mostrar</h3>
+		</div>
 		{% endif %}
 	</tbody>
 </table>

@@ -1,4 +1,6 @@
 import json
+
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -156,27 +158,46 @@ class ReservaDetail(DetailView):
 
 class ReservaList(ListView):
     model = Reserva
-    template_name = 'app_reservas/reservas_list.html'
+    template_name = 'app_reservas/reserva_list.html'
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(ReservaList, self).get_context_data(**kwargs)
-        estado_form = FilterReservaForm(self.request.GET)
-        context['estado_form'] = estado_form
+        filter_form = FilterReservaForm(self.request.GET)
+        context['filter_form'] = filter_form
         context['estado_reserva'] = ESTADO_RESERVA
         return context
 
     def get_queryset(self):
-        estado = self.request.GET.get('estado', '')
-        order = self.request.GET.get('orderby', '')
-        reservas_qs = Reserva.objects.all().order_by('-id')
-        if not estado:
-            estado = '1'
-        reservas_qs = reservas_qs.filter(
-            historicoestadoreserva__estado=estado,
-            historicoestadoreserva__fecha_fin__isnull=True,
-        )
-        return reservas_qs
+        filter_form = FilterReservaForm(self.request.GET)
+        order = None
+        buscar = None
+        if filter_form.is_valid():
+            estado = filter_form.cleaned_data.get('estado', '1')
+            buscar = filter_form.cleaned_data.get('buscar', '')
+
+        reservas_qs = Reserva.objects.all()
+
+        if estado and estado!='0':
+            reservas_qs = reservas_qs.filter(
+                historicoestadoreserva__estado=estado,
+                historicoestadoreserva__fecha_fin__isnull=True,
+            )
+
+        if buscar and buscar != 'None':
+            try:
+                reservas_qs = reservas_qs.filter(
+                    Q(comision__materia__nombre__icontains=buscar) |
+                    Q(comision__comision__icontains=buscar) |
+                    Q(nombre_evento__icontains=buscar) |
+                    Q(usuario__legajo__icontains=buscar) |
+                    Q(usuario__last_name__icontains=buscar) |
+                    Q(usuario__first_name__icontains=buscar)
+            )
+            except ValueError:
+                pass
+
+        return reservas_qs.order_by('-id')
 
 
 class ReservaListDocente(ListView):

@@ -311,9 +311,15 @@ ReservaInlineFormset = inlineformset_factory(Reserva, HorarioReserva, form=Horar
 
 class FilterReservaForm(forms.Form):
     estado = forms.ChoiceField(
-                choices=sorted(ESTADO_RESERVA.items()),
-                widget=forms.Select(attrs={'id': 'estado_select', 'class': 'form-control'})
+                required=False,
+                choices=[('0','Todas')] +list(sorted(ESTADO_RESERVA.items())),
+                widget=forms.Select(attrs={'id': 'estado_select', 'class': 'form-control'}),
             )
+
+    buscar = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'id': 'buscar_field', 'class': 'form-control'})
+    )
 
 
 class ReservaWithoutSolicitudCreateForm(forms.Form):
