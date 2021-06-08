@@ -1,5 +1,5 @@
 Django==1.8.11
-Pillow==3.2.0
+Pillow==8.2.0
 amqp==1.4.8
 anyjson==0.3.3
 billiard==3.3.0.22
