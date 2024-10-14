@@ -71,9 +71,16 @@ class HorarioSolicitud(models.Model):
         null=True,
         blank=True,
     )
-    tipo_recurso_ali = models.ManyToManyField(
-        'TipoRecursoAli',
-        verbose_name='Tipo de Recurso ALI',
+    tipo_aula = models.ForeignKey(
+        'TipoAula',
+        verbose_name='Tipo de aula',
+        blank=True,
+    )
+    
+    tipo_laboratorio = models.ForeignKey(
+        'TipoLaboratorio',
+        verbose_name="Tipo de Laboratorio",
+       
         blank=True,
     )
 

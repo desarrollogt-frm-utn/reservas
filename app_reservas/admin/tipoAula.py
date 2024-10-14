@@ -15,6 +15,7 @@ class TipoAulaAdmin(admin.ModelAdmin):
         'nombre_plural',
         'slug',
         'is_visible_navbar',
+        'is_alí',
     )
 
     list_filter = (

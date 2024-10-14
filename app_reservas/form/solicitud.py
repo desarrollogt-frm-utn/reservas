@@ -117,7 +117,7 @@ class HorarioSolicitudForm(forms.ModelForm):
 
     class Meta:
         model = HorarioSolicitud
-        fields = ['dia', 'tipo_recurso', 'inicio', 'fin', 'cantidad_alumnos', 'software_requerido', 'tipo_laboratorio', 'tipo_recurso_ali']
+        fields = ['dia', 'tipo_recurso', 'inicio', 'fin', 'cantidad_alumnos', 'software_requerido', 'tipo_laboratorio','tipo_aula' 'tipo_recurso_ali']
         widgets = {
             'dia': forms.Select(attrs={'class': 'form-control', }),
             'inicio': forms.TimeInput(
@@ -131,10 +131,23 @@ class HorarioSolicitudForm(forms.ModelForm):
                 attrs={'class': 'form-control', }
             ),
             'tipo_recurso': forms.Select(attrs={'class': 'form-control', }),
-            'tipo_laboratorio': forms.Select(attrs={'class': 'form-control', 'disabled': 'true'}),
-            'tipo_recurso_ali': forms.SelectMultiple(attrs={'class': 'form-control', 'disabled': 'true'}),
+            'tipo_laboratorio': forms.Select(attrs={'class': 'form-control', 'disabled': True}),
+            'tipo_aula': forms.Select(attrs={'class': 'form-control', 'disabled': True}),
+            'tipo_recurso_ali': forms.SelectMultiple(attrs={'class': 'form-control', 'disabled': True}),
         }
+    def __init__(self, *args, **kwargs):
+        super(HorarioSolicitudForm, self).__init__(*args, **kwargs)
 
+        # Verificamos si existe un valor de 'tipo_aula' con 'is_arti=True'
+        tipo_aula_qs = self.fields['tipo_aula'].queryset.filter(is_arti=True)
+
+        if tipo_aula_qs.exists():
+            # Si existe algún valor con is_arti=True, habilitamos el campo
+            self.fields['tipo_aula'].widget.attrs['disabled'] = False
+        else:
+            # Si no existe, mantenemos el campo deshabilitado o lo eliminamos
+            del self.fields['tipo_aula']
+            
     def clean_fin(self):
         inicio = self.cleaned_data['inicio']
         fin = self.cleaned_data['fin']

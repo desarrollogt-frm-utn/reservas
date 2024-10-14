@@ -24,7 +24,12 @@ class TipoAula(models.Model):
                   '"Aulas Multimedia", un slug posible sería "aulas_multimedia" o '
                   '"multimedia".',
     )
-
+    is_ali = models.BooleanField(
+        default=False,
+        verbose_name='Aula es arti',
+        help_text='Indica si el tipo de aula es de tipo arti .',
+    )
+    
     is_visible_navbar = models.BooleanField(
         default=False,
         verbose_name='Visible en la navbar',
