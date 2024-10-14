@@ -60,6 +60,7 @@ class HorarioSolicitud(models.Model):
 
     # Relaciones
 
+    
     solicitud = models.ForeignKey(
         'Solicitud',
         verbose_name='Solicitud',
@@ -77,13 +78,11 @@ class HorarioSolicitud(models.Model):
         blank=True,
     )
     
-    tipo_laboratorio = models.ForeignKey(
-        'TipoLaboratorio',
-        verbose_name="Tipo de Laboratorio",
-       
-        blank=True,
+    tipo_recurso_ali = models.ManyToManyField(
+        'TipoRecursoAli',
+        verbose_name='Tipo de Recurso ALI',
     )
-
+  
     class Meta:
         """
         Información de la clase.
